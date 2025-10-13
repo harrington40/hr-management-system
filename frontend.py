@@ -6,6 +6,8 @@ from components.employees import RequestTransfer, RequestLeave
 from components.attendance import AttendanceRules, LeaveRules, ShiftTimetable, SetHolidays
 from components.attendance.staff_status import create_staff_status_page as StaffStatus
 from components.attendance.staff_schedule import create_staff_schedule_page as StaffSchedulePage
+from components.dashboard.main_dashboard import create_main_dashboard, UserRole
+from components.dashboard.menu_integration import create_integrated_dashboard_menu, create_dashboard_landing_page
 from helperFuns import imagePath
 from layout import Sidebar
 
@@ -70,9 +72,38 @@ def init(fastapi_app: FastAPI) -> None:
            ui.navigate.to('/')
            return
        
-       Sidebar()
-       ui.label('Welcome to the Dashboard!').classes('text-2xl font-bold')
-       # Add more dashboard components here
+       # Check if user wants traditional menu or modern dashboard
+       from nicegui import context
+       view_mode = None
+       try:
+           if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
+               request = context.client.request
+               if request and hasattr(request, 'query_params'):
+                   view_mode = request.query_params.get("view")
+       except:
+           pass
+       
+       if view_mode == "menu":
+           # Traditional sidebar menu
+           Sidebar()
+           ui.label('Welcome to the Dashboard!').classes('text-2xl font-bold')
+           
+           # Add quick access to modern dashboard
+           with ui.card().classes('w-full max-w-md mt-6'):
+               with ui.card_section().classes('p-6'):
+                   ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>', sanitize=False)
+                   ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>', sanitize=False)
+                   ui.button('🏢 Open Modern Dashboard', on_click=lambda: ui.navigate.to('/dashboard')).classes('w-full bg-blue-600 text-white')
+       else:
+           # Modern comprehensive dashboard
+           # Determine user role (for now, default to admin - could be enhanced with user management)
+           user_role = UserRole.ADMIN  # This could be determined from user data in a real system
+           
+           # Add option to switch to traditional menu
+           with ui.row().classes('fixed top-4 right-4 z-50'):
+               ui.button('📋 Traditional Menu', on_click=lambda: ui.navigate.to('/dashboard?view=menu')).classes('bg-gray-600 text-white shadow-lg')
+           
+           create_main_dashboard(user_role)
 
     @ui.page('/administration/institution')
     def institution_profile_page():
@@ -237,6 +268,28 @@ def init(fastapi_app: FastAPI) -> None:
        
        Sidebar()
        StaffStatus()
+
+    @ui.page('/menu-integration')
+    def menu_integration_page():
+       from nicegui import app
+       
+       # Check if user is authenticated
+       if not app.storage.user.get('authenticated', False):
+           ui.navigate.to('/')
+           return
+       
+       create_integrated_dashboard_menu()
+
+    @ui.page('/dashboard-landing')
+    def dashboard_landing_page():
+       from nicegui import app
+       
+       # Check if user is authenticated
+       if not app.storage.user.get('authenticated', False):
+           ui.navigate.to('/')
+           return
+       
+       create_dashboard_landing_page()
 
     # Add a route specifically for magic link validation (outside the NiceGUI mount)
     @fastapi_app.get("/auth")

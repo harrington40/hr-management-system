@@ -1,0 +1,43 @@
+attendance_rates:
+  SM001:
+    days_present: 197
+    days_total: 200
+    rate: 98.5
+  SM002:
+    days_present: 194
+    days_total: 200
+    rate: 96.8
+  SM003:
+    days_present: 198
+    days_total: 200
+    rate: 99.2
+  SM004:
+    days_present: 194
+    days_total: 200
+    rate: 97.1
+  SM005:
+    days_present: 191
+    days_total: 200
+    rate: 95.5
+overtime_hours:
+  SM001:
+    monthly: 8.5
+    yearly: 102
+  SM002:
+    monthly: 4.2
+    yearly: 50
+  SM003:
+    monthly: 12.1
+    yearly: 145
+  SM004:
+    monthly: 6.8
+    yearly: 82
+  SM005:
+    monthly: 15.5
+    yearly: 186
+productivity_scores:
+  SM001: 87.5
+  SM002: 92.1
+  SM003: 84.8
+  SM004: 89.6
+  SM005: 94.2

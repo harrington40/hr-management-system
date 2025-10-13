@@ -1,0 +1,208 @@
+daily_records:
+  '2025-10-07': {}
+  '2025-10-08': {}
+  '2025-10-09':
+    SM001:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM002:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM003:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM004:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM005:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+  '2025-10-10':
+    SM001:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM002:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM003:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM004:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM005:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+  '2025-10-11':
+    SM001:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM002:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM003:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM004:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM005:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+  '2025-10-12':
+    SM001:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM002:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM003:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM004:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM005:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+  '2025-10-13':
+    SM001:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM002:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM003:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM004:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0
+    SM005:
+      break_end: '13:00:00'
+      break_start: '12:00:00'
+      check_in: 09:00:00
+      check_out: '17:00:00'
+      notes: ''
+      status: present
+      total_hours: 7.0

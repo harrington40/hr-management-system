@@ -1,25 +1,76 @@
 """
-Staff and On Duty Status Management Component
-Provides real-time tracking of staff attendance status, on-duty personnel, and status management
+Enterprise Staff Status & Attendance Management System
+Comprehensive real-time tracking of staff attendance, performance metrics, and workforce analytics
+Integrated with HR Holiday & Vacation Management System
 """
 
 from nicegui import ui
 import yaml
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import json
 from typing import Dict, List, Any
+from dataclasses import dataclass
+from enum import Enum
+
+class StaffStatus(Enum):
+    ON_DUTY = "on_duty"
+    OFF_DUTY = "off_duty"
+    ON_BREAK = "on_break"
+    IN_MEETING = "in_meeting"
+    ON_LEAVE = "on_leave"
+    REMOTE_WORK = "remote_work"
+    EMERGENCY_LEAVE = "emergency_leave"
+    SICK_LEAVE = "sick_leave"
+    VACATION = "vacation"
+    TRAINING = "training"
+
+class AttendanceMode(Enum):
+    CLOCK_IN = "clock_in"
+    CLOCK_OUT = "clock_out"
+    BREAK_START = "break_start"
+    BREAK_END = "break_end"
+    LUNCH_START = "lunch_start"
+    LUNCH_END = "lunch_end"
+
+@dataclass
+class StaffMember:
+    employee_id: str
+    name: str
+    department: str
+    position: str
+    email: str
+    phone: str
+    current_status: StaffStatus
+    shift_start: str
+    shift_end: str
+    last_activity: datetime
+    attendance_score: float = 0.0
+    performance_rating: str = "Good"
+
+@dataclass
+class AttendanceRecord:
+    employee_id: str
+    timestamp: datetime
+    action: AttendanceMode
+    location: str
+    notes: str = ""
 
 class StaffStatusManager:
-    """Manager class for staff status and on-duty tracking"""
+    """Enterprise Staff Status and Attendance Management System"""
     
     def __init__(self):
         self.config_dir = "config"
         self.staff_status_file = os.path.join(self.config_dir, "staff_status.yaml")
         self.staff_data_file = os.path.join(self.config_dir, "staff_data.yaml")
+        self.attendance_records_file = os.path.join(self.config_dir, "attendance_records.yaml")
+        self.performance_metrics_file = os.path.join(self.config_dir, "performance_metrics.yaml")
+        
         self.ensure_config_directory()
         self.staff_status = self.load_staff_status()
         self.staff_data = self.load_staff_data()
+        self.attendance_records = self.load_attendance_records()
+        self.performance_metrics = self.load_performance_metrics()
     
     def ensure_config_directory(self):
         """Ensure config directory exists"""
@@ -53,6 +104,34 @@ class StaffStatusManager:
             default_data = self.get_default_staff_data()
             self.save_staff_data(default_data)
             return default_data
+    
+    def load_attendance_records(self) -> Dict[str, Any]:
+        """Load attendance records from YAML file"""
+        if os.path.exists(self.attendance_records_file):
+            try:
+                with open(self.attendance_records_file, 'r') as file:
+                    return yaml.safe_load(file) or {}
+            except Exception as e:
+                print(f"Error loading attendance records: {e}")
+                return self.get_default_attendance_records()
+        else:
+            default_records = self.get_default_attendance_records()
+            self.save_attendance_records(default_records)
+            return default_records
+    
+    def load_performance_metrics(self) -> Dict[str, Any]:
+        """Load performance metrics from YAML file"""
+        if os.path.exists(self.performance_metrics_file):
+            try:
+                with open(self.performance_metrics_file, 'r') as file:
+                    return yaml.safe_load(file) or {}
+            except Exception as e:
+                print(f"Error loading performance metrics: {e}")
+                return self.get_default_performance_metrics()
+        else:
+            default_metrics = self.get_default_performance_metrics()
+            self.save_performance_metrics(default_metrics)
+            return default_metrics
     
     def get_default_staff_status(self) -> Dict[str, Any]:
         """Get default staff status configuration"""
@@ -110,88 +189,208 @@ class StaffStatusManager:
         }
     
     def get_default_staff_data(self) -> Dict[str, Any]:
-        """Get default staff data with sample employees"""
+        """Generate comprehensive default staff data"""
         current_time = datetime.now()
         return {
-            'employees': {
-                'EMP001': {
-                    'name': 'John Smith',
-                    'department': 'Engineering',
-                    'position': 'Senior Developer',
+            'staff_members': {
+                'SM001': {
+                    'employee_id': 'SM001',
+                    'first_name': 'John',
+                    'last_name': 'Smith',
                     'email': 'john.smith@company.com',
                     'phone': '+1-555-0101',
-                    'shift': 'morning',
-                    'location': 'Office Floor 3',
+                    'department': 'Engineering',
+                    'position': 'Senior Software Engineer',
+                    'manager_id': 'SM005',
+                    'hire_date': '2023-01-15',
+                    'status': 'active',
+                    'shift_pattern': 'standard',
+                    'location': 'Main Office - Floor 3',
                     'current_status': 'on_duty',
                     'last_status_update': current_time.strftime('%Y-%m-%d %H:%M:%S'),
                     'check_in_time': '09:15',
                     'expected_check_out': '17:00',
                     'break_start': None,
-                    'total_hours_today': 0,
-                    'profile_image': None
+                    'total_hours_today': 4.5,
+                    'emergency_contact': {
+                        'name': 'Jane Smith',
+                        'phone': '+1-555-0102',
+                        'relationship': 'Spouse'
+                    }
                 },
-                'EMP002': {
-                    'name': 'Sarah Johnson',
-                    'department': 'Human Resources',
-                    'position': 'HR Manager',
+                'SM002': {
+                    'employee_id': 'SM002',
+                    'first_name': 'Sarah',
+                    'last_name': 'Johnson',
                     'email': 'sarah.johnson@company.com',
-                    'phone': '+1-555-0102',
-                    'shift': 'morning',
-                    'location': 'Office Floor 2',
+                    'phone': '+1-555-0103',
+                    'department': 'Marketing',
+                    'position': 'Marketing Manager',
+                    'manager_id': 'SM006',
+                    'hire_date': '2022-11-08',
+                    'status': 'active',
+                    'shift_pattern': 'flexible',
+                    'location': 'Main Office - Floor 2',
                     'current_status': 'on_break',
                     'last_status_update': (current_time - timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S'),
                     'check_in_time': '08:45',
                     'expected_check_out': '17:00',
                     'break_start': (current_time - timedelta(minutes=15)).strftime('%H:%M'),
                     'total_hours_today': 3.75,
-                    'profile_image': None
+                    'emergency_contact': {
+                        'name': 'Michael Johnson',
+                        'phone': '+1-555-0104',
+                        'relationship': 'Partner'
+                    }
                 },
-                'EMP003': {
-                    'name': 'Mike Davis',
+                'SM003': {
+                    'employee_id': 'SM003',
+                    'first_name': 'David',
+                    'last_name': 'Wilson',
+                    'email': 'david.wilson@company.com',
+                    'phone': '+1-555-0105',
                     'department': 'Sales',
                     'position': 'Sales Representative',
-                    'email': 'mike.davis@company.com',
-                    'phone': '+1-555-0103',
-                    'shift': 'morning',
-                    'location': 'Remote',
+                    'manager_id': 'SM007',
+                    'hire_date': '2023-03-22',
+                    'status': 'active',
+                    'shift_pattern': 'standard',
+                    'location': 'Regional Office - West',
                     'current_status': 'remote_work',
                     'last_status_update': current_time.strftime('%Y-%m-%d %H:%M:%S'),
                     'check_in_time': '09:00',
                     'expected_check_out': '17:00',
                     'break_start': None,
                     'total_hours_today': 4.0,
-                    'profile_image': None
+                    'emergency_contact': {
+                        'name': 'Lisa Wilson',
+                        'phone': '+1-555-0106',
+                        'relationship': 'Spouse'
+                    }
                 },
-                'EMP004': {
-                    'name': 'Lisa Wilson',
-                    'department': 'Finance',
-                    'position': 'Financial Analyst',
-                    'email': 'lisa.wilson@company.com',
-                    'phone': '+1-555-0104',
-                    'shift': 'morning',
-                    'location': 'Office Floor 1',
+                'SM004': {
+                    'employee_id': 'SM004',
+                    'first_name': 'Emily',
+                    'last_name': 'Brown',
+                    'email': 'emily.brown@company.com',
+                    'phone': '+1-555-0107',
+                    'department': 'Human Resources',
+                    'position': 'HR Specialist',
+                    'manager_id': 'SM008',
+                    'hire_date': '2023-02-10',
+                    'status': 'active',
+                    'shift_pattern': 'standard',
+                    'location': 'Main Office - Floor 1',
                     'current_status': 'on_leave',
                     'last_status_update': (current_time - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'),
                     'check_in_time': None,
                     'expected_check_out': None,
                     'break_start': None,
                     'total_hours_today': 0,
-                    'profile_image': None
+                    'emergency_contact': {
+                        'name': 'Robert Brown',
+                        'phone': '+1-555-0108',
+                        'relationship': 'Father'
+                    }
+                },
+                'SM005': {
+                    'employee_id': 'SM005',
+                    'first_name': 'Michael',
+                    'last_name': 'Davis',
+                    'email': 'michael.davis@company.com',
+                    'phone': '+1-555-0109',
+                    'department': 'Engineering',
+                    'position': 'Engineering Manager',
+                    'manager_id': None,
+                    'hire_date': '2021-07-20',
+                    'status': 'active',
+                    'shift_pattern': 'executive',
+                    'location': 'Main Office - Floor 3',
+                    'current_status': 'on_duty',
+                    'last_status_update': current_time.strftime('%Y-%m-%d %H:%M:%S'),
+                    'check_in_time': '08:30',
+                    'expected_check_out': '18:00',
+                    'break_start': None,
+                    'total_hours_today': 5.5,
+                    'emergency_contact': {
+                        'name': 'Jennifer Davis',
+                        'phone': '+1-555-0110',
+                        'relationship': 'Spouse'
+                    }
                 }
             },
             'departments': {
-                'Engineering': {'total_staff': 15, 'on_duty': 12, 'on_break': 2, 'off_duty': 1},
-                'Human Resources': {'total_staff': 5, 'on_duty': 3, 'on_break': 1, 'off_duty': 1},
-                'Sales': {'total_staff': 10, 'on_duty': 7, 'on_break': 1, 'remote_work': 2},
-                'Finance': {'total_staff': 8, 'on_duty': 6, 'on_leave': 1, 'off_duty': 1}
+                'Engineering': {
+                    'name': 'Engineering',
+                    'manager_id': 'SM005',
+                    'total_staff': 25,
+                    'on_duty': 20,
+                    'on_break': 3,
+                    'remote_work': 2,
+                    'budget': 2500000,
+                    'location': 'Main Office - Floor 3'
+                },
+                'Marketing': {
+                    'name': 'Marketing',
+                    'manager_id': 'SM006',
+                    'total_staff': 12,
+                    'on_duty': 9,
+                    'on_break': 2,
+                    'remote_work': 1,
+                    'budget': 800000,
+                    'location': 'Main Office - Floor 2'
+                },
+                'Sales': {
+                    'name': 'Sales',
+                    'manager_id': 'SM007',
+                    'total_staff': 18,
+                    'on_duty': 14,
+                    'on_break': 1,
+                    'remote_work': 3,
+                    'budget': 1200000,
+                    'location': 'Multiple Locations'
+                },
+                'Human Resources': {
+                    'name': 'Human Resources',
+                    'manager_id': 'SM008',
+                    'total_staff': 8,
+                    'on_duty': 6,
+                    'on_break': 1,
+                    'on_leave': 1,
+                    'budget': 600000,
+                    'location': 'Main Office - Floor 1'
+                }
+            },
+            'shift_patterns': {
+                'standard': {
+                    'name': 'Standard Business Hours',
+                    'start_time': '09:00',
+                    'end_time': '17:00',
+                    'break_duration': 60,
+                    'flexible_minutes': 15
+                },
+                'flexible': {
+                    'name': 'Flexible Hours',
+                    'core_start': '10:00',
+                    'core_end': '15:00',
+                    'earliest_start': '07:00',
+                    'latest_end': '19:00',
+                    'daily_hours': 8
+                },
+                'executive': {
+                    'name': 'Executive Schedule',
+                    'flexible': True,
+                    'minimum_hours': 8,
+                    'overtime_exempt': True
+                }
             },
             'real_time_stats': {
-                'total_employees': 38,
-                'currently_on_duty': 28,
-                'on_break': 4,
-                'remote_workers': 2,
-                'on_leave': 2,
-                'off_duty': 2,
+                'total_employees': 63,
+                'currently_on_duty': 49,
+                'on_break': 7,
+                'remote_workers': 6,
+                'on_leave': 1,
+                'off_duty': 0,
                 'last_updated': current_time.strftime('%Y-%m-%d %H:%M:%S')
             }
         }
@@ -223,6 +422,78 @@ class StaffStatusManager:
             self.staff_data['employees'][emp_id]['last_status_update'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             return self.save_staff_data(self.staff_data)
         return False
+    
+    def get_default_attendance_records(self) -> Dict[str, Any]:
+        """Generate default attendance records"""
+        from datetime import datetime, timedelta
+        
+        today = datetime.now()
+        records = {}
+        
+        # Generate sample attendance for the last 7 days
+        for days_back in range(7):
+            date = (today - timedelta(days=days_back)).strftime('%Y-%m-%d')
+            records[date] = {}
+            
+            for emp_id in ['SM001', 'SM002', 'SM003', 'SM004', 'SM005']:
+                if days_back < 5:  # Weekdays
+                    records[date][emp_id] = {
+                        'check_in': '09:00:00',
+                        'check_out': '17:00:00',
+                        'break_start': '12:00:00',
+                        'break_end': '13:00:00',
+                        'total_hours': 7.0,
+                        'status': 'present',
+                        'notes': ''
+                    }
+        
+        return {'daily_records': records}
+    
+    def get_default_performance_metrics(self) -> Dict[str, Any]:
+        """Generate default performance metrics"""
+        return {
+            'attendance_rates': {
+                'SM001': {'rate': 98.5, 'days_present': 197, 'days_total': 200},
+                'SM002': {'rate': 96.8, 'days_present': 194, 'days_total': 200},
+                'SM003': {'rate': 99.2, 'days_present': 198, 'days_total': 200},
+                'SM004': {'rate': 97.1, 'days_present': 194, 'days_total': 200},
+                'SM005': {'rate': 95.5, 'days_present': 191, 'days_total': 200}
+            },
+            'overtime_hours': {
+                'SM001': {'monthly': 8.5, 'yearly': 102},
+                'SM002': {'monthly': 4.2, 'yearly': 50},
+                'SM003': {'monthly': 12.1, 'yearly': 145},
+                'SM004': {'monthly': 6.8, 'yearly': 82},
+                'SM005': {'monthly': 15.5, 'yearly': 186}
+            },
+            'productivity_scores': {
+                'SM001': 87.5,
+                'SM002': 92.1,
+                'SM003': 84.8,
+                'SM004': 89.6,
+                'SM005': 94.2
+            }
+        }
+    
+    def save_attendance_records(self, records: Dict[str, Any]) -> bool:
+        """Save attendance records to YAML file"""
+        try:
+            with open(self.attendance_records_file, 'w') as file:
+                yaml.dump(records, file, default_flow_style=False, indent=2)
+            return True
+        except Exception as e:
+            print(f"Error saving attendance records: {e}")
+            return False
+    
+    def save_performance_metrics(self, metrics: Dict[str, Any]) -> bool:
+        """Save performance metrics to YAML file"""
+        try:
+            with open(self.performance_metrics_file, 'w') as file:
+                yaml.dump(metrics, file, default_flow_style=False, indent=2)
+            return True
+        except Exception as e:
+            print(f"Error saving performance metrics: {e}")
+            return False
 
 def create_staff_status_page():
     """Create the main staff and on duty status page"""
@@ -400,7 +671,9 @@ def create_staff_directory_panel(manager: StaffStatusManager):
                 with ui.card_section().classes('p-4'):
                     # Employee header
                     with ui.row().classes('w-full items-center mb-3'):
-                        ui.avatar(text=employee['name'][:2], color='bg-blue-500').classes('mr-3')
+                        # Create a simple avatar-like element with initials
+                        with ui.element('div').classes('w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3'):
+                            ui.label(employee['name'][:2].upper())
                         with ui.column().classes('flex-1'):
                             ui.html(f'<div class="font-semibold">{employee["name"]}</div>', sanitize=False)
                             ui.html(f'<div class="text-sm text-gray-600">{employee["position"]}</div>', sanitize=False)
@@ -474,7 +747,9 @@ def create_break_management_panel(manager: StaffStatusManager):
             for emp_id, employee in manager.staff_data['employees'].items():
                 if employee['current_status'] == 'on_break':
                     with ui.row().classes('w-full p-4 border-b items-center'):
-                        ui.avatar(text=employee['name'][:2], color='bg-yellow-500').classes('mr-4')
+                        # Create a simple avatar-like element with initials for break status
+                        with ui.element('div').classes('w-10 h-10 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4'):
+                            ui.label(employee['name'][:2].upper())
                         with ui.column().classes('flex-1'):
                             ui.html(f'<div class="font-semibold">{employee["name"]}</div>', sanitize=False)
                             ui.html(f'<div class="text-sm text-gray-600">Started break at {employee.get("break_start", "N/A")}</div>', sanitize=False)
@@ -486,8 +761,12 @@ def create_attendance_log_panel(manager: StaffStatusManager):
     
     # Date range selector
     with ui.row().classes('w-full gap-4 mb-4'):
-        ui.date('From Date', value=datetime.now().strftime('%Y-%m-%d')).classes('w-48')
-        ui.date('To Date', value=datetime.now().strftime('%Y-%m-%d')).classes('w-48')
+        with ui.input('From Date').classes('w-48') as from_date:
+            from_date.props('type=date')
+            from_date.value = datetime.now().strftime('%Y-%m-%d')
+        with ui.input('To Date').classes('w-48') as to_date:
+            to_date.props('type=date')
+            to_date.value = datetime.now().strftime('%Y-%m-%d')
         ui.button('🔍 Filter', on_click=lambda: ui.notify('Filtering attendance...')).classes('bg-blue-500 text-white')
         ui.button('📊 Export', on_click=lambda: ui.notify('Exporting data...')).classes('bg-green-500 text-white')
     

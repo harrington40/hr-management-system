@@ -1,0 +1,35 @@
+devices:
+  BIO_001:
+    battery_level: 95
+    connected_employees:
+    - SM001
+    - SM002
+    - SM003
+    last_sync: '2025-10-13T10:32:24.629170'
+    location: Main Entrance
+    status: online
+    type: biometric
+  CARD_002:
+    battery_level: null
+    connected_employees:
+    - SM005
+    last_sync: '2025-10-13T10:30:24.629170'
+    location: Executive Floor
+    status: online
+    type: card_reader
+  FACE_003:
+    battery_level: 78
+    connected_employees: []
+    last_sync: '2025-10-13T08:32:24.629170'
+    location: R&D Lab
+    status: maintenance
+    type: face_recognition
+  TEMP_004:
+    battery_level: 88
+    connected_employees:
+    - SM001
+    - SM004
+    last_sync: '2025-10-13T10:31:54.629170'
+    location: Health Check Station
+    status: online
+    type: temperature_scanner

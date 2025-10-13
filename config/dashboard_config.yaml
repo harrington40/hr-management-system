@@ -1,0 +1,88 @@
+algorithms:
+  anomaly_detection:
+    alert_threshold: 0.7
+    enabled: true
+    sensitivity: medium
+  attendance_prediction:
+    accuracy_threshold: 0.85
+    enabled: true
+    model_type: time_series
+  leave_optimization:
+    consider_workload: true
+    enabled: true
+    team_coverage_required: 0.75
+  performance_analysis:
+    enabled: true
+    factors:
+    - attendance
+    - productivity
+    - collaboration
+    - goals
+    update_frequency: daily
+dashboard_settings:
+  auto_refresh_interval: 30
+  hardware_integration: true
+  mobile_responsive: true
+  real_time_sync: true
+  show_animations: true
+  theme: modern_blue
+role_permissions:
+  admin:
+  - all_widgets
+  - system_config
+  - user_management
+  - hardware_control
+  department_manager:
+  - team_performance
+  - attendance_overview
+  - leave_approvals
+  employee:
+  - personal_dashboard
+  - leave_requests
+  - attendance_history
+  hr_manager:
+  - attendance_overview
+  - leave_requests
+  - employee_directory
+  - compliance_status
+widgets_config:
+  attendance_overview:
+    enabled: true
+    position:
+      col: 1
+      row: 1
+      span: 2
+    refresh_rate: 15
+    show_charts: true
+  hardware_status:
+    battery_alerts: true
+    enabled: true
+    position:
+      col: 2
+      row: 2
+      span: 1
+    show_offline_devices: true
+  leave_requests:
+    auto_approve_settings: true
+    enabled: true
+    position:
+      col: 1
+      row: 2
+      span: 1
+    show_pending_only: false
+  performance_metrics:
+    enabled: true
+    include_ai_insights: true
+    position:
+      col: 3
+      row: 1
+      span: 2
+    refresh_rate: 60
+  real_time_alerts:
+    enabled: true
+    position:
+      col: 3
+      row: 2
+      span: 2
+    priority_filtering: true
+    sound_notifications: true
