@@ -1,0 +1,129 @@
+# Attendance Rules Configuration
+# Modern, customizable attendance management system
+
+attendance_rules:
+  version: "1.0"
+  last_updated: "2025-10-12"
+  
+  # Core attendance settings
+  core_settings:
+    working_days_per_week: 5
+    standard_work_hours_per_day: 8
+    break_time_minutes: 60
+    grace_period_minutes: 15
+    overtime_threshold_hours: 8
+    
+  # Check-in/Check-out rules
+  checkin_rules:
+    earliest_checkin_time: "06:00"
+    latest_checkin_time: "10:00"
+    auto_checkout_enabled: true
+    auto_checkout_time: "18:00"
+    require_manager_approval_late_checkin: true
+    late_threshold_minutes: 30
+    
+  # Absence and tardiness policies
+  absence_policies:
+    unexcused_absence_penalty_hours: 8
+    maximum_consecutive_absences: 3
+    absence_notification_required_hours: 24
+    auto_deduct_from_leave_balance: true
+    
+  tardiness_policies:
+    - threshold_minutes: 15
+      penalty_type: "warning"
+      penalty_value: 0
+    - threshold_minutes: 30
+      penalty_type: "deduction"
+      penalty_value: 0.5
+    - threshold_minutes: 60
+      penalty_type: "deduction"
+      penalty_value: 1.0
+      
+  # Overtime calculation rules
+  overtime_rules:
+    enabled: true
+    calculation_method: "daily" # daily, weekly, monthly
+    overtime_multiplier: 1.5
+    double_time_threshold_hours: 12
+    double_time_multiplier: 2.0
+    weekend_overtime_multiplier: 2.0
+    holiday_overtime_multiplier: 2.5
+    
+  # Break time policies
+  break_policies:
+    mandatory_lunch_break: true
+    lunch_break_duration_minutes: 60
+    short_break_duration_minutes: 15
+    short_breaks_per_day: 2
+    unpaid_break_threshold_minutes: 30
+    
+  # Remote work policies
+  remote_work:
+    enabled: true
+    require_vpn_check: false
+    productivity_tracking: false
+    checkin_verification_method: "location" # location, photo, manual
+    
+  # Flexible working arrangements
+  flexible_arrangements:
+    flextime_enabled: true
+    core_hours_start: "10:00"
+    core_hours_end: "15:00"
+    compressed_workweek_enabled: true
+    job_sharing_enabled: false
+    
+  # Attendance tracking methods
+  tracking_methods:
+    - method: "biometric"
+      enabled: true
+      priority: 1
+    - method: "rfid_card"
+      enabled: true
+      priority: 2
+    - method: "mobile_app"
+      enabled: true
+      priority: 3
+    - method: "web_portal"
+      enabled: true
+      priority: 4
+      
+  # Notification settings
+  notifications:
+    email_notifications: true
+    sms_notifications: false
+    push_notifications: true
+    manager_notification_threshold: "30_minutes_late"
+    hr_notification_threshold: "2_hours_absent"
+    
+  # Reporting and analytics
+  reporting:
+    daily_attendance_report: true
+    weekly_summary_report: true
+    monthly_analytics: true
+    attendance_trends_analysis: true
+    productivity_metrics: true
+    
+  # Integration settings
+  integrations:
+    payroll_sync: true
+    calendar_integration: true
+    project_management_tools: false
+    biometric_devices: true
+    
+  # Custom rule expressions (for advanced configurations)
+  custom_rules:
+    - name: "Project Deadline Extension"
+      condition: "project_deadline_within_7_days"
+      action: "extend_overtime_limit_to_12_hours"
+      enabled: true
+      
+    - name: "Senior Staff Flexibility"
+      condition: "employee_level >= 'senior'"
+      action: "reduce_late_penalty_by_50_percent"
+      enabled: true
+      
+    - name: "New Employee Grace Period"
+      condition: "employment_duration < 90_days"
+      action: "extend_grace_period_to_30_minutes"
+      enabled: true

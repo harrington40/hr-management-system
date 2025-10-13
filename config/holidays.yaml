@@ -1,0 +1,368 @@
+# Holidays Configuration
+# Comprehensive holiday management system with customizable calendars
+
+holidays_calendar:
+  version: "1.0"
+  last_updated: "2025-10-12"
+  
+  # General settings
+  general_settings:
+    default_country: "United States"
+    timezone: "UTC+0"
+    weekend_days: ["saturday", "sunday"]
+    holiday_year_start: "01-01"
+    advance_planning_years: 2
+    
+  # Holiday types and categories
+  holiday_types:
+    public_holiday:
+      display_name: "Public Holiday"
+      color: "#dc2626"
+      icon: "🏛️"
+      mandatory: true
+      paid_leave: true
+      overtime_multiplier: 2.5
+      
+    religious_holiday:
+      display_name: "Religious Holiday"
+      color: "#7c3aed"
+      icon: "🕊️"
+      optional: true
+      paid_leave: true
+      cultural_significance: true
+      
+    national_holiday:
+      display_name: "National Holiday"
+      color: "#059669"
+      icon: "🏴"
+      mandatory: true
+      paid_leave: true
+      patriotic_significance: true
+      
+    company_holiday:
+      display_name: "Company Holiday"
+      color: "#0891b2"
+      icon: "🏢"
+      company_specific: true
+      paid_leave: true
+      internal_celebration: true
+      
+    regional_holiday:
+      display_name: "Regional Holiday"
+      color: "#ea580c"
+      icon: "🌍"
+      location_specific: true
+      paid_leave: false
+      regional_significance: true
+      
+    cultural_holiday:
+      display_name: "Cultural Holiday"
+      color: "#be185d"
+      icon: "🎭"
+      optional: true
+      paid_leave: false
+      diversity_inclusion: true
+      
+    floating_holiday:
+      display_name: "Floating Holiday"
+      color: "#4338ca"
+      icon: "🎈"
+      employee_choice: true
+      advance_booking_required: true
+      limited_per_year: true
+      
+  # Fixed annual holidays (2025)
+  fixed_holidays_2025:
+    - name: "New Year's Day"
+      date: "2025-01-01"
+      type: "public_holiday"
+      description: "Start of the new calendar year"
+      observed_date: "2025-01-01"
+      
+    - name: "Martin Luther King Jr. Day"
+      date: "2025-01-20"
+      type: "national_holiday"
+      description: "Honoring civil rights leader"
+      observed_date: "2025-01-20"
+      
+    - name: "Presidents' Day"
+      date: "2025-02-17"
+      type: "national_holiday"
+      description: "Honoring U.S. presidents"
+      observed_date: "2025-02-17"
+      
+    - name: "Memorial Day"
+      date: "2025-05-26"
+      type: "national_holiday"
+      description: "Remembering fallen military personnel"
+      observed_date: "2025-05-26"
+      
+    - name: "Independence Day"
+      date: "2025-07-04"
+      type: "national_holiday"
+      description: "U.S. Independence celebration"
+      observed_date: "2025-07-04"
+      
+    - name: "Labor Day"
+      date: "2025-09-01"
+      type: "public_holiday"
+      description: "Celebrating workers' rights"
+      observed_date: "2025-09-01"
+      
+    - name: "Columbus Day"
+      date: "2025-10-13"
+      type: "public_holiday"
+      description: "Commemorating Columbus's arrival"
+      observed_date: "2025-10-13"
+      optional_observance: true
+      
+    - name: "Veterans Day"
+      date: "2025-11-11"
+      type: "national_holiday"
+      description: "Honoring military veterans"
+      observed_date: "2025-11-11"
+      
+    - name: "Thanksgiving Day"
+      date: "2025-11-27"
+      type: "national_holiday"
+      description: "Thanksgiving celebration"
+      observed_date: "2025-11-27"
+      
+    - name: "Christmas Day"
+      date: "2025-12-25"
+      type: "religious_holiday"
+      description: "Christian celebration of Christ's birth"
+      observed_date: "2025-12-25"
+      
+  # Religious and cultural holidays
+  religious_holidays_2025:
+    - name: "Good Friday"
+      date: "2025-04-18"
+      type: "religious_holiday"
+      religion: "Christian"
+      optional: true
+      
+    - name: "Easter Monday"
+      date: "2025-04-21"
+      type: "religious_holiday"
+      religion: "Christian"
+      optional: true
+      
+    - name: "Ramadan Eid (Eid al-Fitr)"
+      date: "2025-03-30"
+      type: "religious_holiday"
+      religion: "Islamic"
+      optional: true
+      lunar_calendar: true
+      
+    - name: "Eid al-Adha"
+      date: "2025-06-06"
+      type: "religious_holiday"
+      religion: "Islamic"
+      optional: true
+      lunar_calendar: true
+      
+    - name: "Diwali"
+      date: "2025-10-20"
+      type: "religious_holiday"
+      religion: "Hindu"
+      optional: true
+      
+    - name: "Chinese New Year"
+      date: "2025-01-29"
+      type: "cultural_holiday"
+      culture: "Chinese"
+      optional: true
+      
+    - name: "Hanukkah (First Day)"
+      date: "2025-12-14"
+      type: "religious_holiday"
+      religion: "Jewish"
+      optional: true
+      duration_days: 8
+      
+  # Company-specific holidays
+  company_holidays_2025:
+    - name: "Company Foundation Day"
+      date: "2025-03-15"
+      type: "company_holiday"
+      description: "Anniversary of company establishment"
+      mandatory: true
+      celebration_event: true
+      
+    - name: "Employee Appreciation Day"
+      date: "2025-05-15"
+      type: "company_holiday"
+      description: "Recognizing employee contributions"
+      half_day: true
+      team_building_activities: true
+      
+    - name: "Innovation Day"
+      date: "2025-09-15"
+      type: "company_holiday"
+      description: "Celebrating creativity and innovation"
+      optional: true
+      innovation_showcase: true
+      
+    - name: "Year-End Party Day"
+      date: "2025-12-23"
+      type: "company_holiday"
+      description: "Annual celebration and team gathering"
+      half_day: true
+      company_event: true
+      
+  # Floating holidays allocation
+  floating_holidays:
+    total_per_employee_per_year: 2
+    advance_booking_required_days: 30
+    blackout_periods:
+      - start_date: "12-20"
+        end_date: "01-05"
+        reason: "Year-end closure"
+        
+    usage_rules:
+      - can_be_combined_with_annual_leave: true
+      - minimum_usage_period: "half_day"
+      - carries_forward_to_next_year: false
+      - manager_approval_required: true
+      
+  # Regional holiday variations
+  regional_variations:
+    california:
+      additional_holidays:
+        - name: "César Chávez Day"
+          date: "2025-03-31"
+          type: "regional_holiday"
+          
+    texas:
+      additional_holidays:
+        - name: "Texas Independence Day"
+          date: "2025-03-02"
+          type: "regional_holiday"
+          
+    new_york:
+      additional_holidays:
+        - name: "Election Day"
+          date: "2025-11-04"
+          type: "regional_holiday"
+          
+  # Holiday policies and rules
+  holiday_policies:
+    work_on_holiday:
+      compensation_type: "overtime_pay" # overtime_pay, comp_time, both
+      overtime_multiplier: 2.5
+      voluntary_basis: true
+      essential_services_exception: true
+      
+    holiday_falling_on_weekend:
+      policy: "observe_adjacent_weekday" # observe_adjacent_weekday, no_compensation, floating_day
+      friday_before_or_monday_after: "employee_choice"
+      
+    partial_day_holidays:
+      half_day_before_major_holidays: ["christmas_day", "new_years_day"]
+      early_release_time: "14:00"
+      full_pay_for_partial_day: true
+      
+    religious_accommodation:
+      unpaid_leave_for_religious_observance: true
+      flexible_scheduling_for_religious_needs: true
+      make_up_time_allowed: true
+      
+  # Holiday planning and scheduling
+  planning_rules:
+    advance_notice_for_changes_days: 60
+    employee_input_on_floating_holidays: true
+    department_coverage_requirements: true
+    minimum_staff_on_optional_holidays: "25_percent"
+    
+    blackout_periods:
+      - period_name: "Year-End Closure"
+        start_date: "12-24"
+        end_date: "01-02"
+        mandatory_closure: true
+        
+      - period_name: "Peak Business Season"
+        start_date: "11-15"
+        end_date: "12-15"
+        limited_time_off: true
+        essential_staff_only: true
+        
+  # International considerations
+  international_offices:
+    respect_local_holidays: true
+    coordinate_global_operations: true
+    cultural_sensitivity_training: true
+    multi_cultural_calendar_display: true
+    
+  # Compensation and benefits
+  holiday_compensation:
+    paid_holidays_per_year: 12
+    religious_holiday_allowance_days: 3
+    cultural_holiday_allowance_days: 2
+    make_up_work_policy: "flexible_within_pay_period"
+    
+  # Reporting and analytics
+  reporting:
+    holiday_usage_tracking: true
+    cost_analysis_by_holiday_type: true
+    employee_satisfaction_surveys: true
+    cultural_diversity_metrics: true
+    productivity_impact_analysis: true
+    
+  # Integration with other systems
+  integrations:
+    calendar_sync: true
+    payroll_integration: true
+    attendance_system: true
+    leave_management_system: true
+    project_planning_tools: true
+    
+  # Notifications and reminders
+  notifications:
+    upcoming_holiday_reminders:
+      advance_notice_days: [30, 14, 7, 1]
+      
+    floating_holiday_expiry_warnings:
+      advance_notice_days: [90, 30, 7]
+      
+    religious_accommodation_reminders:
+      sent_to_managers: true
+      cultural_awareness_tips: true
+      
+  # Custom holiday rules
+  custom_rules:
+    - name: "Essential Services Coverage"
+      condition: "employee_department in ['Security', 'IT', 'Facilities']"
+      action: "minimum_coverage_25_percent_on_holidays"
+      enabled: true
+      
+    - name: "Senior Staff Holiday Rotation"
+      condition: "employee_level >= 'senior'"
+      action: "fair_rotation_for_major_holidays"
+      enabled: true
+      
+    - name: "New Employee Holiday Entitlement"
+      condition: "employment_duration < 90_days"
+      action: "pro_rata_holiday_entitlement"
+      enabled: true
+      
+  # Holiday calendar themes and customization
+  calendar_customization:
+    themes:
+      - name: "Corporate Professional"
+        primary_color: "#1e40af"
+        secondary_color: "#64748b"
+        
+      - name: "Festive Celebration"
+        primary_color: "#dc2626"
+        secondary_color: "#fbbf24"
+        
+      - name: "Cultural Diversity"
+        primary_color: "#7c3aed"
+        secondary_color: "#ec4899"
+        
+    display_options:
+      show_countdown_to_holidays: true
+      highlight_long_weekends: true
+      show_cultural_significance: true
+      display_optional_holidays: true

@@ -1,0 +1,313 @@
+# Staff Schedule Configuration
+# Manages weekly/monthly schedules, shift planning, and coverage analysis
+
+schedule_settings:
+  week_start_day: "monday"
+  default_shift_duration: 8
+  max_hours_per_week: 40
+  min_rest_hours: 12
+  shift_change_notice_hours: 24
+  overtime_threshold: 8
+  auto_schedule_generation: true
+  allow_shift_swapping: true
+  require_manager_approval: true
+
+shift_templates:
+  morning:
+    name: "Morning Shift"
+    start_time: "09:00"
+    end_time: "17:00"
+    break_duration: 60
+    color: "#3B82F6"
+    description: "Standard morning shift"
+    min_staff_required: 5
+    
+  afternoon:
+    name: "Afternoon Shift"
+    start_time: "13:00"
+    end_time: "21:00"
+    break_duration: 60
+    color: "#F59E0B"
+    description: "Afternoon coverage shift"
+    min_staff_required: 4
+    
+  evening:
+    name: "Evening Shift"
+    start_time: "17:00"
+    end_time: "01:00"
+    break_duration: 60
+    color: "#8B5CF6"
+    description: "Evening shift with overlap"
+    min_staff_required: 3
+    
+  night:
+    name: "Night Shift"
+    start_time: "23:00"
+    end_time: "07:00"
+    break_duration: 60
+    color: "#1F2937"
+    description: "Overnight security shift"
+    min_staff_required: 2
+
+weekly_schedule:
+  week_of: "2025-10-07"
+  assignments:
+    EMP001:
+      monday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      tuesday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      wednesday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      thursday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      friday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      saturday:
+        shift: "off"
+        status: "off"
+        location: ""
+        notes: "Weekend off"
+      sunday:
+        shift: "off"
+        status: "off"
+        location: ""
+        notes: "Weekend off"
+        
+    EMP002:
+      monday:
+        shift: "afternoon"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      tuesday:
+        shift: "afternoon"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      wednesday:
+        shift: "afternoon"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      thursday:
+        shift: "afternoon"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      friday:
+        shift: "afternoon"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      saturday:
+        shift: "off"
+        status: "off"
+        location: ""
+        notes: "Weekend off"
+      sunday:
+        shift: "off"
+        status: "off"
+        location: ""
+        notes: "Weekend off"
+        
+    EMP003:
+      monday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Remote"
+        notes: "Working from home"
+      tuesday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Remote"
+        notes: "Working from home"
+      wednesday:
+        shift: "off"
+        status: "off"
+        location: ""
+        notes: "Personal day"
+      thursday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      friday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: ""
+      saturday:
+        shift: "morning"
+        status: "scheduled"
+        location: "Office"
+        notes: "Weekend coverage"
+      sunday:
+        shift: "off"
+        status: "off"
+        location: ""
+        notes: "Rest day"
+
+schedule_requests:
+  - id: "REQ001"
+    employee_id: "EMP001"
+    employee_name: "John Smith"
+    request_type: "shift_change"
+    requested_date: "2025-10-15"
+    current_shift: "morning"
+    requested_shift: "afternoon"
+    reason: "Doctor appointment in the morning"
+    status: "pending"
+    submitted_date: "2025-10-10"
+    manager_notes: ""
+    
+  - id: "REQ002"
+    employee_id: "EMP002"
+    employee_name: "Sarah Johnson"
+    request_type: "time_off"
+    requested_date: "2025-10-18"
+    reason: "Personal appointment"
+    status: "approved"
+    submitted_date: "2025-10-08"
+    manager_notes: "Approved - coverage arranged"
+    
+  - id: "REQ003"
+    employee_id: "EMP003"
+    employee_name: "Mike Davis"
+    request_type: "overtime"
+    requested_date: "2025-10-16"
+    requested_hours: 4
+    reason: "Project deadline"
+    status: "pending"
+    submitted_date: "2025-10-11"
+    manager_notes: ""
+
+coverage_analysis:
+  monday:
+    required: 10
+    scheduled: 8
+    status: "understaffed"
+    shortfall: 2
+    departments:
+      engineering: 3
+      hr: 2
+      sales: 2
+      finance: 1
+      
+  tuesday:
+    required: 10
+    scheduled: 10
+    status: "optimal"
+    shortfall: 0
+    departments:
+      engineering: 4
+      hr: 2
+      sales: 3
+      finance: 1
+      
+  wednesday:
+    required: 10
+    scheduled: 9
+    status: "adequate"
+    shortfall: 1
+    departments:
+      engineering: 3
+      hr: 2
+      sales: 3
+      finance: 1
+      
+  thursday:
+    required: 10
+    scheduled: 10
+    status: "optimal"
+    shortfall: 0
+    departments:
+      engineering: 4
+      hr: 2
+      sales: 3
+      finance: 1
+      
+  friday:
+    required: 10
+    scheduled: 8
+    status: "understaffed"
+    shortfall: 2
+    departments:
+      engineering: 3
+      hr: 1
+      sales: 3
+      finance: 1
+      
+  saturday:
+    required: 6
+    scheduled: 5
+    status: "adequate"
+    shortfall: 1
+    departments:
+      engineering: 2
+      hr: 1
+      sales: 2
+      finance: 0
+      
+  sunday:
+    required: 4
+    scheduled: 3
+    status: "adequate"
+    shortfall: 1
+    departments:
+      engineering: 1
+      hr: 1
+      sales: 1
+      finance: 0
+
+department_requirements:
+  engineering:
+    min_daily_staff: 4
+    peak_hours: ["09:00-12:00", "14:00-17:00"]
+    specialized_roles: ["senior_dev", "team_lead"]
+    
+  hr:
+    min_daily_staff: 2
+    peak_hours: ["09:00-11:00", "14:00-16:00"]
+    specialized_roles: ["hr_manager"]
+    
+  sales:
+    min_daily_staff: 3
+    peak_hours: ["10:00-12:00", "14:00-18:00"]
+    specialized_roles: ["sales_manager"]
+    
+  finance:
+    min_daily_staff: 1
+    peak_hours: ["09:00-11:00", "15:00-17:00"]
+    specialized_roles: ["financial_analyst"]
+
+notification_settings:
+  email_notifications: true
+  sms_reminders: false
+  manager_alerts: true
+  employee_request_notifications: true
+  shift_reminder_hours: 2
+  schedule_change_notifications: true
+
+automation_rules:
+  auto_assign_preferred_shifts: true
+  respect_availability_constraints: true
+  balance_workload_across_employees: true
+  avoid_back_to_back_shifts: true
+  minimum_days_off_per_week: 2
+  maximum_consecutive_days: 6

@@ -1,0 +1,93 @@
+# Staff Status Configuration
+# Defines status types, settings, and shift patterns
+
+status_types:
+  on_duty:
+    name: "On Duty"
+    color: "green"
+    icon: "✅"
+    description: "Currently working and available"
+  off_duty:
+    name: "Off Duty"
+    color: "gray"
+    icon: "⭕"
+    description: "Not currently working"
+  on_break:
+    name: "On Break"
+    color: "yellow"
+    icon: "☕"
+    description: "Currently on break"
+  on_leave:
+    name: "On Leave"
+    color: "blue"
+    icon: "🏖️"
+    description: "On approved leave"
+  sick_leave:
+    name: "Sick Leave"
+    color: "red"
+    icon: "🤒"
+    description: "On sick leave"
+  remote_work:
+    name: "Remote Work"
+    color: "purple"
+    icon: "🏠"
+    description: "Working remotely"
+
+settings:
+  auto_status_update: true
+  break_timeout_minutes: 30
+  status_sync_interval: 5
+  show_location: true
+  enable_notifications: true
+  max_daily_breaks: 2
+  break_duration_minutes: 30
+  overtime_threshold_hours: 8
+  late_arrival_grace_minutes: 15
+
+shift_patterns:
+  morning:
+    name: "Morning Shift"
+    start: "09:00"
+    end: "17:00"
+    break_times:
+      - start: "12:00"
+        end: "13:00"
+        type: "lunch"
+      - start: "15:00"
+        end: "15:15"
+        type: "coffee"
+  evening:
+    name: "Evening Shift"
+    start: "17:00"
+    end: "01:00"
+    break_times:
+      - start: "20:00"
+        end: "21:00"
+        type: "dinner"
+      - start: "23:00"
+        end: "23:15"
+        type: "coffee"
+  night:
+    name: "Night Shift"
+    start: "01:00"
+    end: "09:00"
+    break_times:
+      - start: "04:00"
+        end: "04:30"
+        type: "meal"
+      - start: "06:30"
+        end: "06:45"
+        type: "coffee"
+
+notification_settings:
+  break_reminders: true
+  shift_start_reminders: true
+  overtime_alerts: true
+  late_arrival_notifications: true
+  status_change_notifications: true
+
+security_settings:
+  require_location_verification: false
+  allow_status_change_by_manager: true
+  require_approval_for_breaks: false
+  log_all_status_changes: true

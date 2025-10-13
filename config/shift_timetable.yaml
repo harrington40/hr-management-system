@@ -1,0 +1,283 @@
+# Shift Timetable Configuration
+# Modern shift scheduling system with flexible arrangements
+
+shift_timetable:
+  version: "1.0"
+  last_updated: "2025-10-12"
+  
+  # Organization settings
+  organization:
+    timezone: "UTC+0"
+    week_start_day: "monday"
+    fiscal_year_start: "01-01"
+    shift_change_notice_hours: 48
+    
+  # Default shift templates
+  shift_templates:
+    regular_day_shift:
+      name: "Regular Day Shift"
+      display_name: "Day Shift (9-5)"
+      color: "#22c55e"
+      icon: "☀️"
+      start_time: "09:00"
+      end_time: "17:00"
+      break_duration_minutes: 60
+      break_start_time: "12:00"
+      working_hours: 8
+      overtime_threshold: 8
+      weekend_applicable: false
+      
+    morning_shift:
+      name: "Morning Shift"
+      display_name: "Morning (6-2)"
+      color: "#f59e0b"
+      icon: "🌅"
+      start_time: "06:00"
+      end_time: "14:00"
+      break_duration_minutes: 45
+      break_start_time: "10:00"
+      working_hours: 8
+      shift_allowance_percentage: 10
+      
+    evening_shift:
+      name: "Evening Shift"
+      display_name: "Evening (2-10)"
+      color: "#ef4444"
+      icon: "🌇"
+      start_time: "14:00"
+      end_time: "22:00"
+      break_duration_minutes: 45
+      break_start_time: "18:00"
+      working_hours: 8
+      shift_allowance_percentage: 15
+      
+    night_shift:
+      name: "Night Shift"
+      display_name: "Night (10-6)"
+      color: "#6366f1"
+      icon: "🌙"
+      start_time: "22:00"
+      end_time: "06:00"
+      break_duration_minutes: 60
+      break_start_time: "02:00"
+      working_hours: 8
+      shift_allowance_percentage: 25
+      night_shift_bonus: true
+      
+    flexible_shift:
+      name: "Flexible Shift"
+      display_name: "Flexible Hours"
+      color: "#8b5cf6"
+      icon: "⚡"
+      core_hours_start: "10:00"
+      core_hours_end: "15:00"
+      minimum_hours_per_day: 8
+      maximum_hours_per_day: 10
+      flexible_start_window: "07:00-11:00"
+      flexible_end_window: "15:00-19:00"
+      
+    part_time_shift:
+      name: "Part Time Shift"
+      display_name: "Part Time (4 hrs)"
+      color: "#06b6d4"
+      icon: "⏰"
+      working_hours: 4
+      flexible_timing: true
+      pro_rata_benefits: true
+      
+  # Department-specific shift patterns
+  department_shifts:
+    IT_Department:
+      default_shift: "regular_day_shift"
+      available_shifts: ["regular_day_shift", "flexible_shift"]
+      on_call_rotation: true
+      weekend_support_required: false
+      
+    Customer_Service:
+      default_shift: "regular_day_shift"
+      available_shifts: ["morning_shift", "regular_day_shift", "evening_shift"]
+      24_7_coverage: false
+      peak_hours: ["09:00-12:00", "14:00-17:00"]
+      
+    Security:
+      default_shift: "regular_day_shift"
+      available_shifts: ["morning_shift", "regular_day_shift", "evening_shift", "night_shift"]
+      24_7_coverage: true
+      minimum_staff_per_shift: 2
+      
+    Manufacturing:
+      default_shift: "morning_shift"
+      available_shifts: ["morning_shift", "evening_shift", "night_shift"]
+      continuous_operation: true
+      shift_handover_time_minutes: 15
+      
+    Sales:
+      default_shift: "regular_day_shift"
+      available_shifts: ["regular_day_shift", "flexible_shift"]
+      customer_meeting_hours: "09:00-18:00"
+      travel_flexibility: true
+      
+  # Weekly shift patterns
+  weekly_patterns:
+    standard_5_day:
+      name: "Standard 5-Day Week"
+      working_days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      total_hours_per_week: 40
+      
+    compressed_4_day:
+      name: "Compressed 4-Day Week"
+      working_days: ["monday", "tuesday", "wednesday", "thursday"]
+      hours_per_day: 10
+      total_hours_per_week: 40
+      
+    six_day_retail:
+      name: "6-Day Retail Schedule"
+      working_days: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+      hours_per_day: 6.67
+      total_hours_per_week: 40
+      
+    rotating_shifts:
+      name: "Rotating 3-Shift Pattern"
+      pattern_duration_weeks: 3
+      rotation_order: ["morning_shift", "evening_shift", "night_shift"]
+      days_off_between_rotations: 2
+      
+  # Shift assignment rules
+  assignment_rules:
+    auto_assignment: false
+    manager_approval_required: true
+    employee_preference_weight: 30
+    seniority_weight: 40
+    performance_weight: 30
+    
+    # Constraints
+    maximum_consecutive_night_shifts: 7
+    minimum_rest_hours_between_shifts: 11
+    maximum_weekly_hours: 48
+    overtime_approval_required: true
+    
+    # Fairness rules
+    equal_opportunity_night_shifts: true
+    weekend_rotation_fair_distribution: true
+    holiday_duty_rotation: true
+    
+  # Special shift arrangements
+  special_arrangements:
+    ramadan_shifts:
+      enabled: true
+      reduced_hours: true
+      flexible_start_time: true
+      iftar_break_duration_minutes: 30
+      
+    summer_hours:
+      enabled: true
+      start_date: "06-01"
+      end_date: "08-31"
+      early_finish_fridays: true
+      friday_end_time: "14:00"
+      
+    winter_shifts:
+      enabled: false
+      daylight_saving_adjustment: true
+      heating_allowance: true
+      
+  # Shift change and swap policies
+  shift_changes:
+    advance_notice_hours: 48
+    maximum_changes_per_month: 4
+    manager_approval_required: true
+    documentation_required: true
+    
+    shift_swapping:
+      enabled: true
+      peer_to_peer_swaps: true
+      manager_notification_required: true
+      qualification_matching_required: true
+      
+  # Break and meal policies
+  break_policies:
+    paid_breaks:
+      - duration_minutes: 15
+        frequency_per_shift: 2
+        timing: "flexible_within_shift_half"
+        
+    meal_breaks:
+      - duration_minutes: 30
+        timing: "mid_shift"
+        paid: false
+        location_restrictions: ["cafeteria", "designated_areas"]
+        
+    special_breaks:
+      prayer_breaks:
+        enabled: true
+        duration_minutes: 10
+        frequency_per_day: 5
+        flexible_timing: true
+        
+      smoking_breaks:
+        enabled: false
+        duration_minutes: 10
+        frequency_per_shift: 2
+        designated_areas_only: true
+        
+  # Overtime and additional hours
+  overtime_rules:
+    automatic_calculation: true
+    approval_workflow: true
+    maximum_overtime_hours_per_week: 12
+    overtime_meal_allowance: true
+    transport_allowance_after_hours: "22:00"
+    
+  # Reporting and analytics
+  reporting:
+    shift_coverage_analysis: true
+    overtime_cost_analysis: true
+    employee_satisfaction_tracking: true
+    productivity_by_shift_analysis: true
+    absenteeism_by_shift_tracking: true
+    
+  # Integration settings
+  integrations:
+    attendance_system_sync: true
+    payroll_integration: true
+    employee_self_service: true
+    mobile_app_scheduling: true
+    calendar_integration: true
+    
+  # Notifications and alerts
+  notifications:
+    shift_assignment_notifications: true
+    shift_change_alerts: true
+    overtime_approval_notifications: true
+    coverage_shortage_alerts: true
+    upcoming_shift_reminders: true
+    
+    reminder_timing:
+      shift_start_reminder_hours: 2
+      shift_change_reminder_hours: 24
+      overtime_opportunity_reminder_hours: 4
+      
+  # Compliance and regulations
+  compliance:
+    labor_law_compliance_check: true
+    maximum_working_hours_enforcement: true
+    minimum_rest_period_enforcement: true
+    youth_worker_restrictions: true
+    pregnant_worker_accommodations: true
+    
+  # Custom scheduling rules
+  custom_rules:
+    - name: "Senior Staff Weekend Priority"
+      condition: "employee_level >= 'senior' and shift_time == 'weekend'"
+      action: "priority_assignment"
+      enabled: true
+      
+    - name: "New Employee Day Shift Only"
+      condition: "employment_duration < 90_days"
+      action: "restrict_to_day_shifts"
+      enabled: true
+      
+    - name: "Department Head On-Call"
+      condition: "role == 'department_head'"
+      action: "always_available_on_call"
+      enabled: true

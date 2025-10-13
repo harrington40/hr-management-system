@@ -1,0 +1,222 @@
+# Leave Rules Configuration
+# Comprehensive leave management system with customizable policies
+
+leave_rules:
+  version: "1.0"
+  last_updated: "2025-10-12"
+  
+  # General leave settings
+  general_settings:
+    leave_year_start_month: 1  # January
+    leave_year_start_day: 1
+    maximum_carry_forward_days: 5
+    advance_leave_booking_days: 30
+    minimum_notice_period_days: 7
+    allow_negative_balance: false
+    maximum_negative_days: -5
+    
+  # Leave types and allocations
+  leave_types:
+    annual_leave:
+      display_name: "Annual Leave"
+      color: "#22c55e"
+      icon: "🏖️"
+      enabled: true
+      allocation_rules:
+        base_allocation_days: 25
+        probation_allocation_days: 0
+        senior_staff_bonus_days: 5
+        long_service_bonus:
+          - years_of_service: 5
+            bonus_days: 2
+          - years_of_service: 10
+            bonus_days: 5
+      accrual_method: "monthly" # monthly, quarterly, annual, daily
+      accrual_rate_per_month: 2.08  # 25 days / 12 months
+      carry_forward_allowed: true
+      maximum_carry_forward: 5
+      encashment_allowed: true
+      encashment_threshold_days: 10
+      
+    sick_leave:
+      display_name: "Sick Leave"
+      color: "#ef4444"
+      icon: "🤒"
+      enabled: true
+      allocation_rules:
+        base_allocation_days: 10
+        probation_allocation_days: 5
+        chronic_condition_bonus_days: 15
+      accrual_method: "monthly"
+      accrual_rate_per_month: 0.83
+      medical_certificate_required_days: 3
+      carry_forward_allowed: false
+      encashment_allowed: false
+      
+    maternity_leave:
+      display_name: "Maternity Leave"
+      color: "#ec4899"
+      icon: "👶"
+      enabled: true
+      allocation_rules:
+        base_allocation_days: 120
+        additional_complications_days: 30
+      requires_documentation: true
+      consecutive_days_only: true
+      advance_notice_required_days: 60
+      
+    paternity_leave:
+      display_name: "Paternity Leave"
+      color: "#3b82f6"
+      icon: "👨‍👶"
+      enabled: true
+      allocation_rules:
+        base_allocation_days: 14
+      requires_documentation: true
+      must_be_taken_within_days: 30
+      
+    compassionate_leave:
+      display_name: "Compassionate Leave"
+      color: "#6b7280"
+      icon: "💐"
+      enabled: true
+      allocation_rules:
+        immediate_family_days: 5
+        extended_family_days: 3
+        close_friend_days: 1
+      emergency_approval: true
+      documentation_required: true
+      
+    study_leave:
+      display_name: "Study Leave"
+      color: "#8b5cf6"
+      icon: "📚"
+      enabled: true
+      allocation_rules:
+        exam_preparation_days: 3
+        thesis_defense_days: 2
+        conference_attendance_days: 5
+      requires_manager_approval: true
+      advance_notice_required_days: 21
+      
+    unpaid_leave:
+      display_name: "Unpaid Leave"
+      color: "#64748b"
+      icon: "💸"
+      enabled: true
+      requires_manager_approval: true
+      requires_hr_approval: true
+      minimum_continuous_days: 7
+      maximum_continuous_days: 90
+      
+  # Approval workflow rules
+  approval_workflow:
+    levels:
+      - level: 1
+        approver_role: "line_manager"
+        auto_approve_threshold_days: 1
+        escalation_timeout_hours: 48
+        
+      - level: 2
+        approver_role: "department_head"
+        required_for_days_threshold: 10
+        escalation_timeout_hours: 72
+        
+      - level: 3
+        approver_role: "hr_manager"
+        required_for_days_threshold: 20
+        final_authority: true
+        
+    special_approvals:
+      emergency_leave:
+        auto_approve: true
+        post_approval_documentation_required: true
+        notification_to_hr: true
+        
+      advance_salary_request:
+        requires_finance_approval: true
+        maximum_advance_months: 2
+        
+  # Leave calculation rules
+  calculation_rules:
+    pro_rata_calculation: true
+    weekend_inclusion: false
+    public_holiday_inclusion: false
+    half_day_minimum: 0.5
+    quarter_day_minimum: 0.25
+    
+    # Special calculation periods
+    probation_period_months: 6
+    notice_period_leave_restriction: true
+    resignation_leave_encashment: true
+    
+  # Blackout periods
+  blackout_periods:
+    - name: "Year End Closing"
+      start_date: "12-20"
+      end_date: "01-05"
+      affected_leave_types: ["annual_leave", "study_leave"]
+      emergency_override: true
+      
+    - name: "Project Delivery Sprint"
+      start_date: "03-15"
+      end_date: "03-31"
+      affected_departments: ["IT", "Engineering"]
+      affected_leave_types: ["annual_leave"]
+      
+  # Delegation and coverage rules
+  delegation_rules:
+    mandatory_handover: true
+    handover_checklist_required: true
+    backup_person_assignment: true
+    critical_role_coverage_required: true
+    
+  # Integration with other systems
+  integrations:
+    calendar_sync: true
+    payroll_integration: true
+    project_management_sync: false
+    email_notifications: true
+    mobile_app_sync: true
+    
+  # Reporting and analytics
+  reporting:
+    monthly_leave_summary: true
+    department_wise_analysis: true
+    leave_trend_analysis: true
+    cost_center_reporting: true
+    compliance_reporting: true
+    
+  # Custom business rules
+  custom_business_rules:
+    - name: "Friday Leave Restriction"
+      condition: "day_of_week == 'friday' and leave_type == 'annual_leave'"
+      action: "require_manager_approval"
+      enabled: false
+      
+    - name: "Peak Season Leave Limit"
+      condition: "month in ['November', 'December'] and department == 'Sales'"
+      action: "limit_concurrent_leave_to_10_percent"
+      enabled: true
+      
+    - name: "New Joiner Leave Restriction"
+      condition: "employment_duration < 90_days"
+      action: "restrict_to_sick_leave_only"
+      enabled: true
+      
+  # Leave balance management
+  balance_management:
+    negative_balance_alerts: true
+    low_balance_warning_threshold: 3
+    balance_expiry_notifications: true
+    automatic_accrual_processing: true
+    manual_adjustment_logging: true
+    
+  # Mobile and self-service features
+  self_service_features:
+    employee_leave_calendar: true
+    team_leave_visibility: true
+    leave_balance_dashboard: true
+    mobile_leave_application: true
+    photo_attachment_support: true
+    location_based_restrictions: false
