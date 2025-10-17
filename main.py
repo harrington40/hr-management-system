@@ -2,6 +2,10 @@
 from fastapi.responses import HTMLResponse, RedirectResponse
 from frontend import init
 from fastapi import FastAPI #Depends, HTTPException
+import logging
+
+# Import service manager
+from services.service_manager import service_manager
 
 # from sqlmodel import select
 # from sqlmodel import Session, select
@@ -9,7 +13,28 @@ from fastapi import FastAPI #Depends, HTTPException
 # from apis.db import get_session, init_db
 # from apis.userModel import User
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on application startup"""
+    logger.info("Starting HR Management System...")
+
+    # Initialize all services
+    if not service_manager.initialize_services():
+        logger.error("Failed to initialize some services - application may have limited functionality")
+    else:
+        logger.info("All services initialized successfully")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Shutdown services on application shutdown"""
+    logger.info("Shutting down HR Management System...")
+    service_manager.shutdown_services()
 
 # @app.liespan("startup")
 # def on_startup():
@@ -18,6 +43,22 @@ app = FastAPI()
 @app.get('/')
 def read_root():
     return {"message": "Welcome to HRMkit! Visit /hrmkit for the application."}
+
+@app.get('/health')
+def health_check():
+    """Health check endpoint to verify services"""
+    services_status = {
+        'database': service_manager.is_service_available('database'),
+        'mqtt': service_manager.is_service_available('mqtt'),
+        'backblaze': service_manager.is_service_available('backblaze'),
+        'grpc': service_manager.is_service_available('grpc'),
+        'overall': service_manager.is_initialized
+    }
+    return {
+        "status": "healthy" if service_manager.is_initialized else "degraded",
+        "services": services_status
+    }
+
 init(app)
 
 # @app.post("/users")

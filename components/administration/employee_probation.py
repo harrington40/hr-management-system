@@ -503,7 +503,7 @@ def create_probation_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">trending_up</i>
                         </div>
-                    ''')
+                    ''', sanitize=False)
                 
                 # Active probations card
                 with ui.card().classes('p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white'):
@@ -515,7 +515,7 @@ def create_probation_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">groups</i>
                         </div>
-                    ''')
+                    ''', sanitize=False)
                 
                 # Average duration card
                 with ui.card().classes('p-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white'):
@@ -527,7 +527,7 @@ def create_probation_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">schedule</i>
                         </div>
-                    ''')
+                    ''', sanitize=False)
                 
                 # AI predictions card
                 with ui.card().classes('p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white'):
@@ -539,7 +539,7 @@ def create_probation_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">psychology</i>
                         </div>
-                    ''')
+                    ''', sanitize=False)
             
             # Recent activity
             with ui.card().classes('p-6'):
@@ -585,7 +585,7 @@ def create_probation_overview_section():
                             </button>
                         </div>
                     </div>
-                ''')
+                ''', sanitize=False)
             
             # Performance trends
             with ui.card().classes('p-6'):
@@ -624,7 +624,7 @@ def create_probation_overview_section():
                             <div class="bg-purple-500 h-2 rounded-full" style="width: 82%"></div>
                         </div>
                     </div>
-                ''')
+                ''', sanitize=False)
 
 def create_smart_dashboard():
     """Create smart dashboard with key metrics"""
@@ -639,7 +639,7 @@ def create_smart_dashboard():
                     </div>
                     <i class="material-icons text-3xl opacity-75">groups</i>
                 </div>
-            ''')
+            ''', sanitize=False)
         
         with ui.card().classes('p-6 bg-gradient-to-r from-green-500 to-green-600 text-white min-w-48'):
             ui.html('''
@@ -650,7 +650,7 @@ def create_smart_dashboard():
                     </div>
                     <i class="material-icons text-3xl opacity-75">trending_up</i>
                 </div>
-            ''')
+            ''', sanitize=False)
         
         with ui.card().classes('p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white min-w-48'):
             ui.html('''
@@ -661,7 +661,7 @@ def create_smart_dashboard():
                     </div>
                     <i class="material-icons text-3xl opacity-75">psychology</i>
                 </div>
-            ''')
+            ''', sanitize=False)
 
 def create_probation_analytics_dashboard():
     """Create intelligent probation analytics dashboard"""
@@ -1236,7 +1236,7 @@ async def show_ai_analytics_dialog():
                     <p class="text-purple-600">Advanced machine learning insights and predictions</p>
                 </div>
             </div>
-        ''')
+        ''', sanitize=False)
         
         with ui.row().classes('w-full gap-6'):
             # Left column - Predictions
@@ -1258,7 +1258,7 @@ async def show_ai_analytics_dialog():
                                 <span class="text-orange-600 font-bold">Low</span>
                             </div>
                         </div>
-                    ''')
+                    ''', sanitize=False)
             
             # Right column - Recommendations
             with ui.column().classes('flex-1'):
@@ -1271,7 +1271,7 @@ async def show_ai_analytics_dialog():
                             <div class="text-sm font-medium text-green-800">• Provide mentorship program</div>
                             <div class="text-sm font-medium text-green-800">• Set measurable goals</div>
                         </div>
-                    ''')
+                    ''', sanitize=False)
         
         ui.button('Close', on_click=dialog.close).props('flat color=purple').classes('mt-6')
     dialog.open()
@@ -1289,7 +1289,7 @@ async def show_new_probation_dialog():
                     <p class="text-indigo-600">Initiate employee probation with AI assistance</p>
                 </div>
             </div>
-        ''')
+        ''', sanitize=False)
         
         # Quick probation form
         with ui.row().classes('w-full gap-4 mb-4'):
@@ -1321,7 +1321,7 @@ def create_probation_reports_section():
                     </div>
                 </div>
             </div>
-        ''')
+        ''', sanitize=False)
         
         # Quick report cards
         with ui.row().classes('w-full gap-4 mb-6'):
@@ -1332,7 +1332,7 @@ def create_probation_reports_section():
                         <div class="text-2xl font-bold text-green-800">89%</div>
                         <div class="text-green-700">Success Rate</div>
                     </div>
-                ''')
+                ''', sanitize=False)
             
             with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-blue-50 to-blue-100'):
                 ui.html('''
@@ -1341,7 +1341,7 @@ def create_probation_reports_section():
                         <div class="text-2xl font-bold text-blue-800">3.8</div>
                         <div class="text-blue-700">Avg Duration (months)</div>
                     </div>
-                ''')
+                ''', sanitize=False)
             
             with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-purple-50 to-purple-100'):
                 ui.html('''
@@ -1350,7 +1350,7 @@ def create_probation_reports_section():
                         <div class="text-2xl font-bold text-purple-800">47</div>
                         <div class="text-purple-700">Total Cases</div>
                     </div>
-                ''')
+                ''', sanitize=False)
         
         # Report generation
         with ui.card().classes('p-6'):
