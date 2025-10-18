@@ -30,12 +30,12 @@ class ServiceConfig(BaseSettings):
     MYSQL_PASSWORD: str = ""
     MYSQL_DATABASE: str = "hrms"
     
-    # Oracle Configuration
-    ORACLE_HOST: str = "localhost"
-    ORACLE_PORT: int = 1521
-    ORACLE_SID: str = "XE"
-    ORACLE_USERNAME: str = "system"
-    ORACLE_PASSWORD: str = ""
+    # OrientDB Configuration
+    ORIENTDB_HOST: str = "orientdb.transtechologies.com"
+    ORIENTDB_PORT: int = 2424
+    ORIENTDB_USER: str = "root"
+    ORIENTDB_PASSWORD: str = "Namu2025"
+    ORIENTDB_DATABASE: str = "hrms"
     
     # gRPC Configuration
     GRPC_HOST: str = "localhost"
@@ -62,6 +62,7 @@ class ServiceConfig(BaseSettings):
     
     class Config:
         env_file = ".env"
+        extra = "ignore"  # Allow extra environment variables
 
 # Global configuration instance
 config = ServiceConfig()

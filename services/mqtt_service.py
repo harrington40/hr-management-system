@@ -34,16 +34,21 @@ class MQTTService:
             self.client.on_message = self._on_message
             self.client.on_disconnect = self._on_disconnect
             
-            # Connect to broker
+            # For FastAPI compatibility, don't start the loop here
+            # The loop will be managed by the FastAPI event loop
+            # self.client.loop_start()
+            
+            # Try to connect synchronously
             self.client.connect(
                 config.MQTT_BROKER_HOST, 
                 config.MQTT_BROKER_PORT, 
                 config.MQTT_KEEPALIVE
             )
             
-            # Start the loop
-            self.client.loop_start()
-            logger.info("MQTT service started")
+            # Set connected flag immediately for synchronous operation
+            self.is_connected = True
+            logger.info("MQTT service initialized (synchronous mode for FastAPI)")
+            return True
             
         except Exception as e:
             logger.error(f"Failed to connect to MQTT broker: {e}")

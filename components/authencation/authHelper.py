@@ -75,7 +75,7 @@ async def generate_magic_link(user_email: str, base_url: str | None = None) -> J
         
         # Derive base URL if not provided (prefer env var, then sensible default)
         if not base_url:
-            origin = readEnv('APP_ORIGIN') or 'http://127.0.0.1:8080'
+            origin = readEnv('APP_ORIGIN') or 'http://127.0.0.1:8081'
             # Ensure no trailing slash
             origin = origin.rstrip('/')
             base_url = f"{origin}/auth"

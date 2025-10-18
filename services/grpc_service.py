@@ -9,6 +9,7 @@ import grpc
 from concurrent import futures
 from typing import Callable, Dict, Any
 from config.services import config
+# from services.hrms_service import hrms_servicer
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +21,14 @@ class GRPCService:
         self.is_running = False
         self.services = {}
     
-    def start_server(self, max_workers: int = 10):
-        """Start gRPC server"""
+    def start_server(self, max_workers: int = 10, port: int = 50051):
+        """Start gRPC server on specified port"""
         try:
             self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
+            
+            # Register HRMS service
+            # Note: In a real implementation, you'd use generated code from proto files
+            # For now, we'll keep it simple
             
             # Add registered services
             for service_name, service_config in self.services.items():
@@ -35,12 +40,12 @@ class GRPCService:
                     add_service_func(servicer_instance, self.server)
                     logger.info(f"Registered gRPC service: {service_name}")
             
-            # Start server
-            self.server.add_insecure_port(f'{config.GRPC_HOST}:{config.GRPC_PORT}')
+            # Start server on specified port
+            self.server.add_insecure_port(f'[::]:{port}')
             self.server.start()
             self.is_running = True
             
-            logger.info(f"gRPC server started on {config.GRPC_HOST}:{config.GRPC_PORT}")
+            logger.info(f"gRPC server started on port {port}")
             return True
             
         except Exception as e:

@@ -174,28 +174,45 @@ def EnrollNewStaff():
     real-time validation, and institutional integration
     """
     
-    # Page header with breadcrumb and actions
-    with ui.row().classes('w-full justify-between items-center mb-6'):
+    # Get institution data for integration
+    institution_data = institution_data_manager.get_institution_data()
+    
+    # Page header with modern design
+    with ui.row().classes('w-full justify-between items-center mb-8 p-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg'):
         with ui.column():
-            ui.label('Enroll New Staff').classes('text-3xl font-bold text-gray-800 dark:text-white')
-            with ui.row().classes('items-center gap-2 text-sm text-gray-500'):
-                ui.icon('home').classes('text-blue-500')
+            ui.icon('person_add').classes('text-4xl text-white mb-2')
+            ui.label('Enroll New Staff').classes('text-3xl font-bold text-white')
+            with ui.row().classes('items-center gap-2 text-white/80 text-sm mt-2'):
+                ui.icon('home').classes('text-blue-200')
                 ui.label('Dashboard')
                 ui.icon('chevron_right').classes('text-xs')
                 ui.label('Administration')
                 ui.icon('chevron_right').classes('text-xs')
-                ui.label('Enroll New Staff').classes('text-blue-600 font-medium')
+                ui.label('Enroll New Staff').classes('text-blue-200 font-medium')
         
-        # Quick actions
-        with ui.row().classes('gap-2'):
-            ui.button('Import Employees', icon='upload', on_click=import_employees).props('outlined color=blue')
-            ui.button('Employee Directory', icon='people', on_click=view_employee_directory).props('outlined color=green')
+        # Quick actions with modern buttons
+        with ui.row().classes('gap-3'):
+            ui.button('Import Employees', icon='upload', 
+                     on_click=import_employees).props('flat color=white unelevated')
+            ui.button('Employee Directory', icon='people', 
+                     on_click=view_employee_directory).props('flat color=white unelevated')
     
-    # Institution integration info
-    create_institution_integration_banner()
+    # Institution integration info with modern card design
+    with ui.card().classes('w-full p-6 mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 shadow-md'):
+        with ui.row().classes('items-center justify-between w-full'):
+            with ui.row().classes('items-center gap-4'):
+                ui.icon('business').classes('text-4xl text-green-600')
+                with ui.column():
+                    ui.label(f'Enrolling to: {institution_data["basic_info"]["name"]}').classes('text-xl font-bold text-gray-800')
+                    ui.label(f'Total Employees: {institution_data["statistics"]["total_employees"]} | Departments: {institution_data["statistics"]["departments"]}').classes('text-sm text-gray-600 font-medium')
+            
+            with ui.row().classes('gap-3'):
+                ui.chip('Active Institution', icon='check_circle', color='green').props('dense')
+                ui.button('View Institution', icon='visibility', 
+                         on_click=lambda: ui.navigate.to('/administration/institution')).props('flat dense color=green')
     
-    # Main enrollment form with tabs
-    with ui.tabs().classes('w-full mb-4') as tabs:
+    # Main enrollment form with modern tabs
+    with ui.tabs().classes('w-full mb-6 shadow-sm') as tabs:
         personal_tab = ui.tab('Personal Information', icon='person')
         employment_tab = ui.tab('Employment Details', icon='work')
         contact_tab = ui.tab('Contact & Emergency', icon='contact_phone')
@@ -207,35 +224,131 @@ def EnrollNewStaff():
     with ui.tab_panels(tabs, value=personal_tab).classes('w-full'):
         # Personal Information Panel
         with ui.tab_panel(personal_tab):
-            create_personal_info_section(form_data, tabs, employment_tab)
+            with ui.card().classes('w-full p-8 shadow-lg border-l-4 border-blue-500'):
+                with ui.row().classes('items-center mb-6'):
+                    ui.icon('person').classes('text-3xl text-blue-600 mr-3')
+                    ui.label('Personal Information').classes('text-2xl font-bold text-gray-800')
+                
+                with ui.grid(columns=2).classes('gap-8 w-full'):
+                    # Left column
+                    with ui.column().classes('gap-6'):
+                        first_name = ui.input('First Name *', placeholder='Enter first name').classes('w-full').props('outlined dense')
+                        last_name = ui.input('Last Name *', placeholder='Enter last name').classes('w-full').props('outlined dense')
+                        date_of_birth = ui.date('Date of Birth').classes('w-full').props('outlined dense')
+                        gender = ui.select(['Male', 'Female', 'Other', 'Prefer not to say'], 
+                                         label='Gender').classes('w-full').props('outlined dense')
+                    
+                    # Right column
+                    with ui.column().classes('gap-6'):
+                        email = ui.input('Email Address *', placeholder='john.doe@company.com').classes('w-full').props('outlined dense type=email')
+                        phone = ui.input('Phone Number *', placeholder='+1 (555) 123-4567').classes('w-full').props('outlined dense')
+                        ssn = ui.input('SSN', placeholder='XXX-XX-XXXX').classes('w-full').props('outlined dense')
+                        address = ui.textarea('Address', placeholder='Street address, City, State, ZIP').classes('w-full').props('outlined dense rows=3')
+                
+                # Navigation and validation with modern buttons
+                with ui.row().classes('justify-end gap-4 mt-8'):
+                    validate_btn = ui.button('Validate & Continue', icon='arrow_forward', 
+                                            on_click=lambda: validate_personal_info(form_data, first_name, last_name, email, phone, ssn, date_of_birth, gender, address, tabs, employment_tab)).props('color=primary elevation=2')
         
         # Employment Details Panel
         with ui.tab_panel(employment_tab):
-            create_employment_details_section(form_data, tabs, contact_tab)
+            with ui.card().classes('w-full p-8 shadow-lg border-l-4 border-green-500'):
+                with ui.row().classes('items-center mb-6'):
+                    ui.icon('work').classes('text-3xl text-green-600 mr-3')
+                    ui.label('Employment Details').classes('text-2xl font-bold text-gray-800')
+                
+                with ui.grid(columns=2).classes('gap-8 w-full'):
+                    # Left column
+                    with ui.column().classes('gap-6'):
+                        department = ui.select(employee_data_manager.departments, 
+                                             label='Department *').classes('w-full').props('outlined dense')
+                        position = ui.select([], label='Position *').classes('w-full').props('outlined dense')
+                        
+                        # Dynamic position loading based on department
+                        department.on('update:model-value', lambda e: update_positions(position, department.value))
+                        
+                        employment_type = ui.select(employee_data_manager.employment_types, 
+                                                  label='Employment Type *').classes('w-full').props('outlined dense')
+                        start_date = ui.date('Start Date *').classes('w-full').props('outlined dense')
+                    
+                    # Right column
+                    with ui.column().classes('gap-6'):
+                        salary_grade = ui.select(employee_data_manager.salary_grades, 
+                                               label='Salary Grade').classes('w-full').props('outlined dense')
+                        reporting_manager = ui.input('Reporting Manager', placeholder='Manager name').classes('w-full').props('outlined dense')
+                        work_location = ui.input('Work Location', placeholder='Office location').classes('w-full').props('outlined dense')
+                        
+                        # Employee ID preview with modern design
+                        with ui.card().classes('p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200'):
+                            ui.label('Employee ID (Auto-generated)').classes('text-sm text-gray-600 font-medium')
+                            ui.label(employee_data_manager.generate_employee_id()).classes('text-xl font-mono font-bold text-blue-600')
+                
+                # Navigation with modern buttons
+                with ui.row().classes('justify-between mt-8'):
+                    ui.button('Previous', icon='arrow_back', 
+                             on_click=lambda: tabs.set_value(tabs.tabs[0])).props('outlined elevation=1')
+                    ui.button('Continue', icon='arrow_forward', 
+                             on_click=lambda: save_employment_details(form_data, department, position, employment_type, start_date, salary_grade, reporting_manager, work_location, tabs, contact_tab)).props('color=primary elevation=2')
         
         # Contact & Emergency Panel
         with ui.tab_panel(contact_tab):
-            create_contact_emergency_section(form_data, tabs, review_tab)
+            with ui.card().classes('w-full p-8 shadow-lg border-l-4 border-purple-500'):
+                with ui.row().classes('items-center mb-6'):
+                    ui.icon('contact_phone').classes('text-3xl text-purple-600 mr-3')
+                    ui.label('Contact & Emergency Information').classes('text-2xl font-bold text-gray-800')
+                
+                with ui.grid(columns=2).classes('gap-8 w-full'):
+                    # Emergency Contact column
+                    with ui.column().classes('gap-6'):
+                        with ui.card().classes('p-4 bg-red-50 border border-red-200'):
+                            ui.label('Emergency Contact').classes('text-lg font-semibold text-red-700 mb-3')
+                            emergency_name = ui.input('Emergency Contact Name', placeholder='Full name').classes('w-full').props('outlined dense')
+                            emergency_relationship = ui.select(['Spouse', 'Parent', 'Sibling', 'Child', 'Friend', 'Other'], 
+                                                             label='Relationship').classes('w-full').props('outlined dense')
+                            emergency_phone = ui.input('Emergency Phone', placeholder='+1 (555) 123-4567').classes('w-full').props('outlined dense')
+                            emergency_email = ui.input('Emergency Email', placeholder='emergency@email.com').classes('w-full').props('outlined dense type=email')
+                    
+                    # Additional Information column
+                    with ui.column().classes('gap-6'):
+                        with ui.card().classes('p-4 bg-blue-50 border border-blue-200'):
+                            ui.label('Additional Information').classes('text-lg font-semibold text-blue-700 mb-3')
+                            preferred_name = ui.input('Preferred Name', placeholder='Nickname or preferred name').classes('w-full').props('outlined dense')
+                            
+                            # Skills and certifications
+                            ui.textarea('Skills & Certifications', placeholder='List relevant skills and certifications').classes('w-full').props('outlined dense rows=3')
+                            
+                            # Special accommodations
+                            ui.textarea('Special Accommodations', placeholder='Any workplace accommodations needed').classes('w-full').props('outlined dense rows=2')
+                
+                # Navigation with modern buttons
+                with ui.row().classes('justify-between mt-8'):
+                    ui.button('Previous', icon='arrow_back', 
+                             on_click=lambda: tabs.set_value(tabs.tabs[1])).props('outlined elevation=1')
+                    ui.button('Continue to Review', icon='arrow_forward', 
+                             on_click=lambda: save_contact_info(form_data, emergency_name, emergency_relationship, emergency_phone, emergency_email, preferred_name, tabs, review_tab)).props('color=primary elevation=2')
         
         # Review & Submit Panel
         with ui.tab_panel(review_tab):
-            create_review_submit_section(form_data, tabs, personal_tab)
+            with ui.card().classes('w-full p-8 shadow-lg border-l-4 border-orange-500'):
+                with ui.row().classes('items-center mb-6'):
+                    ui.icon('check_circle').classes('text-3xl text-orange-600 mr-3')
+                    ui.label('Review Employee Information').classes('text-2xl font-bold text-gray-800')
+                
+                # Review summary will be populated dynamically
+                review_container = ui.column().classes('w-full gap-6')
+                
+                # Action buttons with modern design
+                with ui.row().classes('justify-between mt-8 p-4 bg-gray-50 rounded-lg'):
+                    with ui.row().classes('gap-3'):
+                        ui.button('Back to Edit', icon='edit', 
+                                 on_click=lambda: tabs.set_value(personal_tab)).props('outlined elevation=1')
+                        ui.button('Save as Draft', icon='save', 
+                                 on_click=lambda: save_as_draft(form_data)).props('outlined color=orange elevation=1')
+                    
+                    ui.button('Enroll Employee', icon='person_add', 
+                             on_click=lambda: submit_enrollment(form_data, review_container)).props('color=success size=lg elevation=2')
 
-def create_institution_integration_banner():
-    """Create integration banner showing institution connection"""
-    institution_data = institution_data_manager.get_institution_data()
-    
-    with ui.card().classes('w-full p-4 mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500'):
-        with ui.row().classes('items-center justify-between w-full'):
-            with ui.row().classes('items-center gap-4'):
-                ui.icon('business').classes('text-3xl text-blue-600')
-                with ui.column():
-                    ui.label(f'Enrolling to: {institution_data["basic_info"]["name"]}').classes('text-lg font-semibold text-gray-800')
-                    ui.label(f'Total Employees: {institution_data["statistics"]["total_employees"]} | Departments: {institution_data["statistics"]["departments"]}').classes('text-sm text-gray-600')
-            
-            with ui.row().classes('gap-2'):
-                ui.chip('Active Institution', color='green').props('dense')
-                ui.button('View Institution', icon='visibility', on_click=lambda: ui.navigate.to('/administration/institution')).props('flat dense color=blue')
+# Helper functions for form handling
 
 def create_personal_info_section(form_data, tabs, next_tab):
     """Create personal information form section"""
@@ -249,6 +362,7 @@ def create_personal_info_section(form_data, tabs, next_tab):
                 last_name = ui.input('Last Name *', placeholder='Enter last name').classes('w-full').props('outlined dense')
                 
                 with ui.input('Date of Birth').classes('w-full').props('outlined dense'):
+                    ui.date()
                     ui.date()
                 
                 gender = ui.select(['Male', 'Female', 'Other', 'Prefer not to say'], 
@@ -264,7 +378,7 @@ def create_personal_info_section(form_data, tabs, next_tab):
         # Navigation and validation
         with ui.row().classes('justify-end gap-2 mt-6'):
             validate_btn = ui.button('Validate & Continue', icon='arrow_forward', 
-                                    on_click=lambda: validate_personal_info(form_data, first_name, last_name, email, phone, ssn, tabs, next_tab)).props('color=primary')
+                                    on_click=lambda: validate_personal_info(form_data, first_name, last_name, email, phone, ssn, date_of_birth, gender, address, tabs, next_tab)).props('color=primary')
 
 def create_employment_details_section(form_data, tabs, next_tab):
     """Create employment details form section"""
@@ -279,13 +393,12 @@ def create_employment_details_section(form_data, tabs, next_tab):
                 position = ui.select([], label='Position *').classes('w-full').props('outlined dense')
                 
                 # Dynamic position loading based on department
-                department.on('update:model-value', lambda e: update_positions(position, e.args))
+                department.on('update:model-value', lambda e: update_positions(position, e.value))
                 
                 employment_type = ui.select(employee_data_manager.employment_types, 
                                           label='Employment Type *').classes('w-full').props('outlined dense')
                 
-                with ui.input('Start Date *').classes('w-full').props('outlined dense'):
-                    start_date = ui.date()
+                start_date = ui.date('Start Date *').classes('w-full').props('outlined dense')
             
             # Right column
             with ui.column().classes('gap-4'):
@@ -359,7 +472,7 @@ def create_review_submit_section(form_data, tabs, first_tab):
                      on_click=lambda: submit_enrollment(form_data, review_container)).props('color=success size=lg')
 
 # Helper functions for form handling
-def validate_personal_info(form_data, first_name, last_name, email, phone, ssn, tabs, next_tab):
+def validate_personal_info(form_data, first_name, last_name, email, phone, ssn, date_of_birth, gender, address, tabs, next_tab):
     """Validate personal information and move to next tab"""
     # Store form data
     form_data.update({
@@ -367,7 +480,10 @@ def validate_personal_info(form_data, first_name, last_name, email, phone, ssn, 
         'last_name': last_name.value,
         'email': email.value,
         'phone': phone.value,
-        'ssn': ssn.value
+        'ssn': ssn.value,
+        'date_of_birth': date_of_birth.value,
+        'gender': gender.value,
+        'address': address.value
     })
     
     # Basic validation
@@ -439,12 +555,57 @@ def update_review_section(form_data):
     # Implementation would populate the review_container with form data
     pass
 
-async def submit_enrollment(form_data, review_container):
+async def update_global_statistics():
+    """Update statistics across all application components using HR algorithms"""
+    try:
+        # Get updated employee statistics
+        stats = employee_data_manager.get_employee_statistics()
+        
+        # Update institution statistics
+        institution_data_manager.update_section("statistics", {
+            "total_employees": stats["total_employees"],
+            "last_updated": datetime.now().isoformat()
+        })
+        
+        # Notify user of statistics update
+        ui.notify(f'📊 Statistics updated: {stats["total_employees"]} total employees', color='info', position='top-right')
+        
+        # Trigger dashboard refresh if dashboard is open
+        # This would require additional implementation for real-time updates
+        
+    except Exception as e:
+        print(f"Error updating global statistics: {e}")
+        ui.notify('Statistics update completed with minor issues', color='warning')
+
+def update_global_statistics_sync():
+    """Update statistics across all application components using HR algorithms (synchronous version)"""
+    try:
+        # Get updated employee statistics
+        stats = get_employee_statistics()
+        
+        # Update institution statistics
+        institution_data_manager.update_section("statistics", {
+            "total_employees": stats["total_employees"],
+            "last_updated": datetime.now().isoformat()
+        })
+        
+        # Update department employee counts
+        from components.administration.departmental_sections import update_department_employee_counts
+        update_department_employee_counts()
+        
+        # Notify user of statistics update
+        ui.notify(f'📊 Statistics updated: {stats["total_employees"]} total employees', color='info', position='top-right')
+        
+        # Trigger dashboard refresh if dashboard is open
+        # This would require additional implementation for real-time updates
+        
+    except Exception as e:
+        print(f"Error updating global statistics: {e}")
+        ui.notify('Statistics update completed with minor issues', color='warning')
+
+def submit_enrollment(form_data, review_container):
     """Submit the employee enrollment"""
     ui.notify('Processing employee enrollment...', color='info')
-    
-    # Simulate processing time
-    await asyncio.sleep(2)
     
     # Create employee profile
     success, result = employee_data_manager.create_employee_profile(form_data)
@@ -452,6 +613,42 @@ async def submit_enrollment(form_data, review_container):
     if success:
         employee_profile = result
         ui.notify(f'Employee enrolled successfully! ID: {employee_profile["employee_id"]}', color='positive')
+        
+        # Trigger real-time statistics update across the application
+        update_global_statistics_sync()
+        
+        # Show success dialog
+        with ui.dialog() as dialog, ui.card():
+            ui.label('Employee Enrollment Successful!').classes('text-xl font-bold text-green-600')
+            ui.separator()
+            ui.label(f'Employee ID: {employee_profile["employee_id"]}').classes('text-lg font-mono')
+            ui.label(f'Name: {employee_profile["personal_info"]["first_name"]} {employee_profile["personal_info"]["last_name"]}').classes('text-lg')
+            ui.label(f'Department: {employee_profile["employment_info"]["department"]}').classes('text-lg')
+            ui.label(f'Position: {employee_profile["employment_info"]["position"]}').classes('text-lg')
+            
+            with ui.row().classes('gap-2 mt-4'):
+                ui.button('Print Profile', icon='print').props('color=blue')
+                ui.button('Send Welcome Email', icon='email').props('color=green')
+                ui.button('Close', on_click=dialog.close).props('color=primary')
+        
+        dialog.open()
+    else:
+        errors = result
+        ui.notify(f'Enrollment failed: {", ".join(errors)}', color='negative')
+
+def submit_enrollment(form_data, review_container):
+    """Submit the employee enrollment"""
+    ui.notify('Processing employee enrollment...', color='info')
+    
+    # Create employee profile
+    success, result = employee_data_manager.create_employee_profile(form_data)
+    
+    if success:
+        employee_profile = result
+        ui.notify(f'Employee enrolled successfully! ID: {employee_profile["employee_id"]}', color='positive')
+        
+        # Trigger real-time statistics update across the application
+        update_global_statistics_sync()
         
         # Show success dialog
         with ui.dialog() as dialog, ui.card():
@@ -499,7 +696,8 @@ def get_department_employees(department):
 
 def get_employee_statistics():
     """API to get employee statistics for dashboard"""
-    total_employees = len(employee_data_manager.employees)
+    total_employees = len([emp for emp in employee_data_manager.employees.values()
+                          if emp['employment_info']['status'] == 'Active'])
     departments = employee_data_manager.departments
     active_employees = len([emp for emp in employee_data_manager.employees.values() 
                            if emp['employment_info']['status'] == 'Active'])
