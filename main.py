@@ -2,6 +2,7 @@
 from fastapi.responses import HTMLResponse, RedirectResponse
 from frontend import init
 from fastapi import FastAPI #Depends, HTTPException
+from contextlib import asynccontextmanager
 import logging
 
 # Import service manager
@@ -17,24 +18,14 @@ from services.service_manager import service_manager
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI()  # Remove lifespan for debugging
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize services on application startup"""
-    logger.info("Starting HR Management System...")
-
-    # Initialize all services
-    if not service_manager.initialize_services():
-        logger.error("Failed to initialize some services - application may have limited functionality")
-    else:
-        logger.info("All services initialized successfully")
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Shutdown services on application shutdown"""
-    logger.info("Shutting down HR Management System...")
-    service_manager.shutdown_services()
+# Initialize services immediately
+logger.info("Initializing HRMS services...")
+if not service_manager.initialize_services():
+    logger.error("Failed to initialize some services - application may have limited functionality")
+else:
+    logger.info("All services initialized successfully")
 
 # @app.liespan("startup")
 # def on_startup():
@@ -58,6 +49,32 @@ def health_check():
         "status": "healthy" if service_manager.is_initialized else "degraded",
         "services": services_status
     }
+
+@app.get('/auth')
+def auth_endpoint(email: str, timestamp: str, token: str):
+    """Handle magic link authentication"""
+    from components.authencation.authHelper import validate_magic_link_server, create_jwt_token
+    
+    # Validate the magic link
+    is_valid, message = validate_magic_link_server(email, timestamp, token)
+    
+    if not is_valid:
+        # Redirect to login page with error
+        return RedirectResponse(url=f"http://127.0.0.1:8000/hrmkit/?error={message}", status_code=302)
+    
+    # Generate JWT token for the user
+    user_data = {
+        "email": email, 
+        "username": email.split('@')[0],
+        "timestamp": timestamp
+    }
+    jwt_token = create_jwt_token(user_data)
+    
+    if jwt_token is None:
+        return RedirectResponse(url=f"http://127.0.0.1:8000/hrmkit/?error=Failed%20to%20generate%20token", status_code=302)
+    
+    # Redirect to dashboard with JWT token
+    return RedirectResponse(url=f"http://127.0.0.1:8000/hrmkit/dashboard?jwt_token={jwt_token}&username={email.split('@')[0]}", status_code=302)
 
 init(app)
 
