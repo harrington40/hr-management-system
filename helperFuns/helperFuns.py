@@ -4,8 +4,24 @@ from dotenv import load_dotenv
 from nicegui import ui
 import os
 import re
+import uuid
+import random
+import string
 
 load_dotenv()
+
+class HelperFunctions:
+    """Helper functions for HRMS operations"""
+    
+    def generate_id(self) -> str:
+        """Generate a unique ID"""
+        return str(uuid.uuid4())
+    
+    def generate_employee_number(self) -> str:
+        """Generate a unique employee number"""
+        # Generate a random 6-digit employee number
+        return f"EMP{random.randint(100000, 999999)}"
+
 def imagePath(filename: str) -> str:
     return os.path.join("assets/images/", filename)
 

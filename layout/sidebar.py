@@ -9,51 +9,51 @@ class MenuState:
         self.menu_items = {}  # Store references to menu items
         
     def set_active(self, item_id):
-        """Set the active menu item and update all menu items"""
+        """Set the active menu item and update all menu items with curved red highlighting and white borders"""
         # Store the active item in persistent storage
         try:
             app.storage.user['active_menu_item'] = item_id
         except:
             pass
-            
-        # Reset all items to inactive (remove red background)
+
+        # Reset all items to inactive (remove red background and white borders)
         for menu_id, item_ref in self.menu_items.items():
             if item_ref:
                 try:
-                    # Remove active state classes
-                    item_ref.classes(remove='bg-red-500 text-white font-bold border-l-4 border-red-200')
+                    # Remove active state classes - red background, white borders, rounded corners
+                    item_ref.classes(remove='bg-red-500 text-white font-bold border-2 border-white rounded-xl shadow-lg')
                     item_ref.classes(remove='bg-red-400')
-                    # Reset to default colors
-                    item_ref.classes(add='text-gray-200')
+                    # Reset to default blue theme
+                    item_ref.classes(add='text-white')
                 except Exception as e:
                     print(f"Error resetting menu item {menu_id}: {e}")
-                
-        # Set the clicked item as active (add red background)
+
+        # Set the clicked item as active (add curved red background with white borders)
         self.active_item_id = item_id
         if item_id in self.menu_items and self.menu_items[item_id]:
             try:
                 # Remove default colors first
-                self.menu_items[item_id].classes(remove='text-gray-200')
-                # Add active state classes
-                self.menu_items[item_id].classes(add='bg-red-500 text-white font-bold border-l-4 border-red-200')
-                print(f"Set menu item {item_id} as active")
+                self.menu_items[item_id].classes(remove='text-white')
+                # Add active state classes - CURVED RED with WHITE BORDERS
+                self.menu_items[item_id].classes(add='bg-red-500 text-white font-bold border-2 border-white rounded-xl shadow-lg')
+                print(f"Set menu item {item_id} as active with CURVED RED highlighting and white borders")
             except Exception as e:
                 print(f"Error setting active menu item {item_id}: {e}")
-            
+
     def register_item(self, item_id, item_ref):
         """Register a menu item with the state manager"""
         self.menu_items[item_id] = item_ref
         print(f"Registered menu item {item_id}: {item_ref}")
-        
+
         # Check if this item should be active based on stored state
         try:
             stored_active_item = app.storage.user.get('active_menu_item')
             if stored_active_item == item_id:
-                # This item should be active, apply styling
-                item_ref.classes(remove='text-gray-200')
-                item_ref.classes(add='bg-red-500 text-white font-bold border-l-4 border-red-200')
+                # This item should be active, apply CURVED RED highlighting with WHITE BORDERS
+                item_ref.classes(remove='text-white')
+                item_ref.classes(add='bg-red-500 text-white font-bold border-2 border-white rounded-xl shadow-lg')
                 self.active_item_id = item_id
-                print(f"Restored active state for menu item {item_id}")
+                print(f"Restored active state for menu item {item_id} with CURVED RED highlighting and white borders")
         except Exception as e:
             print(f"Error checking stored active state: {e}")
         
@@ -437,3 +437,185 @@ def handleOpenSearch(div: ui.element, btn: ui.element):
        
 def expansion_state(val: ui.expansion):
     print(f'Expansion state changed: {val.text}')
+
+def create_modern_sidebar():
+    """Create a modern, always-visible sidebar with appealing design and no overlap"""
+
+    # Modern sidebar container - always visible with fixed width
+    sidebar_container = ui.element('div').classes('fixed left-0 top-0 h-full w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-50 border-r border-slate-700 overflow-y-auto')
+
+    with sidebar_container:
+        # Modern Header with gradient
+        with ui.element('div').classes('p-6 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white border-b border-slate-700'):
+            with ui.row().classes('items-center gap-4'):
+                ui.html('<div class="text-3xl">🚀</div>', sanitize=False)
+                with ui.column():
+                    ui.html('<div class="text-xl font-bold tracking-wide">HRMS</div>', sanitize=False)
+                    ui.html('<div class="text-sm opacity-90 font-medium">Management System</div>', sanitize=False)
+
+        # Navigation Menu Container with modern styling
+        with ui.element('div').classes('p-4 space-y-1'):
+
+            # Administration Section
+            with ui.element('div').classes('mb-6'):
+                # Modern section header
+                with ui.row().classes('items-center gap-2 mb-3 px-3'):
+                    ui.html('<div class="text-blue-400">⚙️</div>', sanitize=False)
+                    ui.html('<div class="text-sm font-bold text-slate-300 uppercase tracking-wider">Administration</div>', sanitize=False)
+
+                admin_items = [
+                    {'id': 1, 'label': 'Institution Profile', 'route': '/administration/institution', 'icon': '🏛️', 'color': 'text-blue-400'},
+                    {'id': 2, 'label': 'Departmental Sections', 'route': '/administration/departments', 'icon': '🏢', 'color': 'text-green-400'},
+                    {'id': 3, 'label': 'Enroll New Staff', 'route': '/administration/enroll-staff', 'icon': '👤', 'color': 'text-purple-400'},
+                    {'id': 4, 'label': 'Probation', 'route': '/administration/probation', 'icon': '⚖️', 'color': 'text-yellow-400'},
+                    {'id': 5, 'label': 'Termination', 'route': '/administration/termination', 'icon': '🚪', 'color': 'text-red-400'},
+                    {'id': 6, 'label': 'View Leave Requests', 'route': '/employees/request-leave', 'icon': '📋', 'color': 'text-cyan-400'},
+                    {'id': 7, 'label': 'View Transfer Requests', 'route': '/employees/request-transfer', 'icon': '🔄', 'color': 'text-pink-400'}
+                ]
+
+                for item in admin_items:
+                    item_id = item['id']
+                    item_label = item['label']
+                    item_route = item['route']
+                    item_icon = item['icon']
+                    item_color = item['color']
+
+                    # Modern menu item with glassmorphism effect
+                    with ui.element('div').classes('group relative mb-1') as menu_item:
+                        with ui.row().classes('items-center gap-4 p-3 rounded-xl hover:bg-white/10 hover:backdrop-blur-sm cursor-pointer transition-all duration-200 border border-transparent hover:border-white/20 hover:shadow-lg'):
+                            ui.html(f'<div class="text-xl {item_color}">{item_icon}</div>', sanitize=False)
+                            ui.html(f'<div class="font-medium text-slate-200 group-hover:text-white transition-colors duration-200">{item_label}</div>', sanitize=False)
+
+                            # Active indicator
+                            with ui.element('div').classes('ml-auto w-2 h-2 rounded-full bg-transparent group-hover:bg-blue-400 transition-all duration-200 opacity-0 group-hover:opacity-100') as indicator:
+                                pass
+
+                        # Add click handler
+                        menu_item.on('click', lambda e, item=item: handle_modern_menu_click(item['id'], item['label'], item['route']))
+
+                        # Register with state manager
+                        menu_state.register_item(item_id, menu_item)
+
+            # Employees Section
+            with ui.element('div').classes('mb-6'):
+                with ui.row().classes('items-center gap-2 mb-3 px-3'):
+                    ui.html('<div class="text-green-400">👥</div>', sanitize=False)
+                    ui.html('<div class="text-sm font-bold text-slate-300 uppercase tracking-wider">Employees</div>', sanitize=False)
+
+                employee_items = [
+                    {'id': 8, 'label': 'Request Transfer', 'route': '/employees/request-transfer', 'icon': '🔄', 'color': 'text-orange-400'},
+                    {'id': 9, 'label': 'Request Leave', 'route': '/employees/request-leave', 'icon': '🏖️', 'color': 'text-teal-400'}
+                ]
+
+                for item in employee_items:
+                    item_id = item['id']
+                    item_label = item['label']
+                    item_route = item['route']
+                    item_icon = item['icon']
+                    item_color = item['color']
+
+                    with ui.element('div').classes('group relative mb-1') as menu_item:
+                        with ui.row().classes('items-center gap-4 p-3 rounded-xl hover:bg-white/10 hover:backdrop-blur-sm cursor-pointer transition-all duration-200 border border-transparent hover:border-white/20 hover:shadow-lg'):
+                            ui.html(f'<div class="text-xl {item_color}">{item_icon}</div>', sanitize=False)
+                            ui.html(f'<div class="font-medium text-slate-200 group-hover:text-white transition-colors duration-200">{item_label}</div>', sanitize=False)
+
+                            with ui.element('div').classes('ml-auto w-2 h-2 rounded-full bg-transparent group-hover:bg-green-400 transition-all duration-200 opacity-0 group-hover:opacity-100'):
+                                pass
+
+                        menu_item.on('click', lambda e, item=item: handle_modern_menu_click(item['id'], item['label'], item['route']))
+                        menu_state.register_item(item_id, menu_item)
+
+            # Attendance Section
+            with ui.element('div').classes('mb-6'):
+                with ui.row().classes('items-center gap-2 mb-3 px-3'):
+                    ui.html('<div class="text-purple-400">📊</div>', sanitize=False)
+                    ui.html('<div class="text-sm font-bold text-slate-300 uppercase tracking-wider">Attendance</div>', sanitize=False)
+
+                attendance_items = [
+                    {'id': 10, 'label': 'Attendance Rules', 'route': '/attendance/attendance', 'icon': '📊', 'color': 'text-indigo-400'},
+                    {'id': 11, 'label': 'Leave Rules', 'route': '/attendance/leave/rules', 'icon': '📋', 'color': 'text-rose-400'},
+                    {'id': 12, 'label': 'Shift Timetable', 'route': '/attendance/timetable', 'icon': '⏰', 'color': 'text-amber-400'},
+                    {'id': 13, 'label': 'Set Holidays', 'route': '/attendance/holidays', 'icon': '🎉', 'color': 'text-emerald-400'},
+                    {'id': 14, 'label': 'Staff Schedule', 'route': '/attendance/staff_schedule', 'icon': '📅', 'color': 'text-violet-400'},
+                    {'id': 15, 'label': 'Staff & On Duty Status', 'route': '/attendance/staff_status', 'icon': '👥', 'color': 'text-cyan-400'}
+                ]
+
+                for item in attendance_items:
+                    item_id = item['id']
+                    item_label = item['label']
+                    item_route = item['route']
+                    item_icon = item['icon']
+                    item_color = item['color']
+
+                    with ui.element('div').classes('group relative mb-1') as menu_item:
+                        with ui.row().classes('items-center gap-4 p-3 rounded-xl hover:bg-white/10 hover:backdrop-blur-sm cursor-pointer transition-all duration-200 border border-transparent hover:border-white/20 hover:shadow-lg'):
+                            ui.html(f'<div class="text-xl {item_color}">{item_icon}</div>', sanitize=False)
+                            ui.html(f'<div class="font-medium text-slate-200 group-hover:text-white transition-colors duration-200">{item_label}</div>', sanitize=False)
+
+                            with ui.element('div').classes('ml-auto w-2 h-2 rounded-full bg-transparent group-hover:bg-purple-400 transition-all duration-200 opacity-0 group-hover:opacity-100'):
+                                pass
+
+                        menu_item.on('click', lambda e, item=item: handle_modern_menu_click(item['id'], item['label'], item['route']))
+                        menu_state.register_item(item_id, menu_item)
+
+        # Modern Footer - Rich blue theme
+        with ui.element('div').classes('absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-r from-blue-800 to-indigo-800 border-t border-blue-700 text-white'):
+            # Footer content hidden by default, shows on hover
+            with ui.element('div').classes('opacity-0 hover:opacity-100 transition-opacity duration-300 text-center'):
+                ui.html('<div class="text-xs font-semibold mb-1">🔗 Quick Links</div>', sanitize=False)
+                ui.html('<div class="text-xs opacity-80">HRMS - Modern Navigation</div>', sanitize=False)
+
+    # Return the sidebar container for potential external control
+    return sidebar_container
+
+def handle_modern_menu_click(item_id, item_label, item_route):
+    """Handle modern menu item click - update state and navigate with red highlighting"""
+    print(f'Modern menu clicked: ID={item_id}, Label={item_label}, Route={item_route}')
+
+    # Update the active state BEFORE navigation - this will apply RED highlighting
+    menu_state.set_active(item_id)
+
+    # Show notification
+    ui.notify(f'You clicked {item_label}', color='positive')
+
+    # Navigate to route with proper routing logic
+    try:
+        if item_route == '/administration/institution':
+            ui.navigate.to('/administration/institution')
+        elif item_route == '/administration/departments':
+            ui.navigate.to('/administration/departments')
+        elif item_route == '/administration/enroll-staff':
+            ui.navigate.to('/administration/enroll-staff')
+        elif item_route == '/administration/probation':
+            ui.navigate.to('/administration/probation')
+        elif item_route == '/administration/termination':
+            ui.navigate.to('/administration/termination')
+        elif item_route == '/employees/request-transfer':
+            ui.navigate.to('/employees/request-transfer')
+        elif item_route == '/employees/request-leave':
+            ui.navigate.to('/employees/request-leave')
+        elif item_route == '/attendance/attendance':
+            ui.navigate.to('/attendance/attendance')
+        elif item_route == '/attendance/leave/rules':
+            ui.navigate.to('/attendance/leave/rules')
+        elif item_route == '/attendance/timetable':
+            ui.navigate.to('/attendance/timetable')
+        elif item_route == '/attendance/holidays':
+            ui.navigate.to('/attendance/holidays')
+        elif item_route == '/attendance/staff_schedule':
+            ui.navigate.to('/attendance/staff_schedule')
+        elif item_route == '/attendance/staff_status':
+            ui.navigate.to('/attendance/staff_status')
+        elif 'reporting' in item_route:
+            ui.navigate.to('/dashboard')  # For now, redirect reporting to dashboard
+        else:
+            ui.notify(f'Page under development: {item_label}', color='info')
+            return  # Don't navigate if page doesn't exist
+    except Exception as e:
+        print(f"Navigation error: {e}")
+        ui.notify(f'Navigation error: {e}', color='negative')
+        return
+
+    print(f'Successfully navigated to: {item_route}')
+    print(f'Active menu items: {list(menu_state.menu_items.keys())}')
+    print(f'Current active item: {menu_state.active_item_id}')

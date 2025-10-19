@@ -64,3 +64,18 @@ watchfiles==1.1.0
 websockets==15.0.1
 wsproto==1.2.0
 yarl==1.20.1
+
+# MQTT and Communication
+paho-mqtt==2.1.0
+
+# Backblaze B2 Storage
+b2sdk==2.7.0
+
+# gRPC
+grpcio==1.70.0
+grpcio-tools==1.70.0
+protobuf==5.29.5
+
+# Testing
+pytest==8.3.3
+pytest-cov==5.0.0
