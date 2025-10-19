@@ -16,14 +16,23 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh 'python3 --version'
-                sh 'pip3 install --upgrade pip'
+                sh '''
+                    echo "=== Setting up Python ==="
+                    python3 --version || echo "Python3 not found"
+                    which python3 || echo "python3 not in PATH"
+                    pip3 install --upgrade pip || echo "Failed to upgrade pip"
+                '''
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip3 install -r requirement.txt'
+                sh '''
+                    echo "=== Installing Dependencies ==="
+                    ls -la requirement.txt || echo "requirement.txt not found"
+                    pip3 install -r requirement.txt || exit 1
+                    echo "Dependencies installed successfully"
+                '''
             }
         }
 
@@ -48,9 +57,13 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 sh '''
-                    pip3 install pytest pytest-cov
-                    python3 -m pytest tests/unit/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
+                    echo "=== Running Unit Tests ==="
+                    pip3 install pytest pytest-cov || exit 1
+                    echo "Running pytest with coverage..."
+                    python3 -m pytest tests/unit/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80 || exit 1
+                    echo "Unit tests completed successfully"
                 '''
+            }
             }
             post {
                 always {
@@ -70,18 +83,37 @@ pipeline {
         stage('Integration Tests') {
             steps {
                 sh '''
-                    pip3 install pytest pytest-html
-                    # Start application in background for testing
+                    echo "=== Running Integration Tests ==="
+                    pip3 install pytest pytest-html || exit 1
+                    echo "Starting application for integration tests..."
+
+                    # Start application in background
                     python3 run_dual_services.py &
                     APP_PID=$!
+                    echo "Application started with PID: $APP_PID"
+
+                    # Wait for app to start
                     sleep 30
 
+                    # Check if app is running
+                    if kill -0 $APP_PID 2>/dev/null; then
+                        echo "Application is running"
+                    else
+                        echo "Application failed to start"
+                        exit 1
+                    fi
+
                     # Run integration tests
-                    python3 -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html
+                    echo "Running integration tests..."
+                    python3 -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || exit 1
 
                     # Cleanup
+                    echo "Stopping application..."
                     kill $APP_PID || true
+                    sleep 5
+                    echo "Integration tests completed successfully"
                 '''
+            }
             }
             post {
                 always {
@@ -142,12 +174,25 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        def app = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                        app.push()
-                        if (env.BRANCH_NAME == 'main') {
-                            app.push('latest')
+                    try {
+                        echo "=== Building Docker Image ==="
+                        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                            echo "Building Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                            def app = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                            echo "Pushing Docker image..."
+                            app.push()
+                            if (env.BRANCH_NAME == 'main') {
+                                echo "Pushing latest tag for main branch"
+                                app.push('latest')
+                            }
+                            echo "Docker build completed successfully"
                         }
+                    } catch (Exception e) {
+                        echo "Docker build failed: ${e.getMessage()}"
+                        echo "Checking Docker installation..."
+                        sh 'docker --version || echo "Docker not found"'
+                        sh 'docker ps || echo "Docker daemon not running"'
+                        throw e
                     }
                 }
             }
