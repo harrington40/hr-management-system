@@ -102,7 +102,7 @@ PY
           # Optional venv
           if [ -d "venv" ]; then
             . venv/bin/activate
-            PIP="python3 -m pip"
+            PIP="./venv/bin/pip"
             PY="python3"
           else
             PIP="python3 -m pip"
@@ -153,10 +153,16 @@ PY
           set +e  # Allow test failures without stopping pipeline
           echo "=== Running Unit Tests ==="
 
-          if [ -d "venv" ]; then . venv/bin/activate; fi
-          python3 -m pip install --upgrade pip || true
-          python3 -m pip install -r requirement.txt || true
-          python3 -m pip install pytest pytest-cov || true
+          if [ -d "venv" ]; then
+            . venv/bin/activate
+            ./venv/bin/pip install --upgrade pip || true
+            ./venv/bin/pip install -r requirements.txt || true
+            ./venv/bin/pip install pytest pytest-cov || true
+          else
+            python3 -m pip install --upgrade pip --user || true
+            python3 -m pip install -r requirements.txt --user || true
+            python3 -m pip install pytest pytest-cov --user || true
+          fi
 
           # Run unit tests with coverage
           python3 -m pytest tests/unit/ -v \
@@ -187,10 +193,16 @@ PY
           set +e  # Allow some failures in integration tests
           echo "=== Running Integration Tests ==="
 
-          if [ -d "venv" ]; then . venv/bin/activate; fi
-          python3 -m pip install --upgrade pip || true
-          python3 -m pip install -r requirement.txt || true
-          python3 -m pip install pytest pytest-html || true
+          if [ -d "venv" ]; then
+            . venv/bin/activate
+            ./venv/bin/pip install --upgrade pip || true
+            ./venv/bin/pip install -r requirements.txt || true
+            ./venv/bin/pip install pytest pytest-html || true
+          else
+            python3 -m pip install --upgrade pip --user || true
+            python3 -m pip install -r requirements.txt --user || true
+            python3 -m pip install pytest pytest-html --user || true
+          fi
 
           # Start application in background
           echo "Starting application..."
@@ -255,10 +267,16 @@ PY
           set +e  # Allow some failures in regression tests
           echo "=== Running Regression Tests ==="
 
-          if [ -d "venv" ]; then . venv/bin/activate; fi
-          python3 -m pip install --upgrade pip || true
-          python3 -m pip install -r requirement.txt || true
-          python3 -m pip install pytest pytest-html selenium webdriver-manager || true
+          if [ -d "venv" ]; then
+            . venv/bin/activate
+            ./venv/bin/pip install --upgrade pip || true
+            ./venv/bin/pip install -r requirements.txt || true
+            ./venv/bin/pip install pytest pytest-html selenium webdriver-manager || true
+          else
+            python3 -m pip install --upgrade pip --user || true
+            python3 -m pip install -r requirements.txt --user || true
+            python3 -m pip install pytest pytest-html selenium webdriver-manager --user || true
+          fi
 
           # Start application
           echo "Starting application for regression tests..."
