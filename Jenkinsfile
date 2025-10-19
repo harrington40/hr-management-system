@@ -17,10 +17,19 @@ pipeline {
         stage('Setup Python') {
             steps {
                 sh '''
-                    echo "=== Setting up Python ==="
+                    echo "=== Setting up Python Environment ==="
                     python3 --version || echo "Python3 not found"
-                    which python3 || echo "python3 not in PATH"
-                    pip3 install --upgrade pip || echo "Failed to upgrade pip"
+
+                    # Create virtual environment to avoid externally-managed-environment issues
+                    python3 -m venv venv || echo "venv creation failed, trying alternative"
+
+                    # Activate virtual environment
+                    . venv/bin/activate || echo "venv activation failed"
+
+                    # Upgrade pip within virtual environment
+                    ./venv/bin/pip install --upgrade pip || pip3 install --upgrade pip --user
+
+                    echo "Python environment setup completed"
                 '''
             }
         }
@@ -30,7 +39,17 @@ pipeline {
                 sh '''
                     echo "=== Installing Dependencies ==="
                     ls -la requirement.txt || echo "requirement.txt not found"
-                    pip3 install -r requirement.txt || exit 1
+
+                    # Try virtual environment first
+                    if [ -d "venv" ]; then
+                        echo "Using virtual environment"
+                        . venv/bin/activate
+                        ./venv/bin/pip install -r requirement.txt || exit 1
+                    else
+                        echo "Virtual environment not available, trying system pip"
+                        pip3 install -r requirement.txt --user || exit 1
+                    fi
+
                     echo "Dependencies installed successfully"
                 '''
             }
@@ -39,9 +58,21 @@ pipeline {
         stage('Security Scan') {
             steps {
                 sh '''
-                    pip3 install bandit safety
-                    bandit -r . -f json -o bandit-report.json || true
-                    safety check --output json > safety-report.json || true
+                    echo "=== Running Security Scan ==="
+
+                    # Activate virtual environment if available
+                    if [ -d "venv" ]; then
+                        . venv/bin/activate
+                        ./venv/bin/pip install bandit safety || exit 1
+                        ./venv/bin/bandit -r . -f json -o bandit-report.json || true
+                        ./venv/bin/safety check --output json > safety-report.json || true
+                    else
+                        pip3 install bandit safety --user || exit 1
+                        bandit -r . -f json -o bandit-report.json || true
+                        safety check --output json > safety-report.json || true
+                    fi
+
+                    echo "Security scan completed"
                 '''
                 publishHTML target: [
                     allowMissing: true,
@@ -58,9 +89,17 @@ pipeline {
             steps {
                 sh '''
                     echo "=== Running Unit Tests ==="
-                    pip3 install pytest pytest-cov || exit 1
-                    echo "Running pytest with coverage..."
-                    python3 -m pytest tests/unit/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80 || exit 1
+
+                    # Activate virtual environment if available
+                    if [ -d "venv" ]; then
+                        . venv/bin/activate
+                        ./venv/bin/pip install pytest pytest-cov || exit 1
+                        ./venv/bin/python3 -m pytest tests/unit/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80 || exit 1
+                    else
+                        pip3 install pytest pytest-cov --user || exit 1
+                        python3 -m pytest tests/unit/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80 || exit 1
+                    fi
+
                     echo "Unit tests completed successfully"
                 '''
             }
@@ -84,11 +123,21 @@ pipeline {
             steps {
                 sh '''
                     echo "=== Running Integration Tests ==="
-                    pip3 install pytest pytest-html || exit 1
+
+                    # Activate virtual environment if available
+                    if [ -d "venv" ]; then
+                        . venv/bin/activate
+                        ./venv/bin/pip install pytest pytest-html || exit 1
+                        PYTHON_CMD="./venv/bin/python3"
+                    else
+                        pip3 install pytest pytest-html --user || exit 1
+                        PYTHON_CMD="python3"
+                    fi
+
                     echo "Starting application for integration tests..."
 
                     # Start application in background
-                    python3 run_dual_services.py &
+                    $PYTHON_CMD run_dual_services.py &
                     APP_PID=$!
                     echo "Application started with PID: $APP_PID"
 
@@ -105,7 +154,7 @@ pipeline {
 
                     # Run integration tests
                     echo "Running integration tests..."
-                    python3 -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || exit 1
+                    $PYTHON_CMD -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || exit 1
 
                     # Cleanup
                     echo "Stopping application..."
@@ -132,23 +181,37 @@ pipeline {
         stage('Regression Tests') {
             steps {
                 sh '''
-                    pip3 install pytest pytest-html selenium
+                    echo "=== Running Regression Tests ==="
+
                     # Install Chrome for Selenium tests
                     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
                     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
                     apt-get update
                     apt-get install -y google-chrome-stable
 
+                    # Activate virtual environment if available
+                    if [ -d "venv" ]; then
+                        . venv/bin/activate
+                        ./venv/bin/pip install pytest pytest-html selenium || exit 1
+                        PYTHON_CMD="./venv/bin/python3"
+                    else
+                        pip3 install pytest pytest-html selenium --user || exit 1
+                        PYTHON_CMD="python3"
+                    fi
+
                     # Start application
-                    python3 run_dual_services.py &
+                    $PYTHON_CMD run_dual_services.py &
                     APP_PID=$!
+                    echo "Application started with PID: $APP_PID"
                     sleep 30
 
                     # Run regression tests
-                    python3 -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html
+                    $PYTHON_CMD -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html || exit 1
 
                     # Cleanup
                     kill $APP_PID || true
+                    echo "Regression tests completed"
+                '''
                 '''
             }
             post {
@@ -207,14 +270,35 @@ pipeline {
             }
             steps {
                 sh '''
-                    pip3 install pyinstaller
+                    echo "=== Building Windows Executable ==="
+
+                    # Activate virtual environment if available
+                    if [ -d "venv" ]; then
+                        . venv/bin/activate
+                        ./venv/bin/pip install pyinstaller || exit 1
+                        PYINSTALLER_CMD="./venv/bin/pyinstaller"
+                    else
+                        pip3 install pyinstaller --user || exit 1
+                        PYINSTALLER_CMD="pyinstaller"
+                    fi
 
                     # Create executable
-                    pyinstaller --clean hrms.spec
+                    $PYINSTALLER_CMD --clean hrms.spec || exit 1
 
                     # Create installer if NSIS is available
                     if command -v makensis >/dev/null 2>&1; then
-                        makensis installer.nsi
+                        makensis installer.nsi || echo "NSIS installer creation failed"
+                    else
+                        echo "NSIS not available, skipping installer creation"
+                    fi
+
+                    echo "Windows executable build completed"
+                '''
+                archiveArtifacts artifacts: 'dist/HRMS_Application.exe, HRMS_Application_installer.exe',
+                               allowEmptyArchive: true,
+                               fingerprint: true
+            }
+        }
                     fi
                 '''
                 archiveArtifacts artifacts: 'dist/HRMS_Application.exe, HRMS_Application_installer.exe',
@@ -264,7 +348,6 @@ pipeline {
                 '''
             }
         }
-    }
 
     post {
         always {
