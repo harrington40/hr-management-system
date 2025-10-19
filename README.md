@@ -62,7 +62,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 ### 2. Environment Configuration
@@ -154,7 +154,7 @@ hrms-main/
 ├── main.py               # Application entry point
 ├── frontend.py           # Frontend initialization
 ├── SECURITY_GUIDE.md     # Security documentation
-├── requirement.txt       # Python dependencies
+├── requirements.txt      # Python dependencies
 └── README.md            # This file
 ```
 
@@ -381,7 +381,7 @@ For support and questions:
 
 3. **Install dependencies**
    ```bash
-   pip install -r requirement.txt
+   pip install -r requirements.txt
    ```
 
 4. **Environment Configuration**
@@ -462,7 +462,7 @@ hrms-main/
 ├── layout/                # Layout components
 ├── main.py               # Application entry point
 ├── frontend.py           # Frontend initialization
-└── requirement.txt       # Python dependencies
+└── requirements.txt      # Python dependencies
 ```
 
 ## �️ Database Architecture

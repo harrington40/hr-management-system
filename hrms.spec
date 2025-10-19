@@ -30,7 +30,7 @@ a = Analysis(
         (str(config_dir), 'config'),
         (str(database_dir / 'hrms_schema.sql'), 'database'),
         (str(database_dir / 'hrms_schema_clean.sql'), 'database'),
-        ('requirement.txt', '.'),
+        ('requirements.txt', '.'),
         ('frontend.py', '.'),
         ('run_dual_services.py', '.'),
         ('run_grpc_only.py', '.'),

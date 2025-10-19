@@ -6,7 +6,6 @@ aiosmtplib==3.0.2
 annotated-types==0.7.0
 anyio==4.10.0
 attrs==25.3.0
-bcrypt==4.2.0
 bidict==0.23.1
 blinker==1.9.0
 certifi==2025.8.3
@@ -20,8 +19,6 @@ fastapi==0.116.1
 fastapi-cli==0.0.8
 fastapi-mail==1.5.0
 frozenlist==1.7.0
-grpcio==1.70.0
-grpcio-tools==1.70.0
 h11==0.16.0
 httpcore==1.0.9
 httptools==0.6.4
@@ -36,10 +33,8 @@ markdown2==2.5.4
 MarkupSafe==3.0.2
 mdurl==0.1.2
 multidict==6.6.4
-mysql-connector-python==9.2.0
 nicegui==2.23.0
 orjson==3.11.2
-paho-mqtt==2.1.0
 propcache==0.3.2
 pscript==0.7.7
 pycparser==2.22
@@ -69,21 +64,14 @@ watchfiles==1.1.0
 websockets==15.0.1
 wsproto==1.2.0
 yarl==1.20.1
-pyorient==1.5.5
 
-# Testing dependencies
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-cov==4.1.0
-pytest-html==4.1.1
-pytest-mock==3.12.0
-coverage==7.3.2
-bandit==1.7.6
-safety==2.3.5
-selenium==4.15.2
-requests==2.31.0
-webdriver-manager==4.0.1
+# MQTT and Communication
+paho-mqtt==2.1.0
 
-# Build dependencies
-pyinstaller==6.3.0
+# Backblaze B2 Storage
+b2sdk==2.7.0
 
+# gRPC
+grpcio==1.70.0
+grpcio-tools==1.70.0
+protobuf==5.31.1
