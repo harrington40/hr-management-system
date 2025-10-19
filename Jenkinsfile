@@ -33,7 +33,7 @@ pipeline {
       steps {
         echo "=== Pipeline Information ==="
         echo "Branch: ${env.BRANCH_NAME}"
-        echo "Build Number: ${env.BUILD_NUMBER}"
+        echo "GIT_BRANCH: ${env.GIT_BRANCH}"
         echo "Job Name: ${env.JOB_NAME}"
         echo "Node: ${env.NODE_NAME}"
         echo "Workspace: ${env.WORKSPACE}"
@@ -41,6 +41,9 @@ pipeline {
           set +e  # Don't fail on info gathering
           pwd || echo "pwd failed"
           ls -la || echo "ls failed"
+          echo "Git branch info:"
+          git branch || echo "git branch failed"
+          git status || echo "git status failed"
         '''
       }
     }
@@ -342,7 +345,13 @@ PY
     }
 
     stage('Build Docker Image') {
-      when { anyOf { branch 'main'; branch 'dev' } }
+      when {
+        anyOf {
+          branch 'main'
+          branch 'dev'
+          expression { env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'dev' }
+        }
+      }
       steps {
         script {
           try {
@@ -372,7 +381,13 @@ PY
     }
 
     stage('Build Windows Executable') {
-      when { anyOf { branch 'main'; branch 'dev' } }
+      when {
+        anyOf {
+          branch 'main'
+          branch 'dev'
+          expression { env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'dev' }
+        }
+      }
       steps {
         sh '''
           set +e  # Don't fail if Windows tools not available
@@ -423,7 +438,12 @@ PY
     }
 
     stage('Deploy to Test') {
-      when { branch 'dev' }
+      when {
+        anyOf {
+          branch 'dev'
+          expression { env.BRANCH_NAME == 'dev' }
+        }
+      }
       steps {
         sh '''
           set -euxo pipefail
@@ -436,7 +456,12 @@ PY
     }
 
     stage('Deploy to Staging') {
-      when { branch 'main' }
+      when {
+        anyOf {
+          branch 'main'
+          expression { env.BRANCH_NAME == 'main' }
+        }
+      }
       steps {
         sh '''
           set -euxo pipefail
