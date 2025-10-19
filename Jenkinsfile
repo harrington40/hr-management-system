@@ -96,17 +96,44 @@ PY
       }
     }
 
+    stage('Setup Virtual Environment') {
+      steps {
+        sh '''
+          echo "=== Setting up Virtual Environment ==="
+
+          # Create virtual environment if it doesn't exist
+          if [ ! -d "venv" ]; then
+            echo "Creating virtual environment..."
+            python3 -m venv venv || (echo "ERROR: Failed to create virtual environment" && exit 1)
+          fi
+
+          # Use full path to python executable to avoid PATH issues
+          echo "Upgrading pip in virtual environment..."
+          ./venv/bin/python -m pip install --upgrade pip || echo "WARNING: pip upgrade failed"
+
+          echo "Installing requirements.txt in virtual environment..."
+          ./venv/bin/python -m pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
+
+          echo "Verifying critical dependencies..."
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available" && exit 1)
+
+          echo "Virtual environment setup completed successfully"
+        '''
+      }
+    }
+
     stage('Security Scan') {
       steps {
         sh '''
           set +e  # Don't fail pipeline on security scan issues
           echo "=== Running Security Scan ==="
 
-          # Optional venv
-          if [ -d "venv" ]; then
-            . venv/bin/activate
+          # Virtual environment should be set up now
+          if [ -d "venv" ] && [ -x "./venv/bin/pip" ]; then
             PIP="./venv/bin/pip"
-            PY="python3"
+            PY="./venv/bin/python"
           else
             PIP="python3 -m pip"
             PY="python3"
@@ -152,34 +179,6 @@ PY
             reportName: 'Security Reports'
           ]
         }
-      }
-    }
-
-    stage('Setup Virtual Environment') {
-      steps {
-        sh '''
-          echo "=== Setting up Virtual Environment ==="
-
-          # Create virtual environment if it doesn't exist
-          if [ ! -d "venv" ]; then
-            echo "Creating virtual environment..."
-            python3 -m venv venv || (echo "ERROR: Failed to create virtual environment" && exit 1)
-          fi
-
-          # Use full path to python executable to avoid PATH issues
-          echo "Upgrading pip in virtual environment..."
-          ./venv/bin/python -m pip install --upgrade pip || echo "WARNING: pip upgrade failed"
-
-          echo "Installing requirements.txt in virtual environment..."
-          ./venv/bin/python -m pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
-
-          echo "Verifying critical dependencies..."
-          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available" && exit 1)
-          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available" && exit 1)
-          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available" && exit 1)
-
-          echo "Virtual environment setup completed successfully"
-        '''
       }
     }
 
