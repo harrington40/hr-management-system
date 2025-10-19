@@ -51,7 +51,7 @@ jobs:
           safety check --output json > safety-report.json || true
 
       - name: Upload security reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: security-reports
           path: |
@@ -87,7 +87,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirement.txt') }}
@@ -107,7 +107,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hrms_test
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: unit-test-coverage
           path: |
@@ -143,7 +143,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirement.txt') }}
@@ -173,7 +173,7 @@ jobs:
           python -m pytest tests/integration/ --html=integration-report.html --self-contained-html
 
       - name: Upload integration test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-reports
           path: integration-report.html
@@ -207,7 +207,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirement.txt') }}
@@ -241,7 +241,7 @@ jobs:
           CHROME_BIN: /usr/bin/google-chrome-stable
 
       - name: Upload regression test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: regression-test-reports
           path: regression-report.html
@@ -304,7 +304,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~\AppData\Local\pip\Cache
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirement.txt') }}
@@ -339,7 +339,7 @@ jobs:
           & "C:\Program Files (x86)\NSIS\makensis.exe" installer.nsi
 
       - name: Upload Windows executable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hrms-windows-executable
           path: |
