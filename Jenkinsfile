@@ -206,14 +206,24 @@ PY
 
           if [ -d "venv" ]; then
             . venv/bin/activate
-            ./venv/bin/pip install --upgrade pip || true
-            ./venv/bin/pip install -r requirements.txt || true
-            ./venv/bin/pip install pytest pytest-html || true
+            echo "Installing/upgrading pip in virtual environment..."
+            ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing..."
+            echo "Installing requirements.txt in virtual environment..."
+            ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv - this is critical for tests" && exit 1)
+            echo "Installing test dependencies..."
+            ./venv/bin/pip install pytest pytest-html || echo "WARNING: Test dependencies install failed"
           else
-            python3 -m pip install --upgrade pip --user || true
-            python3 -m pip install -r requirements.txt --user || true
-            python3 -m pip install pytest pytest-html --user || true
+            echo "No virtual environment found, installing with --user flag..."
+            python3 -m pip install --upgrade pip --user || echo "WARNING: pip upgrade failed, continuing..."
+            python3 -m pip install -r requirements.txt --user || (echo "ERROR: Failed to install requirements.txt - this is critical for tests" && exit 1)
+            python3 -m pip install pytest pytest-html --user || echo "WARNING: Test dependencies install failed"
           fi
+
+          # Verify critical dependencies are installed
+          echo "Verifying critical dependencies..."
+          python3 -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
+          python3 -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
+          python3 -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
 
           # Start application in background
           echo "Starting application..."
@@ -280,14 +290,25 @@ PY
 
           if [ -d "venv" ]; then
             . venv/bin/activate
-            ./venv/bin/pip install --upgrade pip || true
-            ./venv/bin/pip install -r requirements.txt || true
-            ./venv/bin/pip install pytest pytest-html selenium webdriver-manager || true
+            echo "Installing/upgrading pip in virtual environment..."
+            ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing..."
+            echo "Installing requirements.txt in virtual environment..."
+            ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv - this is critical for tests" && exit 1)
+            echo "Installing test dependencies..."
+            ./venv/bin/pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
           else
-            python3 -m pip install --upgrade pip --user || true
-            python3 -m pip install -r requirements.txt --user || true
-            python3 -m pip install pytest pytest-html selenium webdriver-manager --user || true
+            echo "No virtual environment found, installing with --user flag..."
+            python3 -m pip install --upgrade pip --user || echo "WARNING: pip upgrade failed, continuing..."
+            python3 -m pip install -r requirements.txt --user || (echo "ERROR: Failed to install requirements.txt - this is critical for tests" && exit 1)
+            python3 -m pip install pytest pytest-html selenium webdriver-manager --user || echo "WARNING: Test dependencies install failed"
           fi
+
+          # Verify critical dependencies are installed
+          echo "Verifying critical dependencies..."
+          python3 -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
+          python3 -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
+          python3 -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
+          python3 -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
 
           # Start application
           echo "Starting application for regression tests..."
