@@ -314,6 +314,17 @@ PY
           echo "Installing test dependencies..."
           ./venv/bin/python -m pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
 
+          # Install Chrome browser for Selenium tests
+          echo "Installing Chrome browser..."
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update && apt-get install -y wget gnupg2 software-properties-common || echo "WARNING: Failed to install Chrome dependencies"
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - || echo "WARNING: Failed to add Chrome key"
+            echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list || echo "WARNING: Failed to add Chrome repo"
+            apt-get update && apt-get install -y google-chrome-stable || echo "WARNING: Failed to install Chrome"
+          else
+            echo "WARNING: apt-get not available, Chrome installation skipped"
+          fi
+
           # Verify critical dependencies are installed (should already be done, but double-check)
           echo "Verifying critical dependencies..."
           ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)

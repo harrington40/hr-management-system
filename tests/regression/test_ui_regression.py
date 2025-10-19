@@ -43,7 +43,7 @@ class TestHRMSRegression:
 
     def test_application_loads(self, browser):
         """Test that the main application page loads"""
-        browser.get("http://localhost:8000")
+        browser.get("http://localhost:8000/hrmkit/")
 
         # Wait for page to load
         WebDriverWait(browser, 30).until(
@@ -54,7 +54,7 @@ class TestHRMSRegression:
 
     def test_navigation_menu(self, browser):
         """Test that navigation menu works"""
-        browser.get("http://localhost:8000")
+        browser.get("http://localhost:8000/hrmkit/")
 
         # Look for navigation elements
         try:
@@ -84,7 +84,7 @@ class TestHRMSRegression:
 
     def test_attendance_page_access(self, browser):
         """Test accessing attendance page"""
-        browser.get("http://localhost:8000")
+        browser.get("http://localhost:8000/hrmkit/")
 
         try:
             # Try to find and click attendance link
@@ -189,7 +189,7 @@ class TestPerformanceRegression:
         """Test that pages load within acceptable time limits"""
         import time
 
-        browser.get("http://localhost:8000")
+        browser.get("http://localhost:8000/hrmkit/")
 
         # Measure load time
         start_time = time.time()
