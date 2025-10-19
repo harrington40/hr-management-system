@@ -155,36 +155,55 @@ PY
       }
     }
 
+    stage('Setup Virtual Environment') {
+      steps {
+        sh '''
+          echo "=== Setting up Virtual Environment ==="
+
+          # Create virtual environment if it doesn't exist
+          if [ ! -d "venv" ]; then
+            echo "Creating virtual environment..."
+            python3 -m venv venv || (echo "ERROR: Failed to create virtual environment" && exit 1)
+          fi
+
+          # Activate and setup venv
+          . venv/bin/activate
+          echo "Upgrading pip in virtual environment..."
+          ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed"
+
+          echo "Installing requirements.txt in virtual environment..."
+          ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
+
+          echo "Verifying critical dependencies..."
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available" && exit 1)
+
+          echo "Virtual environment setup completed successfully"
+        '''
+      }
+    }
+
     stage('Unit Tests') {
       steps {
         sh '''
           set +e  # Allow test failures without stopping pipeline
           echo "=== Running Unit Tests ==="
 
+          # Virtual environment should already be set up
           if [ -d "venv" ]; then
             . venv/bin/activate
-            echo "Installing/upgrading pip in virtual environment..."
-            ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing..."
-            echo "Installing requirements.txt in virtual environment..."
-            ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
+            echo "Installing test dependencies..."
             ./venv/bin/pip install pytest pytest-cov || echo "WARNING: Test dependencies install failed"
           else
-            echo "No virtual environment found, installing with --user flag..."
-            python3 -m pip install --upgrade pip --user || echo "WARNING: pip upgrade failed, continuing..."
-            python3 -m pip install -r requirements.txt --user || (echo "ERROR: Failed to install requirements.txt" && exit 1)
-            python3 -m pip install pytest pytest-cov --user || echo "WARNING: Test dependencies install failed"
+            echo "ERROR: Virtual environment not found - this should have been created in Setup Virtual Environment stage"
+            exit 1
           fi
 
           # Run unit tests with coverage
-          if [ -d "venv" ]; then
-            ./venv/bin/python -m pytest tests/unit/ -v \
-              --cov=. --cov-report=xml:coverage.xml --cov-report=html:htmlcov \
-              --cov-fail-under=50 || echo "Unit tests completed with some failures"
-          else
-            python3 -m pytest tests/unit/ -v \
-              --cov=. --cov-report=xml:coverage.xml --cov-report=html:htmlcov \
-              --cov-fail-under=50 || echo "Unit tests completed with some failures"
-          fi
+          ./venv/bin/python -m pytest tests/unit/ -v \
+            --cov=. --cov-report=xml:coverage.xml --cov-report=html:htmlcov \
+            --cov-fail-under=50 || echo "Unit tests completed with some failures"
 
           echo "Unit tests stage completed"
         '''
@@ -210,40 +229,25 @@ PY
           set +e  # Allow some failures in integration tests
           echo "=== Running Integration Tests ==="
 
-          if [ -d "venv" ]; then
-            . venv/bin/activate
-            echo "Installing/upgrading pip in virtual environment..."
-            ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing..."
-            echo "Installing requirements.txt in virtual environment..."
-            ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv - this is critical for tests" && exit 1)
-            echo "Installing test dependencies..."
-            ./venv/bin/pip install pytest pytest-html || echo "WARNING: Test dependencies install failed"
-          else
-            echo "No virtual environment found, installing with --user flag..."
-            python3 -m pip install --upgrade pip --user || echo "WARNING: pip upgrade failed, continuing..."
-            python3 -m pip install -r requirements.txt --user || (echo "ERROR: Failed to install requirements.txt - this is critical for tests" && exit 1)
-            python3 -m pip install pytest pytest-html --user || echo "WARNING: Test dependencies install failed"
+          # Virtual environment should already be set up
+          if [ ! -d "venv" ]; then
+            echo "ERROR: Virtual environment not found - this should have been created in Setup Virtual Environment stage"
+            exit 1
           fi
 
-          # Verify critical dependencies are installed
+          . venv/bin/activate
+          echo "Installing test dependencies..."
+          ./venv/bin/pip install pytest pytest-html || echo "WARNING: Test dependencies install failed"
+
+          # Verify critical dependencies are installed (should already be done, but double-check)
           echo "Verifying critical dependencies..."
-          if [ -d "venv" ]; then
-            ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
-            ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
-            ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
-          else
-            python3 -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
-            python3 -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
-            python3 -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
-          fi
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
 
           # Start application in background
           echo "Starting application..."
-          if [ -d "venv" ]; then
-            ./venv/bin/python run_dual_services.py &
-          else
-            python3 run_dual_services.py &
-          fi
+          ./venv/bin/python run_dual_services.py &
           APP_PID=$!
           echo "App PID: $APP_PID"
 
@@ -265,11 +269,7 @@ PY
               fi
             else
               echo "App process died, restarting..."
-              if [ -d "venv" ]; then
-                ./venv/bin/python run_dual_services.py &
-              else
-                python3 run_dual_services.py &
-              fi
+              ./venv/bin/python run_dual_services.py &
               APP_PID=$!
               sleep 2
             fi
@@ -279,11 +279,7 @@ PY
 
           # Run integration tests
           echo "Running integration tests..."
-          if [ -d "venv" ]; then
-            ./venv/bin/python -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || echo "Integration tests failed"
-          else
-            python3 -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || echo "Integration tests failed"
-          fi
+          ./venv/bin/python -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || echo "Integration tests failed"
 
           # Cleanup
           echo "Stopping application..."
@@ -312,42 +308,26 @@ PY
           set +e  # Allow some failures in regression tests
           echo "=== Running Regression Tests ==="
 
-          if [ -d "venv" ]; then
-            . venv/bin/activate
-            echo "Installing/upgrading pip in virtual environment..."
-            ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing..."
-            echo "Installing requirements.txt in virtual environment..."
-            ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv - this is critical for tests" && exit 1)
-            echo "Installing test dependencies..."
-            ./venv/bin/pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
-          else
-            echo "No virtual environment found, installing with --user flag..."
-            python3 -m pip install --upgrade pip --user || echo "WARNING: pip upgrade failed, continuing..."
-            python3 -m pip install -r requirements.txt --user || (echo "ERROR: Failed to install requirements.txt - this is critical for tests" && exit 1)
-            python3 -m pip install pytest pytest-html selenium webdriver-manager --user || echo "WARNING: Test dependencies install failed"
+          # Virtual environment should already be set up
+          if [ ! -d "venv" ]; then
+            echo "ERROR: Virtual environment not found - this should have been created in Setup Virtual Environment stage"
+            exit 1
           fi
 
-          # Verify critical dependencies are installed
+          . venv/bin/activate
+          echo "Installing test dependencies..."
+          ./venv/bin/pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
+
+          # Verify critical dependencies are installed (should already be done, but double-check)
           echo "Verifying critical dependencies..."
-          if [ -d "venv" ]; then
-            ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
-            ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
-            ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
-            ./venv/bin/python -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
-          else
-            python3 -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
-            python3 -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
-            python3 -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
-            python3 -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
-          fi
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
 
           # Start application
           echo "Starting application for regression tests..."
-          if [ -d "venv" ]; then
-            ./venv/bin/python run_dual_services.py &
-          else
-            python3 run_dual_services.py &
-          fi
+          ./venv/bin/python run_dual_services.py &
           APP_PID=$!
           echo "App PID: $APP_PID"
 
@@ -367,11 +347,7 @@ PY
               fi
             else
               echo "App process died, restarting..."
-              if [ -d "venv" ]; then
-                ./venv/bin/python run_dual_services.py &
-              else
-                python3 run_dual_services.py &
-              fi
+              ./venv/bin/python run_dual_services.py &
               APP_PID=$!
               sleep 2
             fi
@@ -381,11 +357,7 @@ PY
 
           # Run regression tests (Selenium will download driver automatically)
           echo "Running regression tests..."
-          if [ -d "venv" ]; then
-            ./venv/bin/python -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html || echo "Regression tests failed"
-          else
-            python3 -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html || echo "Regression tests failed"
-          fi
+          ./venv/bin/python -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html || echo "Regression tests failed"
 
           # Cleanup
           echo "Stopping application..."
