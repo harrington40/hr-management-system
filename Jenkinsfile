@@ -101,15 +101,19 @@ PY
         sh '''
           echo "=== Setting up Virtual Environment ==="
 
-          # Create virtual environment if it doesn't exist
-          if [ ! -d "venv" ]; then
-            echo "Creating virtual environment..."
-            python3 -m venv venv || (echo "ERROR: Failed to create virtual environment" && exit 1)
+          # Remove any existing venv to ensure clean state
+          if [ -d "venv" ]; then
+            echo "Removing existing virtual environment..."
+            rm -rf venv
           fi
+
+          # Create fresh virtual environment
+          echo "Creating virtual environment..."
+          python3 -m venv venv || (echo "ERROR: Failed to create virtual environment" && exit 1)
 
           # Use full path to python executable to avoid PATH issues
           echo "Upgrading pip in virtual environment..."
-          ./venv/bin/python -m pip install --upgrade pip || echo "WARNING: pip upgrade failed"
+          ./venv/bin/python -m pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing with existing pip version"
 
           echo "Installing requirements.txt in virtual environment..."
           ./venv/bin/python -m pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
@@ -118,6 +122,7 @@ PY
           ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available" && exit 1)
           ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available" && exit 1)
           ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available" && exit 1)
+          ./venv/bin/python -c "import bcrypt; print('✓ bcrypt available')" || (echo "ERROR: bcrypt not available" && exit 1)
 
           echo "Virtual environment setup completed successfully"
         '''
