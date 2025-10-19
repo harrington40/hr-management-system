@@ -35,18 +35,26 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Bandit Security Scan
         run: |
+          source venv/bin/activate
           pip install bandit
           bandit -r . -f json -o bandit-report.json || true
 
       - name: Run Safety Check
         run: |
+          source venv/bin/activate
           pip install safety
           safety check --output json > safety-report.json || true
 
@@ -86,16 +94,14 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov pytest-asyncio pytest-mock coverage
@@ -142,22 +148,21 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-asyncio requests
 
       - name: Start application for integration tests
         run: |
+          source venv/bin/activate
           python run_dual_services.py &
           sleep 30
         env:
@@ -165,10 +170,12 @@ jobs:
 
       - name: Run integration tests
         run: |
+          source venv/bin/activate
           python -m pytest tests/integration/ -v --tb=short
 
       - name: Generate test report
         run: |
+          source venv/bin/activate
           pip install pytest-html
           python -m pytest tests/integration/ --html=integration-report.html --self-contained-html
 
@@ -206,16 +213,14 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-html selenium
@@ -229,6 +234,7 @@ jobs:
 
       - name: Start application for regression tests
         run: |
+          source venv/bin/activate
           python run_dual_services.py &
           sleep 30
         env:
@@ -236,6 +242,7 @@ jobs:
 
       - name: Run regression tests
         run: |
+          source venv/bin/activate
           python -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html
         env:
           CHROME_BIN: /usr/bin/google-chrome-stable
@@ -303,16 +310,14 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~\AppData\Local\pip\Cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
