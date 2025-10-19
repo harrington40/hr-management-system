@@ -1,0 +1,139 @@
+// HRMS gRPC Service Definition
+
+syntax = "proto3";
+
+package hrms;
+
+service HRMSService {
+  // Employee operations
+  rpc GetEmployee(EmployeeRequest) returns (EmployeeResponse);
+  rpc ListEmployees(ListEmployeesRequest) returns (ListEmployeesResponse);
+  rpc CreateEmployee(CreateEmployeeRequest) returns (EmployeeResponse);
+  rpc UpdateEmployee(UpdateEmployeeRequest) returns (EmployeeResponse);
+  rpc DeleteEmployee(DeleteEmployeeRequest) returns (DeleteResponse);
+
+  // Attendance operations
+  rpc RecordAttendance(AttendanceRequest) returns (AttendanceResponse);
+  rpc GetAttendance(AttendanceQuery) returns (ListAttendanceResponse);
+
+  // Department operations
+  rpc GetDepartment(DepartmentRequest) returns (DepartmentResponse);
+  rpc ListDepartments(ListDepartmentsRequest) returns (ListDepartmentsResponse);
+}
+
+// Messages
+message EmployeeRequest {
+  string employee_id = 1;
+}
+
+message EmployeeResponse {
+  Employee employee = 1;
+  string error = 2;
+}
+
+message ListEmployeesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string department = 3;
+}
+
+message ListEmployeesResponse {
+  repeated Employee employees = 1;
+  int32 total = 2;
+  string error = 3;
+}
+
+message CreateEmployeeRequest {
+  Employee employee = 1;
+}
+
+message UpdateEmployeeRequest {
+  string employee_id = 1;
+  Employee employee = 2;
+}
+
+message DeleteEmployeeRequest {
+  string employee_id = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message AttendanceRequest {
+  string employee_id = 1;
+  string check_type = 2; // "in" or "out"
+  string timestamp = 3;
+}
+
+message AttendanceResponse {
+  AttendanceRecord record = 1;
+  string error = 2;
+}
+
+message AttendanceQuery {
+  string employee_id = 1;
+  string start_date = 2;
+  string end_date = 3;
+}
+
+message ListAttendanceResponse {
+  repeated AttendanceRecord records = 1;
+  string error = 2;
+}
+
+message DepartmentRequest {
+  string department_id = 1;
+}
+
+message DepartmentResponse {
+  Department department = 1;
+  string error = 2;
+}
+
+message ListDepartmentsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ListDepartmentsResponse {
+  repeated Department departments = 1;
+  int32 total = 2;
+  string error = 3;
+}
+
+// Data models
+message Employee {
+  string employee_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string department = 5;
+  string position = 6;
+  string hire_date = 7;
+  string status = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}
+
+message AttendanceRecord {
+  string id = 1;
+  string employee_id = 2;
+  string check_in = 3;
+  string check_out = 4;
+  string date = 5;
+  string status = 6;
+  string notes = 7;
+  string created_at = 8;
+}
+
+message Department {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double budget = 4;
+  string location = 5;
+  bool is_active = 6;
+  string created_at = 7;
+}

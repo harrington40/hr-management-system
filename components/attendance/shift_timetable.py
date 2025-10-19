@@ -894,6 +894,277 @@ def create_shift_templates_panel(manager: ModernShiftTimetableManager):
                 ui.notify(f'🗑️ Template {template_id} deleted', type='info')
                 ui.navigate.reload()
 
+def create_modern_shift_templates(manager: ModernShiftTimetableManager):
+    """Create modern interactive shift templates with active/selected states"""
+    ui.html('<h2 class="text-2xl font-bold text-slate-800 mb-4">⏰ Shift Templates</h2>', sanitize=False)
+    ui.label('Create and manage reusable shift templates with interactive selection').classes('text-slate-600 mb-6')
+
+    shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
+
+    # State management for active selection
+    class TemplateState:
+        def __init__(self):
+            self.selected_template = None
+            self.template_cards = {}
+
+    template_state = TemplateState()
+
+    def select_template(template_id: str):
+        """Handle template selection with visual feedback"""
+        # Update state
+        template_state.selected_template = template_id
+
+        # Update visual states for all cards
+        for tid, card_info in template_state.template_cards.items():
+            if tid == template_id:
+                # Selected state - enhanced styling
+                card_info['card'].classes('border-2 border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-xl transform scale-105')
+                card_info['header'].classes('bg-gradient-to-r from-blue-500 to-indigo-600 text-white')
+                card_info['status'].set_text('🟢 ACTIVE')
+                card_info['status'].classes('text-blue-600 font-bold')
+            else:
+                # Default state
+                card_info['card'].classes('border border-slate-200 bg-white shadow-md hover:shadow-lg')
+                card_info['header'].classes('bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700')
+                card_info['status'].set_text('⭕ INACTIVE')
+                card_info['status'].classes('text-slate-500')
+
+        # Show template details
+        show_template_details(template_id)
+
+    def show_template_details(template_id: str):
+        """Show detailed information for selected template"""
+        template = shift_templates.get(template_id, {})
+        ui.notify(f'📋 Selected: {template.get("display_name", template_id)} - {template.get("start_time", "")} to {template.get("end_time", "")}', type='info')
+
+    # Template Grid
+    if shift_templates:
+        with ui.grid(columns='repeat(auto-fit, minmax(320px, 1fr))').classes('gap-6 w-full mb-6'):
+            for template_id, template in shift_templates.items():
+                with ui.card().classes('border border-slate-200 bg-white shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer') as card:
+                    # Store card reference for state management
+                    template_state.template_cards[template_id] = {
+                        'card': card,
+                        'header': None,
+                        'status': None
+                    }
+
+                    with ui.card_section().classes('p-0'):
+                        # Header with gradient background
+                        with ui.row().classes('w-full p-4 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700') as header:
+                            template_state.template_cards[template_id]['header'] = header
+
+                            with ui.row().classes('items-center justify-between w-full'):
+                                with ui.row().classes('items-center gap-3'):
+                                    ui.html(f'<span class="text-2xl">{template.get("icon", "⏰")}</span>', sanitize=False)
+                                    with ui.column().classes('gap-1'):
+                                        ui.label(template.get('display_name', template_id)).classes('font-bold text-lg')
+                                        ui.label(f'{template.get("start_time", "N/A")} - {template.get("end_time", "N/A")}').classes('text-sm opacity-80')
+
+                                # Status indicator
+                                status_label = ui.label('⭕ INACTIVE').classes('text-slate-500 font-medium')
+                                template_state.template_cards[template_id]['status'] = status_label
+
+                        # Template details
+                        with ui.card_section().classes('p-4'):
+                            with ui.grid(columns=2).classes('gap-4 w-full mb-4'):
+                                # Left column
+                                with ui.column().classes('gap-2'):
+                                    ui.label('⏰ Duration').classes('text-sm font-medium text-slate-600')
+                                    ui.label(f'{template.get("working_hours", 0)} hours').classes('text-slate-800')
+
+                                    ui.label('☕ Break').classes('text-sm font-medium text-slate-600 mt-2')
+                                    ui.label(f'{template.get("break_duration_minutes", 0)} min').classes('text-slate-800')
+
+                                # Right column
+                                with ui.column().classes('gap-2'):
+                                    ui.label('💰 Allowance').classes('text-sm font-medium text-slate-600')
+                                    allowance = template.get('shift_allowance_percentage', 0)
+                                    ui.label(f'{allowance}%' if allowance > 0 else 'None').classes('text-slate-800')
+
+                                    ui.label('🎨 Color').classes('text-sm font-medium text-slate-600 mt-2')
+                                    color = template.get('color', '#6B7280')
+                                    ui.html(f'<div class="w-4 h-4 rounded-full border-2 border-white shadow-sm" style="background-color: {color}"></div>', sanitize=False)
+
+                            # Action buttons
+                            with ui.row().classes('gap-2 w-full mt-4'):
+                                ui.button('👁️ View Details',
+                                        on_click=lambda tid=template_id: show_template_details(tid)
+                                        ).classes('flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm')
+
+                                ui.button('✏️ Edit',
+                                        on_click=lambda tid=template_id: edit_template(tid)
+                                        ).classes('flex-1 bg-blue-500 hover:bg-blue-600 text-white text-sm')
+
+                                ui.button('🗑️ Delete',
+                                        on_click=lambda tid=template_id: delete_template(tid)
+                                        ).classes('flex-1 bg-red-500 hover:bg-red-600 text-white text-sm')
+
+                        # Click handler for entire card
+                        card.on('click', lambda tid=template_id: select_template(tid))
+
+        # Selected template details panel
+        with ui.card().classes('w-full mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200'):
+            with ui.card_section().classes('p-6'):
+                ui.label('📋 Template Details').classes('text-xl font-bold text-blue-800 mb-4')
+
+                if template_state.selected_template:
+                    template = shift_templates.get(template_state.selected_template, {})
+                    with ui.grid(columns='repeat(auto-fit, minmax(200px, 1fr))').classes('gap-4'):
+                        details = [
+                            ('Template ID', template_state.selected_template),
+                            ('Display Name', template.get('display_name', 'N/A')),
+                            ('Start Time', template.get('start_time', 'N/A')),
+                            ('End Time', template.get('end_time', 'N/A')),
+                            ('Working Hours', f'{template.get("working_hours", 0)} hours'),
+                            ('Break Duration', f'{template.get("break_duration_minutes", 0)} minutes'),
+                            ('Break Start', template.get('break_start_time', 'N/A')),
+                            ('Allowance', f'{template.get("shift_allowance_percentage", 0)}%'),
+                        ]
+
+                        for label, value in details:
+                            with ui.card().classes('bg-white/70 border border-blue-100'):
+                                with ui.card_section().classes('p-3 text-center'):
+                                    ui.label(label).classes('text-sm font-medium text-blue-600 mb-1')
+                                    ui.label(str(value)).classes('font-semibold text-blue-800')
+                else:
+                    ui.label('Click on a shift template above to view its details').classes('text-blue-600 italic text-center py-8')
+
+    else:
+        # Empty state with call-to-action
+        with ui.card().classes('w-full p-12 text-center bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300'):
+            with ui.card_section().classes('p-8'):
+                ui.html('<div class="text-8xl mb-6">⏰</div>', sanitize=False)
+                ui.label('No Shift Templates Created').classes('text-2xl font-bold text-slate-700 mb-3')
+                ui.label('Create your first interactive shift template to get started').classes('text-slate-600 mb-6')
+
+                ui.button('✨ Create First Template',
+                        on_click=lambda: show_modern_create_dialog()
+                        ).classes('bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200')
+
+    def show_modern_create_dialog():
+        """Show modern create template dialog"""
+        with ui.dialog() as dialog, ui.card().classes('w-[600px] max-w-full'):
+            with ui.card_section().classes('p-6'):
+                with ui.row().classes('items-center gap-3 mb-6'):
+                    ui.html('<span class="text-3xl">⏰</span>', sanitize=False)
+                    ui.label('Create New Shift Template').classes('text-2xl font-bold text-slate-800')
+
+                with ui.tabs().classes('w-full') as tabs:
+                    basic_tab = ui.tab('Basic Info', icon='info')
+                    time_tab = ui.tab('Time Settings', icon='schedule')
+                    advanced_tab = ui.tab('Advanced', icon='settings')
+
+                with ui.tab_panels(tabs, value=basic_tab).classes('w-full mt-4'):
+                    with ui.tab_panel(basic_tab):
+                        ui.label('Basic Information').classes('font-semibold text-slate-700 mb-4')
+                        template_id = ui.input('Template ID (unique identifier)').classes('w-full mb-3').props('outlined')
+                        display_name = ui.input('Display Name').classes('w-full mb-3').props('outlined')
+                        icon = ui.input('Icon/Emoji', value='⏰').classes('w-full').props('outlined')
+
+                    with ui.tab_panel(time_tab):
+                        ui.label('Time Configuration').classes('font-semibold text-slate-700 mb-4')
+                        with ui.grid(columns=2).classes('gap-4 w-full'):
+                            start_time = ui.input('Start Time').props('outlined type=time').classes('w-full')
+                            end_time = ui.input('End Time').props('outlined type=time').classes('w-full')
+                            break_duration = ui.number('Break Duration (minutes)', value=60, min=0, max=180).classes('w-full')
+                            break_start = ui.input('Break Start Time').props('outlined type=time').classes('w-full')
+
+                    with ui.tab_panel(advanced_tab):
+                        ui.label('Advanced Settings').classes('font-semibold text-slate-700 mb-4')
+                        with ui.grid(columns=2).classes('gap-4 w-full'):
+                            allowance = ui.number('Shift Allowance (%)', value=0, min=0, max=100).classes('w-full')
+                            color = ui.input('Color', value='#3B82F6').props('outlined type=color').classes('w-full')
+                            capacity = ui.number('Max Capacity', value=5, min=1, max=50).classes('w-full')
+                            priority = ui.select(['Low', 'Medium', 'High'], value='Medium', label='Priority').classes('w-full')
+
+                with ui.row().classes('gap-3 w-full justify-end mt-6'):
+                    ui.button('❌ Cancel', on_click=dialog.close).classes('bg-slate-500 hover:bg-slate-600 text-white px-6 py-2 rounded-lg')
+                    ui.button('✅ Create Template',
+                            on_click=lambda: create_modern_template(
+                                template_id.value, display_name.value, icon.value,
+                                start_time.value, end_time.value, break_duration.value, break_start.value,
+                                allowance.value, color.value, capacity.value, priority.value, dialog
+                            )).classes('bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-2 rounded-lg font-semibold')
+
+        dialog.open()
+
+    def create_modern_template(tid, name, icon, start, end, break_dur, break_start, allowance, color, capacity, priority, dialog):
+        """Create new modern shift template"""
+        if not all([tid, name, start, end]):
+            ui.notify('❌ Please fill in all required fields', type='negative')
+            return
+
+        # Calculate working hours
+        try:
+            start_time = datetime.strptime(start, '%H:%M').time()
+            end_time = datetime.strptime(end, '%H:%M').time()
+            start_dt = datetime.combine(datetime.today(), start_time)
+            end_dt = datetime.combine(datetime.today(), end_time)
+            if end_dt < start_dt:  # Next day
+                end_dt += timedelta(days=1)
+            working_hours = (end_dt - start_dt).total_seconds() / 3600 - (break_dur / 60)
+        except:
+            ui.notify('❌ Invalid time format', type='negative')
+            return
+
+        if 'shift_timetable' not in manager.timetable_data:
+            manager.timetable_data['shift_timetable'] = {}
+        if 'shift_templates' not in manager.timetable_data['shift_timetable']:
+            manager.timetable_data['shift_timetable']['shift_templates'] = {}
+
+        manager.timetable_data['shift_timetable']['shift_templates'][tid] = {
+            'name': tid,
+            'display_name': name,
+            'icon': icon,
+            'start_time': start,
+            'end_time': end,
+            'break_duration_minutes': break_dur,
+            'break_start_time': break_start,
+            'working_hours': round(working_hours, 2),
+            'shift_allowance_percentage': allowance,
+            'color': color,
+            'capacity': capacity,
+            'priority': priority
+        }
+
+        dialog.close()
+        ui.notify(f'✅ Template "{name}" created successfully!', type='positive')
+        ui.navigate.reload()
+
+    def edit_template(template_id: str):
+        """Edit existing template"""
+        ui.notify(f'✏️ Edit functionality for {template_id} coming soon!', type='info')
+
+    def delete_template(template_id: str):
+        """Delete template with confirmation"""
+        template = shift_templates.get(template_id, {})
+        template_name = template.get('display_name', template_id)
+
+        with ui.dialog() as confirm_dialog, ui.card().classes('w-96'):
+            with ui.card_section().classes('p-6 text-center'):
+                ui.html('<span class="text-4xl mb-4 block">⚠️</span>', sanitize=False)
+                ui.label(f'Delete Template').classes('text-xl font-bold text-slate-800 mb-2')
+                ui.label(f'Are you sure you want to delete "{template_name}"?').classes('text-slate-600 mb-6')
+                ui.label('This action cannot be undone.').classes('text-sm text-red-600 mb-6')
+
+                with ui.row().classes('gap-3 w-full justify-center'):
+                    ui.button('❌ Cancel', on_click=confirm_dialog.close).classes('bg-slate-500 hover:bg-slate-600 text-white px-6 py-2 rounded-lg')
+                    ui.button('🗑️ Delete',
+                            on_click=lambda: confirm_delete(template_id, confirm_dialog)
+                            ).classes('bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold')
+
+        confirm_dialog.open()
+
+    def confirm_delete(template_id: str, dialog):
+        """Confirm and execute template deletion"""
+        if 'shift_timetable' in manager.timetable_data and 'shift_templates' in manager.timetable_data['shift_timetable']:
+            if template_id in manager.timetable_data['shift_timetable']['shift_templates']:
+                del manager.timetable_data['shift_timetable']['shift_templates'][template_id]
+                ui.notify(f'🗑️ Template deleted successfully', type='info')
+                dialog.close()
+                ui.navigate.reload()
+
 def create_department_schedules_panel(manager: ModernShiftTimetableManager):
     """Create department schedules configuration panel"""
     ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏢 Department Schedules</h2>', sanitize=False)

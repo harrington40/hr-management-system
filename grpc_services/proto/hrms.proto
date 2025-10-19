@@ -1,0 +1,833 @@
+// HRMS gRPC Service Definition
+
+syntax = "proto3";
+
+package hrms;
+
+service HRMSService {
+  // User operations
+  rpc GetUser(UserRequest) returns (UserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc CreateUser(CreateUserRequest) returns (UserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteResponse);
+  rpc AuthenticateUser(AuthenticateRequest) returns (AuthenticateResponse);
+
+  // Employee operations
+  rpc GetEmployee(EmployeeRequest) returns (EmployeeResponse);
+  rpc ListEmployees(ListEmployeesRequest) returns (ListEmployeesResponse);
+  rpc CreateEmployee(CreateEmployeeRequest) returns (EmployeeResponse);
+  rpc UpdateEmployee(UpdateEmployeeRequest) returns (EmployeeResponse);
+  rpc DeleteEmployee(DeleteEmployeeRequest) returns (DeleteResponse);
+
+  // Department operations
+  rpc GetDepartment(DepartmentRequest) returns (DepartmentResponse);
+  rpc ListDepartments(ListDepartmentsRequest) returns (ListDepartmentsResponse);
+  rpc CreateDepartment(CreateDepartmentRequest) returns (DepartmentResponse);
+  rpc UpdateDepartment(UpdateDepartmentRequest) returns (DepartmentResponse);
+  rpc DeleteDepartment(DeleteDepartmentRequest) returns (DeleteResponse);
+
+  // Position operations
+  rpc GetPosition(PositionRequest) returns (PositionResponse);
+  rpc ListPositions(ListPositionsRequest) returns (ListPositionsResponse);
+  rpc CreatePosition(CreatePositionRequest) returns (PositionResponse);
+  rpc UpdatePosition(UpdatePositionRequest) returns (PositionResponse);
+  rpc DeletePosition(DeletePositionRequest) returns (DeleteResponse);
+
+  // Shift Template operations
+  rpc GetShiftTemplate(ShiftTemplateRequest) returns (ShiftTemplateResponse);
+  rpc ListShiftTemplates(ListShiftTemplatesRequest) returns (ListShiftTemplatesResponse);
+  rpc CreateShiftTemplate(CreateShiftTemplateRequest) returns (ShiftTemplateResponse);
+  rpc UpdateShiftTemplate(UpdateShiftTemplateRequest) returns (ShiftTemplateResponse);
+  rpc DeleteShiftTemplate(DeleteShiftTemplateRequest) returns (DeleteResponse);
+
+  // Schedule operations
+  rpc GetSchedule(ScheduleRequest) returns (ScheduleResponse);
+  rpc ListSchedules(ListSchedulesRequest) returns (ListSchedulesResponse);
+  rpc CreateSchedule(CreateScheduleRequest) returns (ScheduleResponse);
+  rpc UpdateSchedule(UpdateScheduleRequest) returns (ScheduleResponse);
+  rpc DeleteSchedule(DeleteScheduleRequest) returns (DeleteResponse);
+
+  // Attendance operations
+  rpc GetAttendance(AttendanceRequest) returns (AttendanceResponse);
+  rpc ListAttendance(ListAttendanceRequest) returns (ListAttendanceResponse);
+  rpc RecordAttendance(RecordAttendanceRequest) returns (AttendanceResponse);
+  rpc UpdateAttendance(UpdateAttendanceRequest) returns (AttendanceResponse);
+  rpc ClockIn(ClockInRequest) returns (AttendanceResponse);
+  rpc ClockOut(ClockOutRequest) returns (AttendanceResponse);
+
+  // Leave operations
+  rpc GetLeaveType(LeaveTypeRequest) returns (LeaveTypeResponse);
+  rpc ListLeaveTypes(ListLeaveTypesRequest) returns (ListLeaveTypesResponse);
+  rpc CreateLeaveType(CreateLeaveTypeRequest) returns (LeaveTypeResponse);
+  rpc UpdateLeaveType(UpdateLeaveTypeRequest) returns (LeaveTypeResponse);
+  rpc DeleteLeaveType(DeleteLeaveTypeRequest) returns (DeleteResponse);
+
+  rpc GetLeaveRequest(LeaveRequestRequest) returns (LeaveRequestResponse);
+  rpc ListLeaveRequests(ListLeaveRequestsRequest) returns (ListLeaveRequestsResponse);
+  rpc CreateLeaveRequest(CreateLeaveRequestRequest) returns (LeaveRequestResponse);
+  rpc UpdateLeaveRequest(UpdateLeaveRequestRequest) returns (LeaveRequestResponse);
+  rpc ApproveLeaveRequest(ApproveLeaveRequestRequest) returns (LeaveRequestResponse);
+  rpc RejectLeaveRequest(RejectLeaveRequestRequest) returns (LeaveRequestResponse);
+
+  rpc GetLeaveBalance(LeaveBalanceRequest) returns (LeaveBalanceResponse);
+  rpc ListLeaveBalances(ListLeaveBalancesRequest) returns (ListLeaveBalancesResponse);
+  rpc UpdateLeaveBalance(UpdateLeaveBalanceRequest) returns (LeaveBalanceResponse);
+
+  // Audit operations
+  rpc GetAuditLog(AuditLogRequest) returns (AuditLogResponse);
+  rpc ListAuditLogs(ListAuditLogsRequest) returns (ListAuditLogsResponse);
+
+  // System operations
+  rpc GetInstitution(InstitutionRequest) returns (InstitutionResponse);
+  rpc UpdateInstitution(UpdateInstitutionRequest) returns (InstitutionResponse);
+
+  rpc GetSystemSetting(SystemSettingRequest) returns (SystemSettingResponse);
+  rpc ListSystemSettings(ListSystemSettingsRequest) returns (ListSystemSettingsResponse);
+  rpc UpdateSystemSetting(UpdateSystemSettingRequest) returns (SystemSettingResponse);
+
+  // Dashboard operations
+  rpc GetDashboardStats(DashboardRequest) returns (DashboardResponse);
+  rpc GetEmployeeStats(EmployeeStatsRequest) returns (EmployeeStatsResponse);
+  rpc GetAttendanceStats(AttendanceStatsRequest) returns (AttendanceStatsResponse);
+  rpc GetLeaveStats(LeaveStatsRequest) returns (LeaveStatsResponse);
+}
+
+// Common messages
+message Empty {}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// User messages
+message UserRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  User user = 1;
+  string message = 2;
+}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  string user_id = 1;
+  User user = 2;
+}
+
+message DeleteUserRequest {
+  string user_id = 1;
+}
+
+message AuthenticateRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthenticateResponse {
+  bool success = 1;
+  string token = 2;
+  User user = 3;
+  string message = 4;
+}
+
+// Employee messages
+message EmployeeRequest {
+  string employee_id = 1;
+}
+
+message EmployeeResponse {
+  Employee employee = 1;
+  string message = 2;
+}
+
+message ListEmployeesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+  string department_id = 4;
+  string position_id = 5;
+}
+
+message ListEmployeesResponse {
+  repeated Employee employees = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateEmployeeRequest {
+  Employee employee = 1;
+}
+
+message UpdateEmployeeRequest {
+  string employee_id = 1;
+  Employee employee = 2;
+}
+
+message DeleteEmployeeRequest {
+  string employee_id = 1;
+}
+
+// Department messages
+message DepartmentRequest {
+  string department_id = 1;
+}
+
+message DepartmentResponse {
+  Department department = 1;
+  string message = 2;
+}
+
+message ListDepartmentsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+}
+
+message ListDepartmentsResponse {
+  repeated Department departments = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateDepartmentRequest {
+  Department department = 1;
+}
+
+message UpdateDepartmentRequest {
+  string department_id = 1;
+  Department department = 2;
+}
+
+message DeleteDepartmentRequest {
+  string department_id = 1;
+}
+
+// Position messages
+message PositionRequest {
+  string position_id = 1;
+}
+
+message PositionResponse {
+  Position position = 1;
+  string message = 2;
+}
+
+message ListPositionsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+  string department_id = 4;
+}
+
+message ListPositionsResponse {
+  repeated Position positions = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreatePositionRequest {
+  Position position = 1;
+}
+
+message UpdatePositionRequest {
+  string position_id = 1;
+  Position position = 2;
+}
+
+message DeletePositionRequest {
+  string position_id = 1;
+}
+
+// Shift Template messages
+message ShiftTemplateRequest {
+  string shift_template_id = 1;
+}
+
+message ShiftTemplateResponse {
+  ShiftTemplate shift_template = 1;
+  string message = 2;
+}
+
+message ListShiftTemplatesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+}
+
+message ListShiftTemplatesResponse {
+  repeated ShiftTemplate shift_templates = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateShiftTemplateRequest {
+  ShiftTemplate shift_template = 1;
+}
+
+message UpdateShiftTemplateRequest {
+  string shift_template_id = 1;
+  ShiftTemplate shift_template = 2;
+}
+
+message DeleteShiftTemplateRequest {
+  string shift_template_id = 1;
+}
+
+// Schedule messages
+message ScheduleRequest {
+  string schedule_id = 1;
+}
+
+message ScheduleResponse {
+  Schedule schedule = 1;
+  string message = 2;
+}
+
+message ListSchedulesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string employee_id = 3;
+  string date_from = 4;
+  string date_to = 5;
+}
+
+message ListSchedulesResponse {
+  repeated Schedule schedules = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateScheduleRequest {
+  Schedule schedule = 1;
+}
+
+message UpdateScheduleRequest {
+  string schedule_id = 1;
+  Schedule schedule = 2;
+}
+
+message DeleteScheduleRequest {
+  string schedule_id = 1;
+}
+
+// Attendance messages
+message AttendanceRequest {
+  string attendance_id = 1;
+}
+
+message AttendanceResponse {
+  Attendance attendance = 1;
+  string message = 2;
+}
+
+message ListAttendanceRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string employee_id = 3;
+  string date_from = 4;
+  string date_to = 5;
+}
+
+message ListAttendanceResponse {
+  repeated Attendance attendances = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message RecordAttendanceRequest {
+  Attendance attendance = 1;
+}
+
+message UpdateAttendanceRequest {
+  string attendance_id = 1;
+  Attendance attendance = 2;
+}
+
+message ClockInRequest {
+  string employee_id = 1;
+  string timestamp = 2;
+  string location = 3;
+}
+
+message ClockOutRequest {
+  string employee_id = 1;
+  string timestamp = 2;
+  string location = 3;
+}
+
+// Leave messages
+message LeaveTypeRequest {
+  string leave_type_id = 1;
+}
+
+message LeaveTypeResponse {
+  LeaveType leave_type = 1;
+  string message = 2;
+}
+
+message ListLeaveTypesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+}
+
+message ListLeaveTypesResponse {
+  repeated LeaveType leave_types = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateLeaveTypeRequest {
+  LeaveType leave_type = 1;
+}
+
+message UpdateLeaveTypeRequest {
+  string leave_type_id = 1;
+  LeaveType leave_type = 2;
+}
+
+message DeleteLeaveTypeRequest {
+  string leave_type_id = 1;
+}
+
+message LeaveRequestRequest {
+  string leave_request_id = 1;
+}
+
+message LeaveRequestResponse {
+  LeaveRequest leave_request = 1;
+  string message = 2;
+}
+
+message ListLeaveRequestsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string employee_id = 3;
+  string status = 4;
+  string date_from = 5;
+  string date_to = 6;
+}
+
+message ListLeaveRequestsResponse {
+  repeated LeaveRequest leave_requests = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CreateLeaveRequestRequest {
+  LeaveRequest leave_request = 1;
+}
+
+message UpdateLeaveRequestRequest {
+  string leave_request_id = 1;
+  LeaveRequest leave_request = 2;
+}
+
+message ApproveLeaveRequestRequest {
+  string leave_request_id = 1;
+  string approved_by = 2;
+  string comments = 3;
+}
+
+message RejectLeaveRequestRequest {
+  string leave_request_id = 1;
+  string rejected_by = 2;
+  string comments = 3;
+}
+
+message LeaveBalanceRequest {
+  string leave_balance_id = 1;
+}
+
+message LeaveBalanceResponse {
+  LeaveBalance leave_balance = 1;
+  string message = 2;
+}
+
+message ListLeaveBalancesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string employee_id = 3;
+  string leave_type_id = 4;
+}
+
+message ListLeaveBalancesResponse {
+  repeated LeaveBalance leave_balances = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message UpdateLeaveBalanceRequest {
+  string leave_balance_id = 1;
+  LeaveBalance leave_balance = 2;
+}
+
+// Audit messages
+message AuditLogRequest {
+  string audit_log_id = 1;
+}
+
+message AuditLogResponse {
+  AuditLog audit_log = 1;
+  string message = 2;
+}
+
+message ListAuditLogsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string user_id = 3;
+  string action = 4;
+  string date_from = 5;
+  string date_to = 6;
+}
+
+message ListAuditLogsResponse {
+  repeated AuditLog audit_logs = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// System messages
+message InstitutionRequest {
+  string institution_id = 1;
+}
+
+message InstitutionResponse {
+  Institution institution = 1;
+  string message = 2;
+}
+
+message UpdateInstitutionRequest {
+  string institution_id = 1;
+  Institution institution = 2;
+}
+
+message SystemSettingRequest {
+  string setting_key = 1;
+}
+
+message SystemSettingResponse {
+  SystemSetting system_setting = 1;
+  string message = 2;
+}
+
+message ListSystemSettingsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string category = 3;
+}
+
+message ListSystemSettingsResponse {
+  repeated SystemSetting system_settings = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message UpdateSystemSettingRequest {
+  string setting_key = 1;
+  SystemSetting system_setting = 2;
+}
+
+// Dashboard messages
+message DashboardRequest {
+  string date_from = 1;
+  string date_to = 2;
+}
+
+message DashboardResponse {
+  DashboardStats stats = 1;
+  string message = 2;
+}
+
+message EmployeeStatsRequest {
+  string date_from = 1;
+  string date_to = 2;
+}
+
+message EmployeeStatsResponse {
+  EmployeeStats stats = 1;
+  string message = 2;
+}
+
+message AttendanceStatsRequest {
+  string date_from = 1;
+  string date_to = 2;
+}
+
+message AttendanceStatsResponse {
+  AttendanceStats stats = 1;
+  string message = 2;
+}
+
+message LeaveStatsRequest {
+  string date_from = 1;
+  string date_to = 2;
+}
+
+message LeaveStatsResponse {
+  LeaveStats stats = 1;
+  string message = 2;
+}
+
+// Data Models
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string password_hash = 4;
+  string role = 5;
+  bool is_active = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  string last_login = 9;
+  Employee employee = 10;
+}
+
+message Employee {
+  string id = 1;
+  string employee_number = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string email = 5;
+  string phone = 6;
+  string address = 7;
+  string date_of_birth = 8;
+  string hire_date = 9;
+  string termination_date = 10;
+  string status = 11;
+  string department_id = 12;
+  string position_id = 13;
+  double salary = 14;
+  string manager_id = 15;
+  string created_at = 16;
+  string updated_at = 17;
+  Department department = 18;
+  Position position = 19;
+  Employee manager = 20;
+}
+
+message Department {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string manager_id = 4;
+  string parent_department_id = 5;
+  bool is_active = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  Employee manager = 9;
+  Department parent_department = 10;
+  repeated Employee employees = 11;
+}
+
+message Position {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string department_id = 4;
+  string level = 5;
+  double min_salary = 6;
+  double max_salary = 7;
+  bool is_active = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  Department department = 11;
+  repeated Employee employees = 12;
+}
+
+message ShiftTemplate {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string start_time = 4;
+  string end_time = 5;
+  int32 duration_hours = 6;
+  bool is_active = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+message Schedule {
+  string id = 1;
+  string employee_id = 2;
+  string shift_template_id = 3;
+  string date = 4;
+  string start_time = 5;
+  string end_time = 6;
+  string status = 7;
+  string notes = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  Employee employee = 11;
+  ShiftTemplate shift_template = 12;
+}
+
+message Attendance {
+  string id = 1;
+  string employee_id = 2;
+  string date = 3;
+  string clock_in_time = 4;
+  string clock_out_time = 5;
+  int32 hours_worked = 6;
+  string status = 7;
+  string location = 8;
+  string notes = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  Employee employee = 12;
+}
+
+message LeaveType {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int32 days_per_year = 4;
+  bool requires_approval = 5;
+  bool is_active = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message LeaveRequest {
+  string id = 1;
+  string employee_id = 2;
+  string leave_type_id = 3;
+  string start_date = 4;
+  string end_date = 5;
+  int32 days_requested = 6;
+  string reason = 7;
+  string status = 8;
+  string approved_by = 9;
+  string approved_at = 10;
+  string comments = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  Employee employee = 14;
+  LeaveType leave_type = 15;
+  Employee approver = 16;
+}
+
+message LeaveBalance {
+  string id = 1;
+  string employee_id = 2;
+  string leave_type_id = 3;
+  int32 year = 4;
+  int32 total_days = 5;
+  int32 used_days = 6;
+  int32 remaining_days = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  Employee employee = 10;
+  LeaveType leave_type = 11;
+}
+
+message AuditLog {
+  string id = 1;
+  string user_id = 2;
+  string action = 3;
+  string table_name = 4;
+  string record_id = 5;
+  string old_values = 6;
+  string new_values = 7;
+  string ip_address = 8;
+  string user_agent = 9;
+  string timestamp = 10;
+  User user = 11;
+}
+
+message Institution {
+  string id = 1;
+  string name = 2;
+  string address = 3;
+  string phone = 4;
+  string email = 5;
+  string website = 6;
+  string logo_url = 7;
+  string tax_id = 8;
+  string registration_number = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message SystemSetting {
+  string key = 1;
+  string value = 2;
+  string category = 3;
+  string description = 4;
+  string data_type = 5;
+  bool is_system = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message DashboardStats {
+  int32 total_employees = 1;
+  int32 active_employees = 2;
+  int32 total_departments = 3;
+  int32 total_positions = 4;
+  int32 today_attendance = 5;
+  int32 pending_leave_requests = 6;
+  double average_salary = 7;
+  int32 new_employees_this_month = 8;
+}
+
+message EmployeeStats {
+  int32 total_employees = 1;
+  int32 active_employees = 2;
+  int32 inactive_employees = 3;
+  map<string, int32> department_distribution = 4;
+  map<string, int32> position_distribution = 5;
+  int32 new_hires_this_month = 6;
+  int32 terminations_this_month = 7;
+}
+
+message AttendanceStats {
+  int32 total_attendance_records = 1;
+  int32 present_today = 2;
+  int32 absent_today = 3;
+  int32 late_today = 4;
+  double average_hours_worked = 5;
+  map<string, int32> attendance_by_department = 6;
+  int32 on_time_percentage = 7;
+}
+
+message LeaveStats {
+  int32 total_leave_requests = 1;
+  int32 pending_requests = 2;
+  int32 approved_requests = 3;
+  int32 rejected_requests = 4;
+  int32 total_leave_days = 5;
+  map<string, int32> leave_by_type = 6;
+  map<string, int32> leave_by_department = 7;
+}

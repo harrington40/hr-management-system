@@ -468,55 +468,122 @@ def create_overtime_rules_panel(manager: AttendanceRulesManager):
     
     overtime_rules = manager.rules_data.get('attendance_rules', {}).get('overtime_rules', {})
     
-    with ui.grid(columns=2).classes('gap-6 w-full'):
-        # Overtime Settings
-        with ui.card().classes('p-4 border-l-4 border-violet-400 hover:shadow-md transition-shadow'):
-            ui.label('🔧 Basic Overtime Settings').classes('font-semibold text-gray-700 mb-3')
+    # Rule Calculation and Overtime Rate in horizontal layout
+    with ui.row().classes('gap-6 w-full mb-6'):
+        # Rule Calculation Card
+        with ui.card().classes('flex-1 p-6 border-l-4 border-violet-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-violet-50 to-white'):
+            ui.label('🧮 Rule Calculation').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Configure how overtime is calculated').classes('text-gray-600 mb-4')
             
-            overtime_enabled = ui.switch(
-                'Enable Overtime Calculation',
-                value=overtime_rules.get('enabled', True),
-                on_change=lambda e: update_overtime_rule('enabled', e.value)
-            ).classes('mb-3')
-            
-            ui.label('Calculation Method').classes('text-sm font-medium text-gray-600 mb-1')
-            calculation_method = ui.select(
-                options=['daily', 'weekly', 'monthly'],
-                value=overtime_rules.get('calculation_method', 'daily'),
-                on_change=lambda e: update_overtime_rule('calculation_method', e.value)
-            ).classes('w-full mb-3')
-            
-            ui.label('Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
-            overtime_multiplier = ui.number(
-                value=overtime_rules.get('overtime_multiplier', 1.5),
-                min=1.0, max=3.0, step=0.1,
-                on_change=lambda e: update_overtime_rule('overtime_multiplier', e.value)
-            ).classes('w-full')
+            with ui.column().classes('gap-4 w-full'):
+                overtime_enabled = ui.switch(
+                    'Enable Overtime Calculation',
+                    value=overtime_rules.get('enabled', True),
+                    on_change=lambda e: update_overtime_rule('enabled', e.value)
+                ).classes('mb-3')
+                
+                ui.label('Calculation Method').classes('text-sm font-medium text-gray-600 mb-1')
+                calculation_method = ui.select(
+                    options=['daily', 'weekly', 'monthly'],
+                    value=overtime_rules.get('calculation_method', 'daily'),
+                    on_change=lambda e: update_overtime_rule('calculation_method', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Overtime Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                overtime_threshold = ui.number(
+                    value=overtime_rules.get('overtime_threshold_hours', 8),
+                    min=4, max=12, step=0.5,
+                    on_change=lambda e: update_overtime_rule('overtime_threshold_hours', e.value)
+                ).classes('w-full')
         
-        # Premium Rates
-        with ui.card().classes('p-4 border-l-4 border-teal-400 hover:shadow-md transition-shadow'):
-            ui.label('💰 Premium Rate Settings').classes('font-semibold text-gray-700 mb-3')
+        # Overtime Rate Calculation Card
+        with ui.card().classes('flex-1 p-6 border-l-4 border-teal-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-teal-50 to-white'):
+            ui.label('💰 Overtime Rate Calculation').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Set compensation multipliers for overtime work').classes('text-gray-600 mb-4')
             
-            ui.label('Double Time Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
-            double_time_threshold = ui.number(
-                value=overtime_rules.get('double_time_threshold_hours', 12),
-                min=8, max=24,
-                on_change=lambda e: update_overtime_rule('double_time_threshold_hours', e.value)
-            ).classes('w-full mb-3')
+            with ui.column().classes('gap-4 w-full'):
+                ui.label('Standard Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                overtime_multiplier = ui.number(
+                    value=overtime_rules.get('overtime_multiplier', 1.5),
+                    min=1.0, max=3.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('overtime_multiplier', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Double Time Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                double_time_threshold = ui.number(
+                    value=overtime_rules.get('double_time_threshold_hours', 12),
+                    min=8, max=24,
+                    on_change=lambda e: update_overtime_rule('double_time_threshold_hours', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Double Time Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                double_time_multiplier = ui.number(
+                    value=overtime_rules.get('double_time_multiplier', 2.0),
+                    min=1.5, max=4.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('double_time_multiplier', e.value)
+                ).classes('w-full')
+    
+    # Premium Rates in horizontal layout - Operations and Controls
+    with ui.row().classes('gap-6 w-full mt-6'):
+        # Operations Card - Premium Multipliers
+        with ui.card().classes('flex-1 p-6 border-l-4 border-amber-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-amber-50 to-white'):
+            ui.label('⚙️ Premium Operations').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Configure special overtime multipliers').classes('text-gray-600 mb-4')
             
-            ui.label('Weekend Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
-            weekend_multiplier = ui.number(
-                value=overtime_rules.get('weekend_overtime_multiplier', 2.0),
-                min=1.0, max=3.0, step=0.1,
-                on_change=lambda e: update_overtime_rule('weekend_overtime_multiplier', e.value)
-            ).classes('w-full mb-3')
+            with ui.column().classes('gap-4 w-full'):
+                ui.label('Weekend Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                weekend_multiplier = ui.number(
+                    value=overtime_rules.get('weekend_overtime_multiplier', 2.0),
+                    min=1.0, max=3.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('weekend_overtime_multiplier', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Holiday Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                holiday_multiplier = ui.number(
+                    value=overtime_rules.get('holiday_overtime_multiplier', 2.5),
+                    min=1.0, max=4.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('holiday_overtime_multiplier', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Night Shift Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                night_shift_multiplier = ui.number(
+                    value=overtime_rules.get('night_shift_multiplier', 1.25),
+                    min=1.0, max=2.0, step=0.05,
+                    on_change=lambda e: update_overtime_rule('night_shift_multiplier', e.value)
+                ).classes('w-full')
+        
+        # Controls Card - Action Buttons and Settings
+        with ui.card().classes('flex-1 p-6 border-l-4 border-orange-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-white'):
+            ui.label('🎛️ Overtime Controls').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Additional overtime settings and controls').classes('text-gray-600 mb-4')
             
-            ui.label('Holiday Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
-            holiday_multiplier = ui.number(
-                value=overtime_rules.get('holiday_overtime_multiplier', 2.5),
-                min=1.0, max=4.0, step=0.1,
-                on_change=lambda e: update_overtime_rule('holiday_overtime_multiplier', e.value)
-            ).classes('w-full')
+            with ui.column().classes('gap-4 w-full'):
+                ui.label('Maximum Weekly Overtime (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                max_weekly_ot = ui.number(
+                    value=overtime_rules.get('max_overtime_hours_week', 20),
+                    min=0, max=60, step=1,
+                    on_change=lambda e: update_overtime_rule('max_overtime_hours_week', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Auto Approval Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                auto_approval_threshold = ui.number(
+                    value=overtime_rules.get('auto_approval_threshold_hours', 4),
+                    min=0, max=20, step=0.5,
+                    on_change=lambda e: update_overtime_rule('auto_approval_threshold_hours', e.value)
+                ).classes('w-full mb-3')
+                
+                with ui.row().classes('gap-3 w-full mt-4'):
+                    auto_approval = ui.switch(
+                        'Auto-approve overtime',
+                        value=overtime_rules.get('auto_overtime_approval', False),
+                        on_change=lambda e: update_overtime_rule('auto_overtime_approval', e.value)
+                    ).classes('flex-1')
+                    
+                    overtime_alerts = ui.switch(
+                        'Overtime alerts',
+                        value=overtime_rules.get('overtime_alerts_enabled', True),
+                        on_change=lambda e: update_overtime_rule('overtime_alerts_enabled', e.value)
+                    ).classes('flex-1')
     
     def update_overtime_rule(key: str, value):
         """Update overtime rule value"""
