@@ -68,7 +68,7 @@ pipeline {
           python3 --version || echo "WARNING: python3 version check failed"
 
           # Check for required files
-          test -f requirement.txt || echo "WARNING: requirement.txt not found"
+          test -f requirements.txt || echo "WARNING: requirements.txt not found"
           test -f main.py || echo "WARNING: main.py not found"
 
           # Check disk space
@@ -134,7 +134,12 @@ PY
       }
       post {
         always {
-          archiveArtifacts artifacts: 'bandit-report.html,safety-report.html', allowEmptyArchive: true
+          sh '''
+            # Check if security reports exist before archiving
+            echo "Checking for security reports..."
+            ls -la bandit-report.html safety-report.html 2>/dev/null || echo "Some security reports not found"
+          '''
+          archiveArtifacts artifacts: 'bandit-report.html,safety-report.html', allowEmptyArchive: true, fingerprint: false
           publishHTML target: [
             allowMissing: true,
             alwaysLinkToLastBuild: true,
@@ -373,10 +378,16 @@ PY
           # Check if we can build Windows executable on Linux
           if command -v wine >/dev/null 2>&1; then
             echo "Wine found, attempting cross-compilation..."
-            if [ -d "venv" ]; then . venv/bin/activate; fi
-            python3 -m pip install --upgrade pip
-            python3 -m pip install pyinstaller
-            python3 -m pip install -r requirement.txt || true
+            if [ -d "venv" ]; then
+              . venv/bin/activate
+              ./venv/bin/pip install --upgrade pip || true
+              ./venv/bin/pip install pyinstaller || true
+              ./venv/bin/pip install -r requirements.txt || true
+            else
+              python3 -m pip install --upgrade pip --user || true
+              python3 -m pip install pyinstaller --user || true
+              python3 -m pip install -r requirements.txt --user || true
+            fi
 
             # Try to build executable
             if [ -f "hrms.spec" ]; then
@@ -398,7 +409,12 @@ PY
       }
       post {
         always {
-          archiveArtifacts artifacts: 'dist/**/*.exe,*.exe', allowEmptyArchive: true, fingerprint: true
+          sh '''
+            # Check if executable files exist before archiving
+            echo "Checking for executable artifacts..."
+            find dist/ -name "*.exe" -o -name "*installer*" 2>/dev/null || echo "No executable artifacts found"
+          '''
+          archiveArtifacts artifacts: 'dist/**/*.exe,*.exe,*.msi,*.dmg', allowEmptyArchive: true, fingerprint: false
         }
       }
     }
