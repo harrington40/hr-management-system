@@ -160,13 +160,16 @@ PY
 
           if [ -d "venv" ]; then
             . venv/bin/activate
-            ./venv/bin/pip install --upgrade pip || true
-            ./venv/bin/pip install -r requirements.txt || true
-            ./venv/bin/pip install pytest pytest-cov || true
+            echo "Installing/upgrading pip in virtual environment..."
+            ./venv/bin/pip install --upgrade pip || echo "WARNING: pip upgrade failed, continuing..."
+            echo "Installing requirements.txt in virtual environment..."
+            ./venv/bin/pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
+            ./venv/bin/pip install pytest pytest-cov || echo "WARNING: Test dependencies install failed"
           else
-            python3 -m pip install --upgrade pip --user || true
-            python3 -m pip install -r requirements.txt --user || true
-            python3 -m pip install pytest pytest-cov --user || true
+            echo "No virtual environment found, installing with --user flag..."
+            python3 -m pip install --upgrade pip --user || echo "WARNING: pip upgrade failed, continuing..."
+            python3 -m pip install -r requirements.txt --user || (echo "ERROR: Failed to install requirements.txt" && exit 1)
+            python3 -m pip install pytest pytest-cov --user || echo "WARNING: Test dependencies install failed"
           fi
 
           # Run unit tests with coverage
