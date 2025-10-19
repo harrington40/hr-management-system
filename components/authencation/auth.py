@@ -28,6 +28,8 @@ def Login_Page():
                     ui.label('Forgot').classes('font-medium text-blue-600 hover:text-blue-800 -mr-16')
                     ui.label('Password?').classes('font-semibold text-blue-600 hover:text-blue-800 cursor-pointer -ml-[5rem]')
                 submit_btn = ui.button('Login', on_click=lambda: handleSubmit([email, password], submit_btn, email.value)).props(f'rounded').classes('mt-6 w-full font-bold') #.bind_enabled_from(checker, 'no_errors')
+                # Magic link button
+                ui.button('Send Magic Link', on_click=lambda: send_magic_link(email.value)).props('outlined color=purple').classes('mt-2 w-full')
                 # Development bypass button for testing
                 ui.button('Dev Login (Testing)', on_click=dev_login).props('outlined color=orange').classes('mt-2 w-full text-xs')
                 # ui.label(f'{progress['isLoading']}').classes('text-red-200')
@@ -76,5 +78,18 @@ def validate_name(value):
     if not value:
         return 'Password is required!'
     elif len(value) < 3:
-        return 'Name must be at least 3 characters long.'
+        return 'Password must be at least 3 characters!'
+
+async def send_magic_link(email: str):
+    if not email:
+        ui.notify('Please enter your email address', color='negative')
+        return
+    try:
+        response = await generate_magic_link(email)
+        if response.status_code == 200:
+            ui.notify('Magic link sent! Check your email.', color='positive')
+        else:
+            ui.notify('Failed to send magic link. Please try again.', color='negative')
+    except Exception as e:
+        ui.notify(f'Error sending magic link: {str(e)}', color='negative')
     return None

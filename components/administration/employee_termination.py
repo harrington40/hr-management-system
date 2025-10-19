@@ -374,12 +374,38 @@ class TerminationManager:
                 old_status = record["status"]
                 record["status"] = new_status
                 record["last_updated"] = datetime.now().isoformat()
-                
+
+                # If termination is completed, update employee status and statistics
+                if new_status == "Completed" and old_status != "Completed":
+                    self._complete_employee_termination(record)
+
                 # Log status change
                 self.log_security_event("STATUS_CHANGED", record_id, record.get("employee_id"))
-                
+
                 return True
         return False
+
+    def _complete_employee_termination(self, termination_record):
+        """Complete employee termination by updating status and statistics"""
+        try:
+            employee_id = termination_record.get("employee_id")
+
+            # Import here to avoid circular imports
+            from components.administration.enroll_staff import employee_data_manager, update_global_statistics_sync
+
+            # Update employee status to Terminated if they exist in the system
+            if employee_id in employee_data_manager.employees:
+                employee_data_manager.employees[employee_id]['employment_info']['status'] = 'Terminated'
+                employee_data_manager.employees[employee_id]['employment_info']['termination_date'] = termination_record.get("effective_date")
+                employee_data_manager.employees[employee_id]['employment_info']['termination_reason'] = termination_record.get("reason")
+
+                # Update global statistics after termination
+                update_global_statistics_sync()
+
+                print(f"Employee {employee_id} termination completed. Statistics updated.")
+
+        except Exception as e:
+            print(f"Error completing employee termination: {e}")
 
 # Global termination manager instance
 termination_manager = TerminationManager()

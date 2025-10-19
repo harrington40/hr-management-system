@@ -6,6 +6,9 @@ from datetime import datetime, timedelta
 import json
 import uuid
 
+# Import employee data manager for real-time statistics
+from .enroll_staff import employee_data_manager
+
 # Advanced Department Management System with HR Time Management Algorithms
 class DepartmentDataManager:
     """
@@ -129,8 +132,8 @@ class DepartmentDataManager:
                 }
             ],
             "statistics": {
-                "total_departments": 4,
-                "total_employees": 62,
+                "total_departments": len(employee_data_manager.departments),
+                "total_employees": len(employee_data_manager.employees),
                 "total_budget": 1200000,
                 "average_efficiency": 91,
                 "last_updated": datetime.now().isoformat()
@@ -688,6 +691,35 @@ def get_department_by_employee(employee_id):
         if dept["head_employee_id"] == employee_id:
             return dept
     return None
+
+def update_department_employee_counts():
+    """Update all department employee counts based on actual employee data"""
+    try:
+        from components.administration.enroll_staff import employee_data_manager
+        
+        # Get current employee counts by department
+        department_counts = {}
+        for emp in employee_data_manager.employees.values():
+            if emp['employment_info']['status'] == 'Active':
+                dept = emp['employment_info']['department']
+                department_counts[dept] = department_counts.get(dept, 0) + 1
+        
+        # Update each department's employee count
+        for dept_data in dept_manager.departments_data['departments']:
+            dept_name = dept_data['name']
+            new_count = department_counts.get(dept_name, 0)
+            
+            # Only update if the count has changed
+            if dept_data.get('employee_count', 0) != new_count:
+                dept_manager.update_department(dept_data['id'], {"employee_count": new_count})
+        
+        # Update department statistics
+        dept_manager.update_statistics()
+        
+        print(f"Updated department employee counts: {department_counts}")
+        
+    except Exception as e:
+        print(f"Error updating department employee counts: {e}")
 
 def update_department_employee_count(dept_id, new_count):
     """Update employee count when employees are added/removed"""

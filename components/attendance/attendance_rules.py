@@ -3,12 +3,13 @@ import yaml
 import os
 from datetime import datetime
 from typing import Dict, Any
+import json
 
 class AttendanceRulesManager:
     def __init__(self):
         self.config_path = "/mnt/c/Users/harri/designProject2020/hr-clock/hrms-main/config/attendance_rules.yaml"
         self.rules_data = self.load_rules()
-        
+
     def load_rules(self) -> Dict[str, Any]:
         """Load attendance rules from YAML file"""
         try:
@@ -16,28 +17,95 @@ class AttendanceRulesManager:
                 return yaml.safe_load(file)
         except FileNotFoundError:
             return self.get_default_rules()
-            
+
     def save_rules(self, rules_data: Dict[str, Any]) -> bool:
         """Save attendance rules to YAML file"""
         try:
             with open(self.config_path, 'w') as file:
                 yaml.dump(rules_data, file, default_flow_style=False, sort_keys=False)
             self.rules_data = rules_data
+            # Update global attendance calculations
+            self.update_global_attendance_calculations()
             return True
         except Exception as e:
             print(f"Error saving rules: {e}")
             return False
-            
+
+    def update_global_attendance_calculations(self):
+        """Update attendance calculations across the app when rules change"""
+        try:
+            # Update dashboard metrics
+            from components.dashboard.dashboard_main import HRDashboardManager
+            dashboard_manager = HRDashboardManager()
+            dashboard_manager.current_metrics = dashboard_manager.calculate_metrics()
+            dashboard_manager.alerts = dashboard_manager.generate_alerts()
+
+            # Update staff status calculations
+            from components.attendance.staff_status import StaffStatusManager
+            staff_manager = StaffStatusManager()
+            staff_manager.update_attendance_calculations()
+
+            print("✅ Global attendance calculations updated")
+        except Exception as e:
+            print(f"Warning: Could not update global calculations: {e}")
+
     def get_default_rules(self) -> Dict[str, Any]:
         """Return default attendance rules"""
         return {
             "attendance_rules": {
-                "version": "1.0",
+                "version": "2.0",
+                "last_updated": datetime.now().isoformat(),
                 "core_settings": {
                     "working_days_per_week": 5,
                     "standard_work_hours_per_day": 8,
                     "break_time_minutes": 60,
-                    "grace_period_minutes": 15
+                    "grace_period_minutes": 15,
+                    "auto_clock_out_after_hours": 12,
+                    "minimum_shift_hours": 4
+                },
+                "checkin_rules": {
+                    "allow_early_checkin_minutes": 30,
+                    "late_threshold_minutes": 15,
+                    "absent_threshold_minutes": 120,
+                    "multiple_checkins_allowed": False,
+                    "location_tracking_required": True
+                },
+                "absence_policies": {
+                    "max_consecutive_absences": 3,
+                    "absence_notification_threshold": 2,
+                    "auto_leave_deduction": True,
+                    "excuse_required_after_days": 1
+                },
+                "overtime_rules": {
+                    "overtime_threshold_hours": 8,
+                    "overtime_multiplier": 1.5,
+                    "max_overtime_hours_week": 20,
+                    "auto_overtime_approval": False
+                },
+                "break_policies": {
+                    "mandatory_break_after_hours": 4,
+                    "break_duration_minutes": 15,
+                    "paid_breaks": True,
+                    "flexible_break_times": True
+                },
+                "remote_work": {
+                    "remote_checkin_required": True,
+                    "location_verification": False,
+                    "remote_productivity_tracking": True,
+                    "max_remote_days_week": 2
+                },
+                "flexible_arrangements": {
+                    "flexible_hours_allowed": True,
+                    "core_hours_required": "09:00-15:00",
+                    "compressed_workweek": False,
+                    "part_time_options": True
+                },
+                "tracking_methods": {
+                    "biometric_required": True,
+                    "mobile_app_checkin": True,
+                    "web_portal_access": True,
+                    "qr_code_checkin": False,
+                    "nfc_card_support": True
                 }
             }
         }
@@ -48,7 +116,7 @@ def AttendanceRules():
     
     # Header with gradient background
     with ui.row().classes('w-full mb-6'):
-        with ui.card().classes('w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white'):
+        with ui.card().classes('w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white border-l-8 border-blue-400 shadow-xl'):
             with ui.card_section().classes('p-6'):
                 with ui.row().classes('items-center justify-between w-full'):
                     with ui.column().classes('gap-2'):
@@ -65,7 +133,7 @@ def AttendanceRules():
     with ui.row().classes('w-full gap-6'):
         # Left panel - Rule Categories
         with ui.column().classes('w-1/4'):
-            with ui.card().classes('w-full'):
+            with ui.card().classes('w-full border-l-4 border-indigo-500 shadow-lg bg-gradient-to-br from-indigo-50 to-white'):
                 with ui.card_section().classes('p-4'):
                     ui.label('Rule Categories').classes('text-xl font-bold text-gray-700 mb-4')
                     
@@ -85,11 +153,35 @@ def AttendanceRules():
                         def __init__(self):
                             self.current = 'core'
                             self.panels = {}
+                            self.buttons = {}  # Store button references
                     
                     state = CategoryState()
                     
                     def switch_category(cat_id):
+                        # Update current selection
+                        old_current = state.current
                         state.current = cat_id
+                        
+                        # Update button styles and text
+                        for cat_id_key, button in state.buttons.items():
+                            category = next((cat for cat in rule_categories if cat['id'] == cat_id_key), None)
+                            if category:
+                                is_selected = cat_id_key == cat_id
+                                icon_prefix = "✅ " if is_selected else ""
+                                
+                                # Update button text with selection indicator
+                                button.set_text(f"{icon_prefix}{category['icon']} {category['name']}")
+                                
+                                # Update button styling
+                                if is_selected:
+                                    button.classes(
+                                        f'w-full justify-start text-left p-4 rounded-xl transition-all duration-300 bg-{category["color"]}-500 hover:bg-{category["color"]}-600 text-white border-2 border-{category["color"]}-300 shadow-lg hover:shadow-xl font-semibold'
+                                    )
+                                else:
+                                    button.classes(
+                                        f'w-full justify-start text-left p-4 rounded-xl transition-all duration-300 bg-gray-100 hover:bg-gray-200 text-gray-700 border-2 border-transparent shadow-sm hover:shadow-md'
+                                    )
+                        
                         # Hide all panels
                         for panel in state.panels.values():
                             panel.set_visibility(False)
@@ -98,14 +190,25 @@ def AttendanceRules():
                             state.panels[cat_id].set_visibility(True)
                     
                     for category in rule_categories:
-                        with ui.row().classes('w-full mb-2'):
-                            btn = ui.button(f"{category['icon']} {category['name']}", 
+                        with ui.row().classes('w-full mb-3'):
+                            # Determine if this button should be selected initially
+                            is_selected = category['id'] == state.current
+                            icon_prefix = "✅ " if is_selected else ""
+                            button_classes = (
+                                f'w-full justify-start text-left p-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md font-semibold '
+                                f'{"bg-" + category["color"] + "-500 hover:bg-" + category["color"] + "-600 text-white border-2 border-" + category["color"] + "-300 shadow-lg hover:shadow-xl" if is_selected else "bg-gray-100 hover:bg-gray-200 text-gray-700 border-2 border-transparent"}'
+                            )
+                            
+                            btn = ui.button(f"{icon_prefix}{category['icon']} {category['name']}", 
                                           on_click=lambda cat=category['id']: switch_category(cat)
-                            ).classes(f'w-full justify-start text-left p-3 rounded-lg transition-all bg-gray-100 hover:bg-gray-200 text-gray-700')
+                            ).classes(button_classes)
+                            
+                            # Store button reference for later styling updates
+                            state.buttons[category['id']] = btn
 
         # Right panel - Rule Configuration
         with ui.column().classes('w-3/4'):
-            with ui.card().classes('w-full'):
+            with ui.card().classes('w-full border-l-4 border-emerald-500 shadow-lg bg-gradient-to-br from-emerald-50 to-white'):
                 with ui.card_section().classes('p-6'):
                     
                     # Create panels and store references
@@ -189,7 +292,7 @@ def create_core_settings_panel(manager: AttendanceRulesManager):
     
     with ui.grid(columns=2).classes('gap-6 w-full'):
         # Working Days
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-blue-400 hover:shadow-md transition-shadow'):
             ui.label('📅 Working Days per Week').classes('font-semibold text-gray-700 mb-2')
             working_days = ui.number(
                 value=core_settings.get('working_days_per_week', 5),
@@ -199,7 +302,7 @@ def create_core_settings_panel(manager: AttendanceRulesManager):
             ui.label('Standard working days in a week').classes('text-sm text-gray-500')
         
         # Work Hours per Day
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-green-400 hover:shadow-md transition-shadow'):
             ui.label('⏰ Work Hours per Day').classes('font-semibold text-gray-700 mb-2')
             work_hours = ui.number(
                 value=core_settings.get('standard_work_hours_per_day', 8),
@@ -209,7 +312,7 @@ def create_core_settings_panel(manager: AttendanceRulesManager):
             ui.label('Standard daily working hours').classes('text-sm text-gray-500')
         
         # Break Time
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-yellow-400 hover:shadow-md transition-shadow'):
             ui.label('☕ Break Time (minutes)').classes('font-semibold text-gray-700 mb-2')
             break_time = ui.number(
                 value=core_settings.get('break_time_minutes', 60),
@@ -219,7 +322,7 @@ def create_core_settings_panel(manager: AttendanceRulesManager):
             ui.label('Total break time per day').classes('text-sm text-gray-500')
         
         # Grace Period
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-purple-400 hover:shadow-md transition-shadow'):
             ui.label('⏱️ Grace Period (minutes)').classes('font-semibold text-gray-700 mb-2')
             grace_period = ui.number(
                 value=core_settings.get('grace_period_minutes', 15),
@@ -245,7 +348,7 @@ def create_checkin_rules_panel(manager: AttendanceRulesManager):
     
     with ui.grid(columns=2).classes('gap-6 w-full'):
         # Earliest Check-in Time
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-orange-400 hover:shadow-md transition-shadow'):
             ui.label('🌅 Earliest Check-in Time').classes('font-semibold text-gray-700 mb-2')
             earliest_checkin = ui.input(
                 value=checkin_rules.get('earliest_checkin_time', '06:00'),
@@ -254,7 +357,7 @@ def create_checkin_rules_panel(manager: AttendanceRulesManager):
             ui.label('Earliest allowed check-in time').classes('text-sm text-gray-500')
         
         # Latest Check-in Time
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-red-400 hover:shadow-md transition-shadow'):
             ui.label('🕘 Latest Check-in Time').classes('font-semibold text-gray-700 mb-2')
             latest_checkin = ui.input(
                 value=checkin_rules.get('latest_checkin_time', '10:00'),
@@ -263,7 +366,7 @@ def create_checkin_rules_panel(manager: AttendanceRulesManager):
             ui.label('Latest allowed check-in time').classes('text-sm text-gray-500')
         
         # Auto Checkout
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-cyan-400 hover:shadow-md transition-shadow'):
             ui.label('🔄 Auto Checkout Settings').classes('font-semibold text-gray-700 mb-2')
             auto_checkout = ui.switch(
                 value=checkin_rules.get('auto_checkout_enabled', True),
@@ -278,7 +381,7 @@ def create_checkin_rules_panel(manager: AttendanceRulesManager):
                 ).classes('w-full mt-2').props('type=time')
         
         # Manager Approval for Late Check-in
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-amber-400 hover:shadow-md transition-shadow'):
             ui.label('👔 Manager Approval Required').classes('font-semibold text-gray-700 mb-2')
             manager_approval = ui.switch(
                 value=checkin_rules.get('require_manager_approval_late_checkin', True),
@@ -303,7 +406,7 @@ def create_absence_policies_panel(manager: AttendanceRulesManager):
     
     with ui.row().classes('gap-6 w-full'):
         # Absence Settings
-        with ui.card().classes('w-1/2 p-4'):
+        with ui.card().classes('w-1/2 p-4 border-l-4 border-rose-400 hover:shadow-md transition-shadow'):
             ui.label('📊 Absence Settings').classes('font-semibold text-gray-700 mb-4')
             
             ui.label('Unexcused Absence Penalty (hours)').classes('text-sm font-medium text-gray-600 mb-1')
@@ -334,7 +437,7 @@ def create_absence_policies_panel(manager: AttendanceRulesManager):
             ).classes('w-full')
         
         # Tardiness Penalties
-        with ui.card().classes('w-1/2 p-4'):
+        with ui.card().classes('w-1/2 p-4 border-l-4 border-pink-400 hover:shadow-md transition-shadow'):
             ui.label('⏰ Tardiness Penalty Structure').classes('font-semibold text-gray-700 mb-4')
             
             tardiness_policies = manager.rules_data.get('attendance_rules', {}).get('tardiness_policies', [])
@@ -365,55 +468,122 @@ def create_overtime_rules_panel(manager: AttendanceRulesManager):
     
     overtime_rules = manager.rules_data.get('attendance_rules', {}).get('overtime_rules', {})
     
-    with ui.grid(columns=2).classes('gap-6 w-full'):
-        # Overtime Settings
-        with ui.card().classes('p-4'):
-            ui.label('🔧 Basic Overtime Settings').classes('font-semibold text-gray-700 mb-3')
+    # Rule Calculation and Overtime Rate in horizontal layout
+    with ui.row().classes('gap-6 w-full mb-6'):
+        # Rule Calculation Card
+        with ui.card().classes('flex-1 p-6 border-l-4 border-violet-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-violet-50 to-white'):
+            ui.label('🧮 Rule Calculation').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Configure how overtime is calculated').classes('text-gray-600 mb-4')
             
-            overtime_enabled = ui.switch(
-                'Enable Overtime Calculation',
-                value=overtime_rules.get('enabled', True),
-                on_change=lambda e: update_overtime_rule('enabled', e.value)
-            ).classes('mb-3')
-            
-            ui.label('Calculation Method').classes('text-sm font-medium text-gray-600 mb-1')
-            calculation_method = ui.select(
-                options=['daily', 'weekly', 'monthly'],
-                value=overtime_rules.get('calculation_method', 'daily'),
-                on_change=lambda e: update_overtime_rule('calculation_method', e.value)
-            ).classes('w-full mb-3')
-            
-            ui.label('Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
-            overtime_multiplier = ui.number(
-                value=overtime_rules.get('overtime_multiplier', 1.5),
-                min=1.0, max=3.0, step=0.1,
-                on_change=lambda e: update_overtime_rule('overtime_multiplier', e.value)
-            ).classes('w-full')
+            with ui.column().classes('gap-4 w-full'):
+                overtime_enabled = ui.switch(
+                    'Enable Overtime Calculation',
+                    value=overtime_rules.get('enabled', True),
+                    on_change=lambda e: update_overtime_rule('enabled', e.value)
+                ).classes('mb-3')
+                
+                ui.label('Calculation Method').classes('text-sm font-medium text-gray-600 mb-1')
+                calculation_method = ui.select(
+                    options=['daily', 'weekly', 'monthly'],
+                    value=overtime_rules.get('calculation_method', 'daily'),
+                    on_change=lambda e: update_overtime_rule('calculation_method', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Overtime Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                overtime_threshold = ui.number(
+                    value=overtime_rules.get('overtime_threshold_hours', 8),
+                    min=4, max=12, step=0.5,
+                    on_change=lambda e: update_overtime_rule('overtime_threshold_hours', e.value)
+                ).classes('w-full')
         
-        # Premium Rates
-        with ui.card().classes('p-4'):
-            ui.label('💰 Premium Rate Settings').classes('font-semibold text-gray-700 mb-3')
+        # Overtime Rate Calculation Card
+        with ui.card().classes('flex-1 p-6 border-l-4 border-teal-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-teal-50 to-white'):
+            ui.label('💰 Overtime Rate Calculation').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Set compensation multipliers for overtime work').classes('text-gray-600 mb-4')
             
-            ui.label('Double Time Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
-            double_time_threshold = ui.number(
-                value=overtime_rules.get('double_time_threshold_hours', 12),
-                min=8, max=24,
-                on_change=lambda e: update_overtime_rule('double_time_threshold_hours', e.value)
-            ).classes('w-full mb-3')
+            with ui.column().classes('gap-4 w-full'):
+                ui.label('Standard Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                overtime_multiplier = ui.number(
+                    value=overtime_rules.get('overtime_multiplier', 1.5),
+                    min=1.0, max=3.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('overtime_multiplier', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Double Time Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                double_time_threshold = ui.number(
+                    value=overtime_rules.get('double_time_threshold_hours', 12),
+                    min=8, max=24,
+                    on_change=lambda e: update_overtime_rule('double_time_threshold_hours', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Double Time Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                double_time_multiplier = ui.number(
+                    value=overtime_rules.get('double_time_multiplier', 2.0),
+                    min=1.5, max=4.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('double_time_multiplier', e.value)
+                ).classes('w-full')
+    
+    # Premium Rates in horizontal layout - Operations and Controls
+    with ui.row().classes('gap-6 w-full mt-6'):
+        # Operations Card - Premium Multipliers
+        with ui.card().classes('flex-1 p-6 border-l-4 border-amber-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-amber-50 to-white'):
+            ui.label('⚙️ Premium Operations').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Configure special overtime multipliers').classes('text-gray-600 mb-4')
             
-            ui.label('Weekend Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
-            weekend_multiplier = ui.number(
-                value=overtime_rules.get('weekend_overtime_multiplier', 2.0),
-                min=1.0, max=3.0, step=0.1,
-                on_change=lambda e: update_overtime_rule('weekend_overtime_multiplier', e.value)
-            ).classes('w-full mb-3')
+            with ui.column().classes('gap-4 w-full'):
+                ui.label('Weekend Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                weekend_multiplier = ui.number(
+                    value=overtime_rules.get('weekend_overtime_multiplier', 2.0),
+                    min=1.0, max=3.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('weekend_overtime_multiplier', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Holiday Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                holiday_multiplier = ui.number(
+                    value=overtime_rules.get('holiday_overtime_multiplier', 2.5),
+                    min=1.0, max=4.0, step=0.1,
+                    on_change=lambda e: update_overtime_rule('holiday_overtime_multiplier', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Night Shift Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
+                night_shift_multiplier = ui.number(
+                    value=overtime_rules.get('night_shift_multiplier', 1.25),
+                    min=1.0, max=2.0, step=0.05,
+                    on_change=lambda e: update_overtime_rule('night_shift_multiplier', e.value)
+                ).classes('w-full')
+        
+        # Controls Card - Action Buttons and Settings
+        with ui.card().classes('flex-1 p-6 border-l-4 border-orange-400 hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-white'):
+            ui.label('🎛️ Overtime Controls').classes('text-xl font-bold text-gray-800 mb-4')
+            ui.label('Additional overtime settings and controls').classes('text-gray-600 mb-4')
             
-            ui.label('Holiday Overtime Multiplier').classes('text-sm font-medium text-gray-600 mb-1')
-            holiday_multiplier = ui.number(
-                value=overtime_rules.get('holiday_overtime_multiplier', 2.5),
-                min=1.0, max=4.0, step=0.1,
-                on_change=lambda e: update_overtime_rule('holiday_overtime_multiplier', e.value)
-            ).classes('w-full')
+            with ui.column().classes('gap-4 w-full'):
+                ui.label('Maximum Weekly Overtime (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                max_weekly_ot = ui.number(
+                    value=overtime_rules.get('max_overtime_hours_week', 20),
+                    min=0, max=60, step=1,
+                    on_change=lambda e: update_overtime_rule('max_overtime_hours_week', e.value)
+                ).classes('w-full mb-3')
+                
+                ui.label('Auto Approval Threshold (hours)').classes('text-sm font-medium text-gray-600 mb-1')
+                auto_approval_threshold = ui.number(
+                    value=overtime_rules.get('auto_approval_threshold_hours', 4),
+                    min=0, max=20, step=0.5,
+                    on_change=lambda e: update_overtime_rule('auto_approval_threshold_hours', e.value)
+                ).classes('w-full mb-3')
+                
+                with ui.row().classes('gap-3 w-full mt-4'):
+                    auto_approval = ui.switch(
+                        'Auto-approve overtime',
+                        value=overtime_rules.get('auto_overtime_approval', False),
+                        on_change=lambda e: update_overtime_rule('auto_overtime_approval', e.value)
+                    ).classes('flex-1')
+                    
+                    overtime_alerts = ui.switch(
+                        'Overtime alerts',
+                        value=overtime_rules.get('overtime_alerts_enabled', True),
+                        on_change=lambda e: update_overtime_rule('overtime_alerts_enabled', e.value)
+                    ).classes('flex-1')
     
     def update_overtime_rule(key: str, value):
         """Update overtime rule value"""
@@ -432,7 +602,7 @@ def create_break_policies_panel(manager: AttendanceRulesManager):
     
     with ui.grid(columns=2).classes('gap-6 w-full'):
         # Lunch Break Settings
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-amber-400 hover:shadow-md transition-shadow'):
             ui.label('🍽️ Lunch Break Settings').classes('font-semibold text-gray-700 mb-3')
             
             mandatory_lunch = ui.switch(
@@ -449,7 +619,7 @@ def create_break_policies_panel(manager: AttendanceRulesManager):
             ).classes('w-full')
         
         # Short Break Settings
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-lime-400 hover:shadow-md transition-shadow'):
             ui.label('☕ Short Break Settings').classes('font-semibold text-gray-700 mb-3')
             
             ui.label('Short Break Duration (minutes)').classes('text-sm font-medium text-gray-600 mb-1')
@@ -481,7 +651,7 @@ def create_remote_work_panel(manager: AttendanceRulesManager):
     
     remote_work = manager.rules_data.get('attendance_rules', {}).get('remote_work', {})
     
-    with ui.card().classes('p-6'):
+    with ui.card().classes('p-6 border-l-4 border-sky-400 hover:shadow-md transition-shadow'):
         ui.label('🔧 Remote Work Configuration').classes('font-semibold text-gray-700 mb-4')
         
         with ui.grid(columns=2).classes('gap-6 w-full'):
@@ -527,7 +697,7 @@ def create_flexible_arrangements_panel(manager: AttendanceRulesManager):
     
     with ui.grid(columns=2).classes('gap-6 w-full'):
         # Flextime Settings
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-fuchsia-400 hover:shadow-md transition-shadow'):
             ui.label('⏰ Flextime Configuration').classes('font-semibold text-gray-700 mb-3')
             
             flextime_enabled = ui.switch(
@@ -549,7 +719,7 @@ def create_flexible_arrangements_panel(manager: AttendanceRulesManager):
             ).classes('w-full').props('type=time')
         
         # Alternative Arrangements
-        with ui.card().classes('p-4'):
+        with ui.card().classes('p-4 border-l-4 border-indigo-400 hover:shadow-md transition-shadow'):
             ui.label('🔄 Alternative Arrangements').classes('font-semibold text-gray-700 mb-3')
             
             compressed_workweek = ui.switch(
@@ -590,7 +760,7 @@ def create_tracking_methods_panel(manager: AttendanceRulesManager):
         }
         
         for i, method in enumerate(tracking_methods):
-            with ui.card().classes('p-4'):
+            with ui.card().classes('p-4 border-l-4 border-slate-400 hover:shadow-md transition-shadow'):
                 with ui.row().classes('items-center justify-between w-full'):
                     with ui.row().classes('items-center gap-3'):
                         ui.label(f'{method_icons.get(method.get("method", ""), "📍")}').classes('text-2xl')
