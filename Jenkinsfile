@@ -166,18 +166,17 @@ PY
             python3 -m venv venv || (echo "ERROR: Failed to create virtual environment" && exit 1)
           fi
 
-          # Activate and setup venv
-          . venv/bin/activate
+          # Use full path to python executable to avoid PATH issues
           echo "Upgrading pip in virtual environment..."
-          python -m pip install --upgrade pip || echo "WARNING: pip upgrade failed"
+          ./venv/bin/python -m pip install --upgrade pip || echo "WARNING: pip upgrade failed"
 
           echo "Installing requirements.txt in virtual environment..."
-          python -m pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
+          ./venv/bin/python -m pip install -r requirements.txt || (echo "ERROR: Failed to install requirements.txt in venv" && exit 1)
 
           echo "Verifying critical dependencies..."
-          python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available" && exit 1)
-          python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available" && exit 1)
-          python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available" && exit 1)
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available" && exit 1)
 
           echo "Virtual environment setup completed successfully"
         '''
@@ -192,16 +191,15 @@ PY
 
           # Virtual environment should already be set up
           if [ -d "venv" ]; then
-            . venv/bin/activate
             echo "Installing test dependencies..."
-            python -m pip install pytest pytest-cov || echo "WARNING: Test dependencies install failed"
+            ./venv/bin/python -m pip install pytest pytest-cov || echo "WARNING: Test dependencies install failed"
           else
             echo "ERROR: Virtual environment not found - this should have been created in Setup Virtual Environment stage"
             exit 1
           fi
 
           # Run unit tests with coverage
-          python -m pytest tests/unit/ -v \
+          ./venv/bin/python -m pytest tests/unit/ -v \
             --cov=. --cov-report=xml:coverage.xml --cov-report=html:htmlcov \
             --cov-fail-under=50 || echo "Unit tests completed with some failures"
 
@@ -235,19 +233,18 @@ PY
             exit 1
           fi
 
-          . venv/bin/activate
           echo "Installing test dependencies..."
-          python -m pip install pytest pytest-html || echo "WARNING: Test dependencies install failed"
+          ./venv/bin/python -m pip install pytest pytest-html || echo "WARNING: Test dependencies install failed"
 
           # Verify critical dependencies are installed (should already be done, but double-check)
           echo "Verifying critical dependencies..."
-          python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
-          python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
-          python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
 
           # Start application in background
           echo "Starting application..."
-          python run_dual_services.py &
+          ./venv/bin/python run_dual_services.py &
           APP_PID=$!
           echo "App PID: $APP_PID"
 
@@ -269,7 +266,7 @@ PY
               fi
             else
               echo "App process died, restarting..."
-              python run_dual_services.py &
+              ./venv/bin/python run_dual_services.py &
               APP_PID=$!
               sleep 2
             fi
@@ -279,7 +276,7 @@ PY
 
           # Run integration tests
           echo "Running integration tests..."
-          python -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || echo "Integration tests failed"
+          ./venv/bin/python -m pytest tests/integration/ -v --tb=short --html=integration-report.html --self-contained-html || echo "Integration tests failed"
 
           # Cleanup
           echo "Stopping application..."
@@ -314,20 +311,19 @@ PY
             exit 1
           fi
 
-          . venv/bin/activate
           echo "Installing test dependencies..."
-          python -m pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
+          ./venv/bin/python -m pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
 
           # Verify critical dependencies are installed (should already be done, but double-check)
           echo "Verifying critical dependencies..."
-          python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
-          python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
-          python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
-          python -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import paho.mqtt.client; print('✓ paho-mqtt available')" || (echo "ERROR: paho-mqtt not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
+          ./venv/bin/python -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
 
           # Start application
           echo "Starting application for regression tests..."
-          python run_dual_services.py &
+          ./venv/bin/python run_dual_services.py &
           APP_PID=$!
           echo "App PID: $APP_PID"
 
@@ -347,7 +343,7 @@ PY
               fi
             else
               echo "App process died, restarting..."
-              python run_dual_services.py &
+              ./venv/bin/python run_dual_services.py &
               APP_PID=$!
               sleep 2
             fi
@@ -357,7 +353,7 @@ PY
 
           # Run regression tests (Selenium will download driver automatically)
           echo "Running regression tests..."
-          python -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html || echo "Regression tests failed"
+          ./venv/bin/python -m pytest tests/regression/ -v --tb=short --html=regression-report.html --self-contained-html || echo "Regression tests failed"
 
           # Cleanup
           echo "Stopping application..."
