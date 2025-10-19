@@ -179,7 +179,7 @@ PY
       }
       post {
         always {
-          publishCoverage adapters: [coberturaAdapter('coverage.xml')], sourceFileResolver: sourceFiles('STORE_LAST_BUILD')
+          recordCoverage tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']], sourceCodeRetention: 'EVERY_BUILD'
           publishHTML target: [
             allowMissing: true,
             alwaysLinkToLastBuild: true,
