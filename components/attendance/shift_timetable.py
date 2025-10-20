@@ -26,6 +26,17 @@ class TimetableMetrics:
     overtime_hours: int = 0
     efficiency_score: float = 0.0
 
+class TemplateState:
+    """State management for shift template selection"""
+    def __init__(self):
+        self.selected_template = None
+        self.templates = []
+        self.template_cards = {}
+
+    def select_template(self, template_id: str):
+        """Handle template selection"""
+        self.selected_template = template_id
+
 class ModernShiftTimetableManager:
     """Advanced manager for shift timetable with AI optimization"""
 
@@ -902,17 +913,12 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
     shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
 
     # State management for active selection
-    class TemplateState:
-        def __init__(self):
-            self.selected_template = None
-            self.template_cards = {}
-
     template_state = TemplateState()
 
     def select_template(template_id: str):
         """Handle template selection with visual feedback"""
         # Update state
-        template_state.selected_template = template_id
+        template_state.select_template(template_id)
 
         # Update visual states for all cards
         for tid, card_info in template_state.template_cards.items():
