@@ -6,6 +6,7 @@ import pytest
 import time
 import os
 import sys
+import shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -23,6 +24,23 @@ class TestHRMSRegression:
     @pytest.fixture(scope="class")
     def browser(self):
         """Set up Chrome browser for testing"""
+        # Check if Chrome is available
+        chrome_paths = [
+            "/usr/bin/google-chrome",
+            "/usr/bin/google-chrome-stable",
+            "/usr/bin/chromium-browser",
+            "/usr/lib/bin/google-chrome",
+            "/usr/lib/bin/google-chrome-stable"
+        ]
+
+        chrome_available = any(os.path.exists(path) for path in chrome_paths)
+        chrome_available = chrome_available or any(
+            shutil.which(cmd) for cmd in ["google-chrome", "google-chrome-stable", "chromium-browser"]
+        )
+
+        if not chrome_available:
+            pytest.skip("Chrome browser not available for Selenium tests")
+
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # Run in headless mode
         chrome_options.add_argument("--no-sandbox")

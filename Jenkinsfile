@@ -319,14 +319,38 @@ PY
           ./venv/bin/python -m pip install pytest pytest-html selenium webdriver-manager || echo "WARNING: Test dependencies install failed"
 
           # Install Chrome browser for Selenium tests
-          echo "Installing Chrome browser..."
-          if command -v apt-get >/dev/null 2>&1; then
-            apt-get update && apt-get install -y wget gnupg2 software-properties-common || echo "WARNING: Failed to install Chrome dependencies"
-            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - || echo "WARNING: Failed to add Chrome key"
-            echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list || echo "WARNING: Failed to add Chrome repo"
-            apt-get update && apt-get install -y google-chrome-stable || echo "WARNING: Failed to install Chrome"
+          echo "Installing Chrome browser for Selenium tests..."
+          CHROME_INSTALLED=false
+
+          # First check if Chrome is already available
+          if command -v google-chrome >/dev/null 2>&1 || command -v google-chrome-stable >/dev/null 2>&1 || command -v chromium-browser >/dev/null 2>&1; then
+            echo "Chrome/Chromium already available on system"
+            CHROME_INSTALLED=true
           else
-            echo "WARNING: apt-get not available, Chrome installation skipped"
+            echo "Chrome not found, attempting installation..."
+            # Try to install Chrome if we have permissions
+            if command -v apt-get >/dev/null 2>&1; then
+              # Check if we can run apt-get (have sudo or are root)
+              if apt-get update --dry-run >/dev/null 2>&1; then
+                echo "Installing Chrome via apt-get..."
+                apt-get update && apt-get install -y wget gnupg2 software-properties-common || echo "WARNING: Failed to install Chrome dependencies"
+                wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - || echo "WARNING: Failed to add Chrome key"
+                echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list || echo "WARNING: Failed to add Chrome repo"
+                apt-get update && apt-get install -y google-chrome-stable || echo "WARNING: Failed to install Chrome"
+                CHROME_INSTALLED=true
+              else
+                echo "WARNING: No permission to install Chrome via apt-get"
+              fi
+            else
+              echo "WARNING: apt-get not available, Chrome installation skipped"
+            fi
+          fi
+
+          # Verify Chrome installation
+          if [ "$CHROME_INSTALLED" = true ] && (command -v google-chrome >/dev/null 2>&1 || command -v google-chrome-stable >/dev/null 2>&1 || command -v chromium-browser >/dev/null 2>&1); then
+            echo "✓ Chrome successfully available for Selenium tests"
+          else
+            echo "⚠️  Chrome not available - Selenium tests may fail or be skipped"
           fi
 
           # Verify critical dependencies are installed (should already be done, but double-check)
