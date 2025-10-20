@@ -560,7 +560,7 @@ PY
             def version = sh(script: '''
               # Try to get version from various sources
               if [ -f "pyproject.toml" ]; then
-                grep -E '^version\s*=' pyproject.toml | sed 's/.*= *//' | tr -d '"' || echo "1.0.0"
+                grep -E '^version\\s*=' pyproject.toml | sed 's/.*= *//' | tr -d '"' || echo "1.0.0"
               elif [ -f "setup.py" ]; then
                 python3 setup.py --version 2>/dev/null || echo "1.0.0"
               else
@@ -619,7 +619,7 @@ PY
               cp coverage.xml release-artifacts/ 2>/dev/null || true
 
               # Copy executables if they exist
-              find dist/ -name "*.exe" -o -name "*installer*" -exec cp {} release-artifacts/ \\; 2>/dev/null || true
+              find dist/ -name "*.exe" -o -name "*installer*" -exec cp {} release-artifacts/ \\\\; 2>/dev/null || true
 
               echo "Release artifacts prepared in release-artifacts/"
               ls -la release-artifacts/ || true
@@ -636,11 +636,11 @@ PY
 ## Build Information
 - Build Number: ${BUILD_NUMBER}
 - Branch: ${BRANCH_NAME}
-- Commit: \$(git rev-parse HEAD)
-- Build Date: \$(date)
+- Commit: \\\$(git rev-parse HEAD)
+- Build Date: \\\$(date)
 
 ## Changes
-\$(git log --oneline -10)
+\\\$(git log --oneline -10)
 
 ## Test Results
 - Unit Tests: Available in htmlcov/
