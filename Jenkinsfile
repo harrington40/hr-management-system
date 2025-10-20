@@ -651,8 +651,8 @@ PY
 
               # Copy executables if they exist
               echo "Checking for executables..."
-              if find dist/ -name "*.exe" -o -name "*installer*" 2>/dev/null | grep -q .; then
-                find dist/ -name "*.exe" -o -name "*installer*" -exec cp {} release-artifacts/ \\\; && echo "✓ Executables copied"
+              if ls dist/*.exe dist/*installer* 2>/dev/null; then
+                cp dist/*.exe dist/*installer* release-artifacts/ 2>/dev/null && echo "✓ Executables copied" || echo "⚠️  Failed to copy some executables"
               else
                 echo "⚠️  No executables found in dist/"
               fi
