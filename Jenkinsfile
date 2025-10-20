@@ -530,6 +530,7 @@ PY
       when {
         anyOf {
           branch 'main'
+          branch 'jenkins-fixes'  // Allow staging deployment on jenkins-fixes for testing
           expression { env.BRANCH_NAME == 'main' }
         }
       }
@@ -547,7 +548,10 @@ PY
     stage('Release') {
       when {
         allOf {
-          branch 'main'
+          anyOf {
+            branch 'main'
+            branch 'jenkins-fixes'  // Allow release builds on jenkins-fixes for testing
+          }
           expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
         }
       }
