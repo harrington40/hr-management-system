@@ -46,6 +46,10 @@ Thumbs.db
 *.log
 logs/
 
+# Coverage reports
+.coverage
+htmlcov/
+
 # Database files
 *.db
 *.sqlite
