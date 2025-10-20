@@ -34,9 +34,12 @@ pipeline {
         echo "=== Pipeline Information ==="
         echo "Branch: ${env.BRANCH_NAME}"
         echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+        echo "GIT_COMMIT: ${env.GIT_COMMIT}"
+        echo "GIT_URL: ${env.GIT_URL}"
         echo "Job Name: ${env.JOB_NAME}"
         echo "Node: ${env.NODE_NAME}"
         echo "Workspace: ${env.WORKSPACE}"
+        echo "BUILD_TAG: ${env.BUILD_TAG}"
         sh '''
           set +e  # Don't fail on info gathering
           pwd || echo "pwd failed"
@@ -44,6 +47,10 @@ pipeline {
           echo "Git branch info:"
           git branch || echo "git branch failed"
           git status || echo "git status failed"
+          echo "Git remote info:"
+          git remote -v || echo "git remote failed"
+          echo "Current HEAD:"
+          git log --oneline -1 || echo "git log failed"
         '''
       }
     }
@@ -418,9 +425,10 @@ PY
     stage('Build Docker Image') {
       when {
         anyOf {
-          branch 'master'
-          branch 'dev'
-          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+          expression { env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'origin/dev' || env.GIT_BRANCH == 'origin/dev' }
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -454,9 +462,10 @@ PY
     stage('Build Windows Executable') {
       when {
         anyOf {
-          branch 'master'
-          branch 'dev'
-          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+          expression { env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'origin/dev' || env.GIT_BRANCH == 'origin/dev' }
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -511,8 +520,9 @@ PY
     stage('Deploy to Test') {
       when {
         anyOf {
-          branch 'dev'
-          expression { env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'origin/dev' || env.GIT_BRANCH == 'origin/dev' }
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -529,9 +539,10 @@ PY
     stage('Deploy to Staging') {
       when {
         anyOf {
-          branch 'master'
-          branch 'jenkins-fixes'  // Allow staging deployment on jenkins-fixes for testing
-          expression { env.BRANCH_NAME == 'master' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+          expression { env.BRANCH_NAME == 'jenkins-fixes' }  // Allow staging deployment on jenkins-fixes for testing
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -549,8 +560,10 @@ PY
       when {
         allOf {
           anyOf {
-            branch 'master'
-            branch 'jenkins-fixes'  // Allow release builds on jenkins-fixes for testing
+            expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+            expression { env.BRANCH_NAME == 'jenkins-fixes' }  // Allow release builds on jenkins-fixes for testing
+            expression { env.TAG_NAME != null }  // Allow tagged builds
+            expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
           }
           expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
         }
@@ -564,11 +577,13 @@ PY
             def version = sh(script: '''
               # Try to get version from various sources
               if [ -f "pyproject.toml" ]; then
-                grep -E '^version\\s*=' pyproject.toml | sed 's/.*= *//' | tr -d '"' || echo "1.0.0"
+                VERSION=$(grep -E '^version\\s*=' pyproject.toml | sed 's/.*= *//' | tr -d '"')
+                # Remove leading 'v' if present
+                echo "${VERSION#v}"
               elif [ -f "setup.py" ]; then
-                python3 setup.py --version 2>/dev/null || echo "1.0.0"
+                python3 setup.py --version 2>/dev/null | sed 's/^v//' || echo "1.0.0"
               else
-                echo "v1.0.${BUILD_NUMBER}"
+                echo "1.0.${BUILD_NUMBER}"
               fi
             ''', returnStdout: true).trim()
 
