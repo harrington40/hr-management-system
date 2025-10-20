@@ -34,9 +34,12 @@ pipeline {
         echo "=== Pipeline Information ==="
         echo "Branch: ${env.BRANCH_NAME}"
         echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+        echo "GIT_COMMIT: ${env.GIT_COMMIT}"
+        echo "GIT_URL: ${env.GIT_URL}"
         echo "Job Name: ${env.JOB_NAME}"
         echo "Node: ${env.NODE_NAME}"
         echo "Workspace: ${env.WORKSPACE}"
+        echo "BUILD_TAG: ${env.BUILD_TAG}"
         sh '''
           set +e  # Don't fail on info gathering
           pwd || echo "pwd failed"
@@ -44,6 +47,10 @@ pipeline {
           echo "Git branch info:"
           git branch || echo "git branch failed"
           git status || echo "git status failed"
+          echo "Git remote info:"
+          git remote -v || echo "git remote failed"
+          echo "Current HEAD:"
+          git log --oneline -1 || echo "git log failed"
         '''
       }
     }
@@ -418,9 +425,10 @@ PY
     stage('Build Docker Image') {
       when {
         anyOf {
-          branch 'main'
-          branch 'dev'
-          expression { env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+          expression { env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'origin/dev' || env.GIT_BRANCH == 'origin/dev' }
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -437,7 +445,7 @@ PY
             docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
               def app = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
               app.push()
-              if (env.BRANCH_NAME == 'main') {
+              if (env.BRANCH_NAME == 'master') {
                 app.push('latest')
               }
             }
@@ -454,9 +462,10 @@ PY
     stage('Build Windows Executable') {
       when {
         anyOf {
-          branch 'main'
-          branch 'dev'
-          expression { env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+          expression { env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'origin/dev' || env.GIT_BRANCH == 'origin/dev' }
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -511,8 +520,9 @@ PY
     stage('Deploy to Test') {
       when {
         anyOf {
-          branch 'dev'
-          expression { env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'origin/dev' || env.GIT_BRANCH == 'origin/dev' }
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -529,8 +539,10 @@ PY
     stage('Deploy to Staging') {
       when {
         anyOf {
-          branch 'main'
-          expression { env.BRANCH_NAME == 'main' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+          expression { env.BRANCH_NAME == 'jenkins-fixes' }  // Allow staging deployment on jenkins-fixes for testing
+          expression { env.TAG_NAME != null }  // Allow tagged builds
+          expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
         }
       }
       steps {
@@ -547,12 +559,25 @@ PY
     stage('Release') {
       when {
         allOf {
-          branch 'main'
+          anyOf {
+            expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'origin/master' || env.GIT_BRANCH == 'origin/master' }
+            expression { env.BRANCH_NAME == 'jenkins-fixes' }  // Allow release builds on jenkins-fixes for testing
+            expression { env.TAG_NAME != null }  // Allow tagged builds
+            expression { env.BUILD_CAUSE == 'MANUALTRIGGER' }  // Allow manual builds
+          }
           expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
         }
       }
       steps {
         script {
+          echo "=== RELEASE STAGE STARTED ==="
+          echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+          echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+          echo "TAG_NAME: ${env.TAG_NAME}"
+          echo "BUILD_CAUSE: ${env.BUILD_CAUSE}"
+          echo "Current build result: ${currentBuild.result}"
+          echo "Checking release conditions..."
+
           try {
             echo "=== Creating Release ==="
 
@@ -560,11 +585,13 @@ PY
             def version = sh(script: '''
               # Try to get version from various sources
               if [ -f "pyproject.toml" ]; then
-                grep -E '^version\\s*=' pyproject.toml | sed 's/.*= *//' | tr -d '"' || echo "1.0.0"
+                VERSION=$(grep -E '^version\\s*=' pyproject.toml | sed 's/.*= *//' | tr -d '"')
+                # Remove leading 'v' if present
+                echo "${VERSION#v}"
               elif [ -f "setup.py" ]; then
-                python3 setup.py --version 2>/dev/null || echo "1.0.0"
+                python3 setup.py --version 2>/dev/null | sed 's/^v//' || echo "1.0.0"
               else
-                echo "v1.0.${BUILD_NUMBER}"
+                echo "1.0.${BUILD_NUMBER}"
               fi
             ''', returnStdout: true).trim()
 
@@ -604,25 +631,41 @@ PY
             // Archive release artifacts
             sh """
               set +e
-              echo "Archiving release artifacts..."
+              echo "=== Preparing Release Artifacts ==="
 
               # Create release directory
               mkdir -p release-artifacts
+              echo "Created release-artifacts directory"
 
-              # Copy important files
-              cp requirements.txt release-artifacts/ 2>/dev/null || true
-              cp README.md release-artifacts/ 2>/dev/null || true
-              cp Dockerfile release-artifacts/ 2>/dev/null || true
+              # Copy important files with better error handling
+              echo "Copying core files..."
+              cp requirements.txt release-artifacts/ 2>/dev/null && echo "✓ requirements.txt copied" || echo "⚠️  requirements.txt not found"
+              cp README.md release-artifacts/ 2>/dev/null && echo "✓ README.md copied" || echo "⚠️  README.md not found"
+              cp Dockerfile release-artifacts/ 2>/dev/null && echo "✓ Dockerfile copied" || echo "⚠️  Dockerfile not found"
+              cp pyproject.toml release-artifacts/ 2>/dev/null && echo "✓ pyproject.toml copied" || echo "⚠️  pyproject.toml not found"
 
               # Copy test reports
-              cp *.html release-artifacts/ 2>/dev/null || true
-              cp coverage.xml release-artifacts/ 2>/dev/null || true
+              echo "Copying test reports..."
+              cp *.html release-artifacts/ 2>/dev/null && echo "✓ HTML reports copied" || echo "⚠️  No HTML reports found"
+              cp coverage.xml release-artifacts/ 2>/dev/null && echo "✓ Coverage report copied" || echo "⚠️  Coverage report not found"
 
               # Copy executables if they exist
-              find dist/ -name "*.exe" -o -name "*installer*" -exec cp {} release-artifacts/ \\\\; 2>/dev/null || true
+              echo "Checking for executables..."
+              if find dist/ -name "*.exe" -o -name "*installer*" 2>/dev/null | grep -q .; then
+                find dist/ -name "*.exe" -o -name "*installer*" -exec cp {} release-artifacts/ \\\; && echo "✓ Executables copied"
+              else
+                echo "⚠️  No executables found in dist/"
+              fi
 
-              echo "Release artifacts prepared in release-artifacts/"
-              ls -la release-artifacts/ || true
+              # Create a version file
+              echo "${version}" > release-artifacts/VERSION.txt
+              echo "✓ Version file created: ${version}"
+
+              echo "=== Release Artifacts Summary ==="
+              echo "Contents of release-artifacts/:"
+              ls -la release-artifacts/ || echo "Failed to list directory"
+              echo "Total files: \$(find release-artifacts/ -type f | wc -l)"
+              echo "Total size: \$(du -sh release-artifacts/ 2>/dev/null | cut -f1)"
             """
 
             // Create release notes
@@ -661,8 +704,29 @@ EOF
               echo "Release notes created"
             """
 
-            // Archive all release artifacts
-            archiveArtifacts artifacts: 'release-artifacts/**', allowEmptyArchive: true, fingerprint: true
+            // Archive all release artifacts with better error handling
+            script {
+              try {
+                def artifactPattern = 'release-artifacts/**'
+                echo "Attempting to archive artifacts with pattern: ${artifactPattern}"
+
+                // Check if artifacts directory exists and has content
+                def artifactsExist = sh(script: 'test -d release-artifacts && find release-artifacts/ -type f | grep -q .', returnStatus: true) == 0
+
+                if (artifactsExist) {
+                  echo "✓ Release artifacts found, archiving..."
+                  archiveArtifacts artifacts: artifactPattern, allowEmptyArchive: false, fingerprint: true
+                  echo "✅ Release artifacts archived successfully"
+                } else {
+                  echo "⚠️  No release artifacts found to archive"
+                  // Still try to archive in case of edge cases
+                  archiveArtifacts artifacts: artifactPattern, allowEmptyArchive: true, fingerprint: false
+                }
+              } catch (Exception e) {
+                echo "⚠️  Artifact archiving failed: ${e.getMessage()}"
+                echo "Continuing with release process..."
+              }
+            }
 
             echo "✅ Release v${version} completed successfully!"
 
@@ -670,6 +734,39 @@ EOF
             echo "⚠️  Release creation failed: ${e.getMessage()}"
             echo "Continuing pipeline despite release failure..."
             // Don't fail the pipeline for release issues
+          }
+        }
+      }
+      post {
+        always {
+          script {
+            echo "=== RELEASE STAGE POST-ACTIONS ==="
+            // Ensure artifacts are archived even if the main steps failed
+            try {
+              def artifactPattern = 'release-artifacts/**'
+              echo "Final attempt to archive release artifacts..."
+
+              // Check if artifacts directory exists and has content
+              def artifactsExist = sh(script: 'test -d release-artifacts && find release-artifacts/ -type f | grep -q .', returnStatus: true) == 0
+
+              if (artifactsExist) {
+                echo "✓ Found release artifacts in post-actions, archiving..."
+                archiveArtifacts artifacts: artifactPattern, allowEmptyArchive: false, fingerprint: true
+                echo "✅ Release artifacts archived successfully in post-actions"
+              } else {
+                echo "⚠️  No release artifacts found in post-actions either"
+                // Create minimal artifact if nothing exists
+                sh '''
+                  mkdir -p release-artifacts
+                  echo "Release failed - no artifacts created" > release-artifacts/ERROR.txt
+                  date >> release-artifacts/ERROR.txt
+                '''
+                archiveArtifacts artifacts: artifactPattern, allowEmptyArchive: true, fingerprint: false
+                echo "📦 Created error artifact for failed release"
+              }
+            } catch (Exception e) {
+              echo "⚠️  Post-action artifact archiving also failed: ${e.getMessage()}"
+            }
           }
         }
       }
