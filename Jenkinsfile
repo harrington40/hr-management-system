@@ -418,9 +418,9 @@ PY
     stage('Build Docker Image') {
       when {
         anyOf {
-          branch 'main'
+          branch 'master'
           branch 'dev'
-          expression { env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev' }
         }
       }
       steps {
@@ -437,7 +437,7 @@ PY
             docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
               def app = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
               app.push()
-              if (env.BRANCH_NAME == 'main') {
+              if (env.BRANCH_NAME == 'master') {
                 app.push('latest')
               }
             }
@@ -454,9 +454,9 @@ PY
     stage('Build Windows Executable') {
       when {
         anyOf {
-          branch 'main'
+          branch 'master'
           branch 'dev'
-          expression { env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'dev' }
+          expression { env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev' }
         }
       }
       steps {
@@ -529,9 +529,9 @@ PY
     stage('Deploy to Staging') {
       when {
         anyOf {
-          branch 'main'
+          branch 'master'
           branch 'jenkins-fixes'  // Allow staging deployment on jenkins-fixes for testing
-          expression { env.BRANCH_NAME == 'main' }
+          expression { env.BRANCH_NAME == 'master' }
         }
       }
       steps {
@@ -549,7 +549,7 @@ PY
       when {
         allOf {
           anyOf {
-            branch 'main'
+            branch 'master'
             branch 'jenkins-fixes'  // Allow release builds on jenkins-fixes for testing
           }
           expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
