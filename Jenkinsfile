@@ -578,7 +578,7 @@ PY
               git config --global user.name "Jenkins CI"
 
               # Check if tag already exists
-              if git tag -l | grep -q "^v${version}$"; then
+              if git tag -l | grep -q "^v${version}\$"; then
                 echo "Tag v${version} already exists, skipping tag creation"
               else
                 git tag -a "v${version}" -m "Release v${version} - Build #${BUILD_NUMBER}"
