@@ -442,12 +442,27 @@ PY
               return
             }
 
-            docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-              def app = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-              app.push()
-              if (env.BRANCH_NAME == 'master') {
-                app.push('latest')
-              }
+            // Use shell commands instead of Docker Pipeline plugin
+            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+              sh """
+                echo "Logging into Docker Hub..."
+                echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
+
+                echo "Building Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+
+                echo "Pushing Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+
+                if [ "${env.BRANCH_NAME}" = "master" ]; then
+                  echo "Tagging and pushing latest for master branch"
+                  docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                  docker push ${DOCKER_IMAGE}:latest
+                fi
+
+                echo "Logging out from Docker Hub..."
+                docker logout
+              """
             }
             echo "Docker build completed successfully"
           } catch (Exception e) {
