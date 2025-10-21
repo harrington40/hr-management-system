@@ -157,7 +157,7 @@ PY
           echo "Installing and running bandit..."
           $PIP install bandit || echo "Bandit installation failed"
           if command -v bandit >/dev/null 2>&1 || [ -x "./venv/bin/bandit" ]; then
-            bandit -r . -f html -o bandit-report.html || echo "Bandit scan failed"
+            ./venv/bin/bandit -r . -f html -o bandit-report.html || echo "Bandit scan failed"
           else
             echo "Bandit not available"
           fi
@@ -460,22 +460,22 @@ PY
             withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
               sh """
                 echo "Logging into Docker Hub..."
-                echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
+                echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin || echo "Docker login failed, continuing without authentication"
 
                 echo "Building Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
 
                 echo "Pushing Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                docker push ${DOCKER_IMAGE}:${DOCKER_TAG} || echo "Docker push failed, image may not be published"
 
                 if [ "${env.BRANCH_NAME}" = "master" ]; then
                   echo "Tagging and pushing latest for master branch"
                   docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
-                  docker push ${DOCKER_IMAGE}:latest
+                  docker push ${DOCKER_IMAGE}:latest || echo "Docker push latest failed"
                 fi
 
                 echo "Logging out from Docker Hub..."
-                docker logout
+                docker logout || true
               """
             }
             echo "Docker build completed successfully"

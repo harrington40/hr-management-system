@@ -20,19 +20,60 @@ class TestHRMSIntegration:
     @pytest.fixture(scope="class")
     def app_process(self):
         """Start the application for integration testing"""
+        import socket
+        import time
+
+        # Clean up any existing processes using port 8000
+        try:
+            # Try to kill any existing processes
+            import subprocess
+            subprocess.run(['pkill', '-f', 'run_dual_services.py'], check=False)
+            subprocess.run(['pkill', '-f', 'uvicorn'], check=False)
+            # Also try to kill processes using port 8000
+            result = subprocess.run(['lsof', '-ti:8000'], capture_output=True, text=True)
+            if result.returncode == 0 and result.stdout.strip():
+                pids = result.stdout.strip().split('\n')
+                for pid in pids:
+                    subprocess.run(['kill', '-9', pid], check=False)
+            time.sleep(2)
+        except:
+            pass  # Ignore cleanup errors
+
         # Start the application in background
         process = subprocess.Popen([
             sys.executable, "run_dual_services.py"
         ], cwd=os.path.join(os.path.dirname(__file__), '../..'))
 
-        # Wait for application to start
-        time.sleep(10)
+        # Wait for application to start - give it more time and check if it's actually listening
+        max_wait = 30
+        for i in range(max_wait):
+            if process.poll() is not None:
+                # Process has exited, check why
+                raise RuntimeError(f"Application failed to start, exit code: {process.returncode}")
+
+            # Check if port 8000 is listening
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            result = sock.connect_ex(('127.0.0.1', 8000))
+            sock.close()
+            if result == 0:
+                # Port is listening, application is ready
+                break
+            time.sleep(1)
+
+        if process.poll() is not None:
+            raise RuntimeError(f"Application failed to start within {max_wait} seconds")
 
         yield process
 
         # Cleanup: terminate the process
-        process.terminate()
-        process.wait()
+        try:
+            process.terminate()
+            process.wait(timeout=10)
+        except:
+            try:
+                process.kill()
+            except:
+                pass
 
     def test_application_startup(self, app_process):
         """Test that the application starts successfully"""
@@ -67,7 +108,8 @@ class TestHRMSIntegration:
     def test_ui_components_loading(self):
         """Test that UI components load without errors"""
         try:
-            response = requests.get("http://localhost:8000/", timeout=10)
+            # Test the actual UI endpoint
+            response = requests.get("http://localhost:8000/hrmkit/", timeout=10)
             assert response.status_code == 200
             assert "HRMS" in response.text or "text/html" in response.headers.get("content-type", "")
         except requests.exceptions.RequestException:
@@ -76,16 +118,16 @@ class TestHRMSIntegration:
     def test_api_endpoints(self):
         """Test various API endpoints"""
         endpoints = [
-            "/hrmkit/employees",
-            "/hrmkit/attendance",
-            "/hrmkit/dashboard"
+            "/hrmkit/dashboard",
+            "/hrmkit/attendance/attendance",
+            "/hrmkit/employees/request-transfer"
         ]
 
         for endpoint in endpoints:
             try:
-                response = requests.get(f"http://localhost:8000{endpoint}", timeout=10)
-                # Accept both 200 and redirects (3xx)
-                assert response.status_code < 400
+                response = requests.get(f"http://localhost:8000{endpoint}", timeout=10, allow_redirects=True)
+                # Accept both 200 and redirects (3xx), but not 404
+                assert response.status_code < 400 or response.status_code == 302  # Allow redirects for auth
             except requests.exceptions.RequestException:
                 pytest.skip(f"Endpoint {endpoint} not accessible")
 
