@@ -20,17 +20,27 @@ class TestAttendanceRules:
         """Test that overtime rules panel can be created"""
         # Create a mock manager instance
         manager = AttendanceRulesManager()
-        
+
         # Mock NiceGUI components
-        with patch('nicegui.ui.card'), \
+        with patch('nicegui.ui.card') as mock_card, \
+             patch('nicegui.ui.html'), \
+             patch('nicegui.ui.label'), \
              patch('nicegui.ui.row'), \
              patch('nicegui.ui.column'), \
-             patch('nicegui.ui.label'), \
-             patch('nicegui.ui.input'), \
-             patch('nicegui.ui.button'), \
-             patch('nicegui.ui.html'):
+             patch('nicegui.ui.switch'), \
+             patch('nicegui.ui.select'), \
+             patch('nicegui.ui.number'), \
+             patch('nicegui.ui.tabs'), \
+             patch('nicegui.ui.tab'), \
+             patch('nicegui.ui.slider'), \
+             patch('nicegui.ui.button'):
 
-            # This should not raise an exception
+            # Mock the card context manager
+            mock_panel = Mock()
+            mock_card.return_value.__enter__ = Mock(return_value=mock_panel)
+            mock_card.return_value.__exit__ = Mock(return_value=None)
+
+            # This should not raise an exception and should return a panel
             panel = create_overtime_rules_panel(manager)
             assert panel is not None
 
