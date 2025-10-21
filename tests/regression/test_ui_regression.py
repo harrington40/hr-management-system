@@ -18,46 +18,46 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 
+@pytest.fixture(scope="class")
+def browser():
+    """Set up Chrome browser for testing"""
+    # Check if Chrome is available
+    chrome_paths = [
+        "/usr/bin/google-chrome",
+        "/usr/bin/google-chrome-stable",
+        "/usr/bin/chromium-browser",
+        "/usr/lib/bin/google-chrome",
+        "/usr/lib/bin/google-chrome-stable"
+    ]
+
+    chrome_available = any(os.path.exists(path) for path in chrome_paths)
+    chrome_available = chrome_available or any(
+        shutil.which(cmd) for cmd in ["google-chrome", "google-chrome-stable", "chromium-browser"]
+    )
+
+    if not chrome_available:
+        pytest.skip("Chrome browser not available for Selenium tests")
+
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--window-size=1920,1080")
+
+    # Use Chrome binary from environment or default
+    chrome_bin = os.environ.get("CHROME_BIN", "/usr/bin/google-chrome-stable")
+    if os.path.exists(chrome_bin):
+        chrome_options.binary_location = chrome_bin
+
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.implicitly_wait(10)
+
+    yield driver
+
+    driver.quit()
+
+
 class TestHRMSRegression:
-    """Regression tests using Selenium WebDriver"""
-
-    @pytest.fixture(scope="class")
-    def browser(self):
-        """Set up Chrome browser for testing"""
-        # Check if Chrome is available
-        chrome_paths = [
-            "/usr/bin/google-chrome",
-            "/usr/bin/google-chrome-stable",
-            "/usr/bin/chromium-browser",
-            "/usr/lib/bin/google-chrome",
-            "/usr/lib/bin/google-chrome-stable"
-        ]
-
-        chrome_available = any(os.path.exists(path) for path in chrome_paths)
-        chrome_available = chrome_available or any(
-            shutil.which(cmd) for cmd in ["google-chrome", "google-chrome-stable", "chromium-browser"]
-        )
-
-        if not chrome_available:
-            pytest.skip("Chrome browser not available for Selenium tests")
-
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Run in headless mode
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--window-size=1920,1080")
-
-        # Use Chrome binary from environment or default
-        chrome_bin = os.environ.get("CHROME_BIN", "/usr/bin/google-chrome-stable")
-        if os.path.exists(chrome_bin):
-            chrome_options.binary_location = chrome_bin
-
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.implicitly_wait(10)
-
-        yield driver
-
-        driver.quit()
 
     def test_application_loads(self, browser):
         """Test that the main application page loads"""
