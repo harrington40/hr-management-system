@@ -253,6 +253,13 @@ PY
           ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
           ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
 
+          # Clean up any existing processes using port 8000
+          echo "Cleaning up any existing processes on port 8000..."
+          pkill -f "python3 run_dual_services.py" || true
+          pkill -f "uvicorn" || true
+          lsof -ti:8000 | xargs kill -9 2>/dev/null || true
+          sleep 2
+
           # Start application in background
           echo "Starting application..."
           ./venv/bin/python run_dual_services.py &
@@ -366,6 +373,13 @@ PY
           ./venv/bin/python -c "import fastapi; print('✓ fastapi available')" || (echo "ERROR: fastapi not available - requirements.txt installation failed" && exit 1)
           ./venv/bin/python -c "import nicegui; print('✓ nicegui available')" || (echo "ERROR: nicegui not available - requirements.txt installation failed" && exit 1)
           ./venv/bin/python -c "import selenium; print('✓ selenium available')" || (echo "ERROR: selenium not available - requirements.txt installation failed" && exit 1)
+
+          # Clean up any existing processes using port 8000
+          echo "Cleaning up any existing processes on port 8000..."
+          pkill -f "python3 run_dual_services.py" || true
+          pkill -f "uvicorn" || true
+          lsof -ti:8000 | xargs kill -9 2>/dev/null || true
+          sleep 2
 
           # Start application
           echo "Starting application for regression tests..."
