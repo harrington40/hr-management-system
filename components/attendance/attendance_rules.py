@@ -463,10 +463,11 @@ def create_absence_policies_panel(manager: AttendanceRulesManager):
 
 def create_overtime_rules_panel(manager: AttendanceRulesManager):
     """Create overtime rules configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Overtime Calculation Rules</h2>', sanitize=False)
-    ui.label('Configure overtime policies and compensation rates').classes('text-gray-600 mb-6')
-    
-    overtime_rules = manager.rules_data.get('attendance_rules', {}).get('overtime_rules', {})
+    with ui.card().classes('w-full p-6') as panel:
+        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Overtime Calculation Rules</h2>', sanitize=False)
+        ui.label('Configure overtime policies and compensation rates').classes('text-gray-600 mb-6')
+
+        overtime_rules = manager.rules_data.get('attendance_rules', {}).get('overtime_rules', {})
     
     # Rule Calculation and Overtime Rate in horizontal layout
     with ui.row().classes('gap-6 w-full mb-6'):
@@ -592,6 +593,8 @@ def create_overtime_rules_panel(manager: AttendanceRulesManager):
         if 'overtime_rules' not in manager.rules_data['attendance_rules']:
             manager.rules_data['attendance_rules']['overtime_rules'] = {}
         manager.rules_data['attendance_rules']['overtime_rules'][key] = value
+
+    return panel
 
 def create_break_policies_panel(manager: AttendanceRulesManager):
     """Create break policies configuration panel"""
