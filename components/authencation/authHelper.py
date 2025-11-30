@@ -16,8 +16,9 @@ import hashlib
 import time
 # import base64
 from urllib.parse import urlencode, urlparse, parse_qs
-from helperFuns import readEnv
-import jwt as PyJWT
+from ...helperFuns import readEnv
+# import jwt as PyJWT
+from jwt import JWT as PyJWT, jwk_from_bytes
 
 # import helperFuns.helperFuns
 current_url = ''
@@ -62,7 +63,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         # return await call_next(request)
         
 # Commenting out the middleware for now
-# app.add_middleware(AuthMiddleware)
+app.add_middleware(AuthMiddleware)
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -156,8 +157,9 @@ def validate_magic_link_server(user_email: str, timestamp: str, token: str):
             "timestamp": timestamp,
             "username": user_email.split('@')[0].title()
         }
+        print(user_data)
         userToken = create_jwt_token(user_data)
-        
+        print(userToken)
         if userToken:
             return True, userToken  # Return token instead of setting storage here
         else:
@@ -167,7 +169,7 @@ def validate_magic_link_server(user_email: str, timestamp: str, token: str):
         return False, f"Authentication failed: {str(e)}"
 
 # Function to validate a magic link from URL parameters
-async def validate_magic_link_from_url(redirect_to: str = '/hrmkit/dashboard'):
+async def validate_magic_link_from_url(redirect_to: str = '/hrmkit/reporting/dashboard'):
     try:
         # Get URL parameters from the request context
         from fastapi import Request
@@ -210,7 +212,7 @@ async def validate_magic_link_from_url(redirect_to: str = '/hrmkit/dashboard'):
                         ui.notify(f"Welcome {user_data['username']}! You have been successfully logged in.", color='positive')
                         
                         # Redirect to clean dashboard URL
-                        ui.navigate.to('/hrmkit/dashboard')
+                        ui.navigate.to('/hrmkit/reporting/dashboard')
                         
                     except Exception as e:
                         ui.notify("Authentication failed. Please try again.", color='negative')
@@ -222,7 +224,7 @@ async def validate_magic_link_from_url(redirect_to: str = '/hrmkit/dashboard'):
 # Function to validate a magic link
 def validate_magic_link(redirect_to: str = '/'):
     # url = await ui.run_javascript('window.location.href')
-    print(current_url)
+    # print(current_url)
     if current_url:
         parsed_url = urlparse(current_url)
         query_params = parse_qs(parsed_url.query)
@@ -267,8 +269,11 @@ def create_jwt_token(data: dict):
             "exp": int((date + JWT_TOKEN_LIFETIME).timestamp()),
             "username": data['username']
         }
+    
         # Use PyJWT encode function
-        token = PyJWT.encode(payload, SECRET_KEY, algorithm="HS256")
+        jwk_key = jwk_from_bytes(SECRET_KEY.encode())
+        print(jwk_key)
+        token = PyJWT().encode(payload, key=SECRET_KEY, alg="HS256")
         return token
     except Exception as e:
         print(f"JWT encoding error: {e}")
@@ -277,14 +282,14 @@ def create_jwt_token(data: dict):
 def decode_jwt_token(token: str):
     try:
         # Use PyJWT decode function
-        data = PyJWT.decode(token, SECRET_KEY, algorithms=["HS256"])
+        data = PyJWT().decode(token, SECRET_KEY, algorithms=["HS256"])
         return data if (data and "email" in data) else None
-    except PyJWT.ExpiredSignatureError:
+    except:
         print("JWT token has expired")
         return None
-    except PyJWT.InvalidTokenError as err:
-        print(f"JWT token decode error: {str(err)}")
-        return None
+    # except PyJWT.InvalidTokenError as err:
+    #     print(f"JWT token decode error: {str(err)}")
+    #     return None
     
 def extract_user() -> None:
      if app.storage.user.get('authenticated', False):

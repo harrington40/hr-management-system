@@ -1,6 +1,6 @@
 from nicegui import ui, app
-from helperFuns import imagePath
-from assets import FlipCards, SearchBox
+from ...helperFuns import imagePath
+from ...assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, timedelta
 import json
@@ -695,7 +695,7 @@ def get_department_by_employee(employee_id):
 def update_department_employee_counts():
     """Update all department employee counts based on actual employee data"""
     try:
-        from components.administration.enroll_staff import employee_data_manager
+        from ...components.administration.enroll_staff import employee_data_manager
         
         # Get current employee counts by department
         department_counts = {}

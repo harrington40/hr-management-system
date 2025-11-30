@@ -4,13 +4,13 @@ Coordinates all services (MQTT, Backblaze, gRPC, OrientDB)
 """
 
 import logging
-import sys
-import os
-from services.mqtt_service import mqtt_service
-from services.backblaze_service import backblaze_service
-from services.grpc_service import grpc_service
-from services.database_service import database_service
-from services.auth_service import AuthService
+# import sys
+# import os
+from ..services.mqtt_service import mqtt_service
+from ..services.backblaze_service import backblaze_service
+from ..services.grpc_service import grpc_service
+from ..services.database_service import database_service
+from ..services.auth_service import AuthService
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +114,7 @@ class ServiceManager:
         """Get service by name"""
         if service_name == 'auth':
             return self.auth_service
-        elif service_name == 'hrms_grpc':
+        elif service_name == 'grpc':
             return self.hrms_grpc_service
         return self.services.get(service_name)
     
@@ -122,7 +122,7 @@ class ServiceManager:
         """Check if service is available"""
         if service_name == 'auth':
             return self.auth_service is not None
-        elif service_name == 'hrms_grpc':
+        elif service_name == 'grpc':
             return self.hrms_grpc_service is not None
         
         service = self.services.get(service_name)

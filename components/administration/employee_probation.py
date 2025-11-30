@@ -1,6 +1,6 @@
 from nicegui import ui, app
-from helperFuns import imagePath
-from assets import FlipCards, SearchBox
+from ...helperFuns import imagePath
+from ...assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, timedelta, date
 import json

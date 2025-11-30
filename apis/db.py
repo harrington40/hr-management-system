@@ -7,7 +7,7 @@ from sqlalchemy.engine import create_engine
 from sqlalchemy.sql import text
 # import pandas as pd
 
-import helperFuns.helperFuns as hf
+import web.hr.helperFuns.utils as hf
 # load_dotenv()
 
 Base = declarative_base()

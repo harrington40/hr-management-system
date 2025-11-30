@@ -1,3 +1,4 @@
-from .sidebar import Sidebar, create_modern_sidebar
+from .sidebar import Sidebar
+from .subpages import router
 
-__all__ = ['Sidebar', 'create_modern_sidebar']
+__all__ = ['Sidebar', 'router']

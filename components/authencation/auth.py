@@ -1,10 +1,10 @@
-from helperFuns import imagePath
-from assets import RemoveOverPadding, SildeFromTop, SlideFromBottom, Wave_AnimationCSS, ZoomIn
-from components.authencation.authHelper import generate_magic_link
 import asyncio
-
 from nicegui import ui, html, app
 from datetime import datetime
+
+from ...helperFuns import imagePath
+from ...assets import RemoveOverPadding, SildeFromTop, SlideFromBottom, Wave_AnimationCSS, ZoomIn
+from .authHelper import create_dev_auth_token, generate_magic_link
 
 def Login_Page():
     ZoomIn()
@@ -28,11 +28,9 @@ def Login_Page():
                     ui.label('Forgot').classes('font-medium text-blue-600 hover:text-blue-800 -mr-16')
                     ui.label('Password?').classes('font-semibold text-blue-600 hover:text-blue-800 cursor-pointer -ml-[5rem]')
                 submit_btn = ui.button('Login', on_click=lambda: handleSubmit([email, password], submit_btn, email.value)).props(f'rounded').classes('mt-6 w-full font-bold') #.bind_enabled_from(checker, 'no_errors')
-                # Magic link button
+               
                 ui.button('Send Magic Link', on_click=lambda: send_magic_link(email.value)).props('outlined color=purple').classes('mt-2 w-full')
-                # Development bypass button for testing
                 ui.button('Dev Login (Testing)', on_click=dev_login).props('outlined color=orange').classes('mt-2 w-full text-xs')
-                # ui.label(f'{progress['isLoading']}').classes('text-red-200')
         with ui.image(f'{imagePath('bg.jpg')}').classes('lg:block bg-fixed md:col-span-9 lg:col-span-8'):
             SlideFromBottom()
             SildeFromTop()
@@ -66,11 +64,10 @@ async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: 
 async def dev_login():
     """Development login bypass for testing"""
     try:
-        from .authHelper import create_dev_auth_token
         token = create_dev_auth_token("dev@hrmkit.com")
         app.storage.user.update({'token': token, 'authenticated': True})
         ui.notify('Development login successful!', color='positive')
-        ui.navigate.to('/dashboard')
+        ui.navigate.to('hrmkit/reporting/dashboard')
     except Exception as e:
         ui.notify(f'Development login failed: {str(e)}', color='negative')
 

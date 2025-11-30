@@ -1,19 +1,27 @@
-from components import Login_Page, InstitutionProfile, EnrollNewStaff
-from components.administration.departmental_sections import DepartmentalSections
-from components.administration.employee_termination import EmployeeTermination
-from components.administration.employee_probation import EmployeeProbation
-from components.employees import RequestTransfer, RequestLeave
-from components.attendance import AttendanceRules, LeaveRules, ShiftTimetable, SetHolidays
-from components.attendance.staff_status import create_staff_status_page as StaffStatus
-from components.attendance.staff_schedule import create_staff_schedule_page as StaffSchedulePage
-from components.dashboard.main_dashboard import create_main_dashboard, UserRole
-from components.dashboard.menu_integration import create_integrated_dashboard_menu, create_dashboard_landing_page
-from helperFuns import imagePath
-from layout import Sidebar, create_modern_sidebar
+from .components import (
+InstitutionProfile, EnrollNewStaff, decode_jwt_token, DepartmentalSections, EmployeeTermination, 
+validate_magic_link_server, EmployeeProbation, RequestTransfer, RequestLeave, AttendanceRules, 
+LeaveRules, ShiftTimetable, SetHolidays, create_staff_status_page as StaffStatus, 
+create_staff_schedule_page as StaffSchedulePage, create_main_dashboard, UserRole, 
+create_integrated_dashboard_menu, create_dashboard_landing_page
+)
+# from components.authencation.authHelper import decode_jwt_token
+# from .components.administration.departmental_sections import DepartmentalSections
+# from .components.administration.employee_termination import EmployeeTermination
+# from .components.administration.employee_probation import EmployeeProbation
+# from .components.employees import RequestTransfer, RequestLeave
+# from .components.attendance import AttendanceRules, LeaveRules, ShiftTimetable, SetHolidays
+# from .components.attendance.staff_status import create_staff_status_page as StaffStatus
+# from .components.attendance.staff_schedule import create_staff_schedule_page as StaffSchedulePage
+# from .components.reports.dashboard.main_dashboard import create_main_dashboard, UserRole
+# from components.reports.dashboard.menu_integration import create_integrated_dashboard_menu, create_dashboard_landing_page
+from .helperFuns import imagePath
+# from components.authencation.authHelper import validate_magic_link_server
+from .layout import Sidebar, router
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from nicegui import ui
+from nicegui import ui, app, context
 import urllib.parse
 import random
 
@@ -23,321 +31,298 @@ def create_page_layout():
     # Sidebar is now always 288px wide (w-72), so use ml-72 for left margin
     return ui.element('div').classes('ml-72 transition-all duration-300 ease-in-out min-h-screen bg-gray-50 p-6 relative z-10')
 
-def init(fastapi_app: FastAPI) -> None:
-    """Initialize NiceGUI with FastAPI integration using run_with"""
-    from nicegui import ui
+def dashboard_page():
+    # # Check for JWT token in URL (from magic link auth)
+    jwt_token = None
+    username = None
+    
+    try:
+        if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
+            request = context.client.request
+            if request and hasattr(request, 'query_params'):
+                jwt_token = request.query_params.get("jwt_token")
+                username = request.query_params.get("username")
+                
+                if jwt_token:
+                    # Decode and validate the JWT token
+                    jwt_token = urllib.parse.unquote(jwt_token)
+                    user_data = decode_jwt_token(jwt_token)
+                    
+                    if user_data:
+                        # Set authentication in storage
+                        app.storage.user.update({'token': jwt_token, 'authenticated': True})
+                        ui.notify(f"Welcome {username or user_data.get('username', 'User')}! You have been successfully logged in.", color='positive')
+                        # Clean redirect to remove token from URL - use relative path since we're already in /hrmkit mount
+                        ui.navigate.to('/hrmkit/reporting/dashboard')
+                        return
+    except Exception as e:
+        print(f"Error processing JWT token: {e}")
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # Check if user wants traditional menu or modern dashboard
+    view_mode = None
+    try:
+        if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
+            request = context.client.request
+            if request and hasattr(request, 'query_params'):
+                view_mode = request.query_params.get("view")
+    except:
+        pass
+    
+    if view_mode == "menu":
+        ui.label('Welcome to the Dashboard!').classes('text-2xl font-bold')
+        # Add quick access to modern dashboard
+        with ui.card().classes('w-full max-w-md mt-6'):
+            with ui.card_section().classes('p-6'):
+                ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>', sanitize=False)
+                ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>', sanitize=False)
+                ui.button('🏢 Open Modern Dashboard', on_click=lambda: ui.navigate.to('/hrmkit/reporting/dashboard')).classes('w-full bg-blue-600 text-white')
+    else:
+        # Modern comprehensive dashboard
+        # Determine user role (for now, default to admin - could be enhanced with user management)
+        user_role = UserRole.ADMIN  # This could be determined from user data in a real system
+        # Add option to switch to traditional menu
+        with ui.row().classes('fixed top-4 right-4 z-50'):
+            ui.button('📋 Traditional Menu', on_click=lambda: ui.navigate.to('/hrmkit/reporting/dashboard?view=menu')).classes('bg-gray-600 text-white shadow-lg hover:bg-gray-700 transition-colors')
+        create_main_dashboard(user_role)
 
+def institution_profile_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    InstitutionProfile()
+
+def enroll_staff_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    EnrollNewStaff()    
+
+def departmental_sections_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    DepartmentalSections()
+
+def employee_termination_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    EmployeeTermination()
+
+def employee_probation_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    EmployeeProbation()
+
+def request_transfer_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    RequestTransfer()
+
+def request_leave_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    RequestLeave()
+
+def attendance_rules_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    AttendanceRules()
+
+def leave_rules_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    LeaveRules()
+
+def shift_timetable_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    ShiftTimetable()
+
+def set_holidays_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # Now load the full SetHolidays component
+    try:
+        SetHolidays()
+    except Exception as e:
+        # Fallback UI if SetHolidays fails
+        ui.label('❌ Error loading holiday management').classes('text-red-600 font-bold text-center mt-8')
+        ui.label(f'Error: {str(e)}').classes('text-red-400 text-center mt-2')
+        ui.button('Retry', on_click=lambda: ui.run_javascript('location.reload()')).classes('bg-blue-500 text-white px-4 py-2 rounded mt-4')
+
+def staff_schedule_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    StaffSchedulePage()
+
+def staff_status_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    StaffStatus()
+
+def menu_integration_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    create_integrated_dashboard_menu()
+
+def dashboard_landing_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    create_dashboard_landing_page()
+    
+def leave_request_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Staff Leave Request Page!').classes('text-2xl font-bold')
+    
+def transfer_request_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Staff Transfer Request Page!').classes('text-2xl font-bold')
+    
+def employee_report_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Employee Report and Listing!').classes('text-2xl font-bold')
+    
+def employee_timesheet_report_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Employee Timeshee Report!').classes('text-2xl font-bold')
+    
+def administration_report_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Administration Page!').classes('text-2xl font-bold')
+    ui.label('This report presents stats on staff under probation and termination').classes('text-xl font-semibold')
+    
+def report_department_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Department and Section Report Page!').classes('text-2xl font-bold')
+    
+def leave_report_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Staff Leave Report Page!').classes('text-2xl font-bold')
+    
+def assets_report_page():
+    # Check if user is authenticated
+    if not app.storage.user.get('authenticated', False):
+        ui.navigate.to('/hrmkit')
+        return
+    # UI to be designed and developed
+    ui.label('Welcome to Assets Report Page!').classes('text-2xl font-bold')
+    
+def init(fastapi_app: FastAPI) -> None:
+    @ui.page('/hrmkit/{_:path}')
+    def page_layout():   
+      Sidebar()
+      ui.sub_pages({
+      '/hrmkit/reporting/dashboard': lambda: dashboard_page(),
+      '/hrmkit/reporting/menu-integration': lambda: menu_integration_page(),
+      '/hrmkit/reporting/dashboard-landing': lambda: dashboard_landing_page(),
+      '/hrmkit/administration/institution': lambda: institution_profile_page(),
+      '/hrmkit/administration/employee/enroll-staff': lambda: enroll_staff_page(),
+      '/hrmkit/administration/departments': lambda: departmental_sections_page(),
+      '/hrmkit/administration/termination': lambda: employee_termination_page(),
+      '/hrmkit/administration/probation': lambda: employee_probation_page(),
+      '/hrmkit/administration/transfer/requests': lambda: transfer_request_page(),
+      '/hrmkit/administration/leave/requests': lambda: leave_request_page(),
+      '/hrmkit/employees/request-transfer': lambda: request_transfer_page(),
+      '/hrmkit/employees/request-leave': lambda: request_leave_page(),
+      '/hrmkit/attendance/attendance-rules': lambda: attendance_rules_page(),
+      '/hrmkit/attendance/leave/rules': lambda: leave_rules_page(),
+      '/hrmkit/attendance/timetable': lambda: shift_timetable_page(),
+      '/hrmkit/attendance/holidays': lambda: set_holidays_page(),
+      '/hrmkit/attendance/employee/schedule': lambda: staff_schedule_page(),
+      '/hrmkit/attendance/staff/on_duty_status': lambda: staff_status_page(),
+      '/hrmkit/reporting/modern-dashboard': lambda: create_modern_hr_dashboard(),
+      '/hrmkit/reporting/employees': lambda: employee_report_page(),
+      '/hrmkit/reporting/employees/timesheet': lambda: employee_timesheet_report_page(),
+      '/hrmkit/reporting/administration': lambda: administration_report_page(),
+      '/hrmkit/reporting/departments': lambda: report_department_page(),
+      '/hrmkit/reporting/leaves': lambda: leave_report_page(),
+      '/hrmkit/reporting/assets': lambda: assets_report_page(),
+   })
+    fastapi_app.include_router(router)
+    
     # Use run_with to integrate NiceGUI with FastAPI
     ui.run_with(
         fastapi_app,
         title='HRMkit',
         favicon=imagePath('favicon.ico') if imagePath('favicon.ico') else None,
-        mount_path='/hrmkit',
+        # mount_path='/hrmkit',
         storage_secret='hrms-secret-key-2024'  # Required for user storage
     )
-    @ui.page('/', title='HRMkit - Login')
-    def show():
-       # Check for error messages in URL
-       from fastapi import Request
-       from nicegui import context
-       try:
-           if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
-               request = context.client.request
-               if request and hasattr(request, 'query_params'):
-                   error = request.query_params.get("error")
-                   if error:
-                       ui.notify(f"Authentication error: {error}", color='negative')
-       except:
-           pass
-           
-       Login_Page()
-       
-    @ui.page('/dashboard')
-    def dashboard_page():
-       from nicegui import app
-       
-       # Check for JWT token in URL (from magic link auth)
-       from fastapi import Request
-       from nicegui import context
-       jwt_token = None
-       username = None
-       
-       try:
-           if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
-               request = context.client.request
-               if request and hasattr(request, 'query_params'):
-                   jwt_token = request.query_params.get("jwt_token")
-                   username = request.query_params.get("username")
-                   
-                   if jwt_token:
-                       # Decode and validate the JWT token
-                       jwt_token = urllib.parse.unquote(jwt_token)
-                       from components.authencation.authHelper import decode_jwt_token
-                       user_data = decode_jwt_token(jwt_token)
-                       
-                       if user_data:
-                           # Set authentication in storage
-                           app.storage.user.update({'token': jwt_token, 'authenticated': True})
-                           ui.notify(f"Welcome {username or user_data.get('username', 'User')}! You have been successfully logged in.", color='positive')
-                           # Clean redirect to remove token from URL - use relative path since we're already in /hrmkit mount
-                           ui.navigate.to('/dashboard')
-                           return
-       except Exception as e:
-           print(f"Error processing JWT token: {e}")
-       
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-       
-       # Check if user wants traditional menu or modern dashboard
-       from nicegui import context
-       view_mode = None
-       try:
-           if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
-               request = context.client.request
-               if request and hasattr(request, 'query_params'):
-                   view_mode = request.query_params.get("view")
-       except:
-           pass
-       
-       if view_mode == "menu":
-           # Modern sidebar menu with red highlighting
-           create_modern_sidebar()
-           ui.label('Welcome to the Dashboard!').classes('text-2xl font-bold')
-           
-           # Add quick access to modern dashboard
-           with ui.card().classes('w-full max-w-md mt-6'):
-               with ui.card_section().classes('p-6'):
-                   ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>', sanitize=False)
-                   ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>', sanitize=False)
-                   ui.button('🏢 Open Modern Dashboard', on_click=lambda: ui.navigate.to('/dashboard')).classes('w-full bg-blue-600 text-white')
-       else:
-           # Modern comprehensive dashboard
-           # Determine user role (for now, default to admin - could be enhanced with user management)
-           user_role = UserRole.ADMIN  # This could be determined from user data in a real system
-           
-           # Add option to switch to traditional menu
-           with ui.row().classes('fixed top-4 right-4 z-50'):
-               ui.button('📋 Traditional Menu', on_click=lambda: ui.navigate.to('/dashboard?view=menu')).classes('bg-gray-600 text-white shadow-lg hover:bg-gray-700 transition-colors')
-           
-           create_main_dashboard(user_role)
-
-    @ui.page('/administration/institution')
-    def institution_profile_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           InstitutionProfile()
-
-    @ui.page('/administration/enroll-staff')
-    def enroll_staff_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           EnrollNewStaff()
-
-    @ui.page('/administration/departments')
-    def departmental_sections_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           DepartmentalSections()
-
-    @ui.page('/administration/termination')
-    def employee_termination_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           EmployeeTermination()
-
-    @ui.page('/administration/probation')
-    def employee_probation_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           EmployeeProbation()
-
-    @ui.page('/employees/request-transfer')
-    def request_transfer_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           RequestTransfer()
-
-    @ui.page('/employees/request-leave')
-    def request_leave_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           RequestLeave()
-
-    @ui.page('/attendance/attendance')
-    def attendance_rules_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           AttendanceRules()
-
-    @ui.page('/attendance/leave/rules')
-    def leave_rules_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           LeaveRules()
-
-    @ui.page('/attendance/timetable')
-    def shift_timetable_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           ShiftTimetable()
-
-    @ui.page('/attendance/holidays')
-    def set_holidays_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           # Now load the full SetHolidays component
-           try:
-               SetHolidays()
-           except Exception as e:
-               # Fallback UI if SetHolidays fails
-               ui.label('❌ Error loading holiday management').classes('text-red-600 font-bold text-center mt-8')
-               ui.label(f'Error: {str(e)}').classes('text-red-400 text-center mt-2')
-               ui.button('Retry', on_click=lambda: ui.run_javascript('location.reload()')).classes('bg-blue-500 text-white px-4 py-2 rounded mt-4')
-
-    @ui.page('/attendance/staff_schedule')
-    def staff_schedule_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           StaffSchedulePage()
-
-    @ui.page('/attendance/staff_status')
-    def staff_status_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_modern_sidebar()
-       with create_page_layout():
-           StaffStatus()
-
-    @ui.page('/menu-integration')
-    def menu_integration_page():
-       from nicegui import app
-
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-
-       create_integrated_dashboard_menu()
-
-    @ui.page('/dashboard-landing')
-    def dashboard_landing_page():
-       from nicegui import app
-       
-       # Check if user is authenticated
-       if not app.storage.user.get('authenticated', False):
-           ui.navigate.to('/')
-           return
-       
-       create_dashboard_landing_page()
 
     # Add a route specifically for magic link validation (outside the NiceGUI mount)
-    @fastapi_app.get("/auth")
-    async def magic_link_auth(email: str = None, timestamp: str = None, token: str = None):
-        if email and timestamp and token:
-            # Validate the magic link
-            from components.authencation.authHelper import validate_magic_link_server
-            is_valid, result = validate_magic_link_server(email, timestamp, token)
+    # @fastapi_app.get("/auth")
+    # async def magic_link_auth(email: str = None, timestamp: str = None, token: str = None):
+    #     if email and timestamp and token:
+    #         # Validate the magic link
+    #         is_valid, result = validate_magic_link_server(email, timestamp, token)
             
-            if is_valid:
-                # Redirect to dashboard with the JWT token in URL
-                encoded_token = urllib.parse.quote(result)  # result is the JWT token
-                return RedirectResponse(url=f"/hrmkit/dashboard?jwt_token={encoded_token}&username={email.split('@')[0].title()}")
-            else:
-                # Redirect to login with error
-                return RedirectResponse(url="/hrmkit/?error=" + urllib.parse.quote(result))
-        else:
-            return RedirectResponse(url="/hrmkit/")
+    #         if is_valid:
+    #             # Redirect to dashboard with the JWT token in URL
+    #             encoded_token = urllib.parse.quote(result)  # result is the JWT token
+    #             return RedirectResponse(url=f"/hrmkit/reporting/dashboard?jwt_token={encoded_token}&username={email.split('@')[0].title()}")
+    #         else:
+    #             # Redirect to login with error
+    #             return RedirectResponse(url="/hrmkit/?error=" + urllib.parse.quote(result))
+    #     else:
+    #         return RedirectResponse(url="/hrmkit/")
 
 def create_modern_hr_dashboard():
     """Create a modern, visually appealing HR dashboard with smart algorithms"""

@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 # Import employee data manager for real-time statistics
-from components.administration.enroll_staff import employee_data_manager
+from ...components.administration.enroll_staff import employee_data_manager
 
 class StaffStatus(Enum):
     ON_DUTY = "on_duty"

@@ -7,7 +7,7 @@ Handles database connections, queries, and operations using OrientDB REST API
 import logging
 import requests
 from typing import List, Dict, Any, Optional
-from config.services import config
+from ..config.services import config
 from requests.auth import HTTPBasicAuth
 
 logger = logging.getLogger(__name__)
