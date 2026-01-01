@@ -24,6 +24,17 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()  # Remove lifespan for debugging
 
+# Add health check endpoint for Jenkins smoke tests
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring"""
+    return {
+        "status": "healthy",
+        "service": "HRMS Application",
+        "version": "1.0.0",
+        "timestamp": str(__import__("datetime").datetime.now())
+    }
+
 # Add SessionMiddleware for NiceGUI first (added in reverse order)
 # Initialize session with required 'id' key
 from starlette.middleware.base import BaseHTTPMiddleware
