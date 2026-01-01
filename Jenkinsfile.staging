@@ -153,14 +153,15 @@ pipeline {
             post {
                 always {
                     junit allowEmptyResults: true, testResults: 'test-results/*.xml'
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'htmlcov',
-                        reportFiles: 'index.html',
-                        reportName: 'Staging Coverage Report'
-                    ])
+                    // TODO: Install HTML Publisher Plugin to enable this
+                    // publishHTML([
+                    //     allowMissing: true,
+                    //     alwaysLinkToLastBuild: true,
+                    //     keepAll: true,
+                    //     reportDir: 'htmlcov',
+                    //     reportFiles: 'index.html',
+                    //     reportName: 'Staging Coverage Report'
+                    // ])
                 }
             }
         }
