@@ -63,7 +63,7 @@ pipeline {
         
         // Notification
         SLACK_CHANNEL = '#hrms-production-deployments'
-        EMAIL_RECIPIENTS = 'engineering-leads@company.com,devops@company.com,cto@company.com'
+        EMAIL_RECIPIENTS = 'dev@transtechologies.com'
         
         // Monitoring
         MONITORING_ENABLED = 'true'

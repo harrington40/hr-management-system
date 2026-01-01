@@ -40,7 +40,7 @@ pipeline {
         
         // Notification
         SLACK_CHANNEL = '#hrms-staging-deployments'
-        EMAIL_RECIPIENTS = 'qa-team@company.com,dev-leads@company.com'
+        EMAIL_RECIPIENTS = 'dev@transtechologies.com'
     }
 
     triggers {
