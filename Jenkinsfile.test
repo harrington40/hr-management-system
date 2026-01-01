@@ -228,7 +228,11 @@ EOF
 
         stage('🐳 Build Docker Image') {
             when {
-                expression { fileExists('Dockerfile') }
+                expression { 
+                    // Skip until Docker Pipeline plugin is installed
+                    return false
+                    // fileExists('Dockerfile') 
+                }
             }
             steps {
                 echo "Building Docker image..."
@@ -242,7 +246,11 @@ EOF
 
         stage('🔍 Docker Image Scan') {
             when {
-                expression { fileExists('Dockerfile') }
+                expression {
+                    // Skip until Docker Pipeline plugin is installed
+                    return false
+                    // fileExists('Dockerfile')
+                }
             }
             steps {
                 echo "Scanning Docker image for vulnerabilities..."
@@ -259,7 +267,11 @@ EOF
 
         stage('📤 Push Docker Image') {
             when {
-                expression { fileExists('Dockerfile') }
+                expression { 
+                    // Skip until Docker Pipeline plugin is installed
+                    return false
+                    // fileExists('Dockerfile')
+                }
             }
             steps {
                 echo "Pushing Docker image to registry..."
