@@ -31,7 +31,7 @@ pipeline {
         DOCKER_TAG = "test-${env.BUILD_NUMBER}"
         
         // Test Environment URLs
-        TEST_URL = 'http://test-hrms.company.local:8081'
+        TEST_URL = 'http://localhost:8081'
         
         // Database Configuration (Test)
         ORIENTDB_HOST = 'orientdb-test.company.local'
@@ -118,9 +118,9 @@ pipeline {
                 echo "Setting up Python virtual environment..."
                 sh '''
                     # Install python3-venv if not already installed
-                    echo "Ensuring python3-venv is installed..."
-                    sudo apt-get update -qq || true
-                    sudo apt-get install -y python3.12-venv 2>/dev/null || sudo apt-get install -y python3-venv || true
+echo "Ensuring python3-venv and build tools are installed..."
+                sudo apt-get update -qq || true
+                sudo apt-get install -y python3.12-venv build-essential 2>/dev/null || sudo apt-get install -y python3-venv build-essential || true
                     
                     # Create virtual environment
                     python3 -m venv venv
