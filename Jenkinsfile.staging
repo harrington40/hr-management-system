@@ -31,7 +31,7 @@ pipeline {
         DOCKER_TAG = "staging-${env.BUILD_NUMBER}"
         
         // Staging Environment URLs
-        STAGING_URL = 'http://staging-hrms.company.local:8082'
+        STAGING_URL = 'http://localhost:8082'
         
         // Database Configuration (Staging)
         ORIENTDB_HOST = 'orientdb-staging.company.local'
