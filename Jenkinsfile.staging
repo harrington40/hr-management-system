@@ -116,8 +116,8 @@ pipeline {
                 sh '''
                     # Install python3-venv if not already installed
                     echo "Ensuring python3-venv is installed..."
-                    sudo apt-get update -qq
-                    sudo apt-get install -y python3.12-venv 2>/dev/null || sudo apt-get install -y python3-venv 2>/dev/null || true
+                    sudo apt-get update -qq || true
+                    sudo apt-get install -y python3.12-venv 2>/dev/null || sudo apt-get install -y python3-venv || true
                     
                     python3 -m venv venv
                     . venv/bin/activate
