@@ -82,3 +82,7 @@ pytest-cov==5.0.0
 bcrypt==4.2.0
 selenium==4.27.1
 webdriver-manager==4.0.2
+
+# QR Code generation for asset management
+qrcode==8.0
+pillow==11.1.0
