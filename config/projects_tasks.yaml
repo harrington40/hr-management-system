@@ -1,0 +1,316 @@
+# Projects and Tasks
+# Active projects and task assignments
+
+projects:
+  PROJ_2025_001:
+    project_id: PROJ_2025_001
+    name: "Customer Portal Redesign"
+    code: "CPR-2025"
+    description: "Complete overhaul of customer-facing web portal"
+    department: Engineering
+    status: in_progress
+    priority: high
+    start_date: "2025-10-01"
+    target_end_date: "2026-02-28"
+    actual_end_date: null
+    budget: 250000
+    current_spending: 125000
+    budget_utilization: 0.50
+    
+    project_manager:
+      employee_id: EMP001044
+      name: "Elena Ivanova"
+    
+    team_members:
+      - employee_id: EMP001001
+        name: "John Smith"
+        role: "Lead Developer"
+        allocation: 100
+      - employee_id: EMP001045
+        name: "Frank O'Brien"
+        role: "QA Engineer"
+        allocation: 80
+      - employee_id: EMP001040
+        name: "Angela Martinez"
+        role: "UX Designer"
+        allocation: 60
+      - employee_id: EMP001003
+        name: "Michael Brown"
+        role: "Frontend Developer"
+        allocation: 100
+    
+    milestones:
+      - name: "Requirements Gathering"
+        status: completed
+        due_date: "2025-10-15"
+        completion_date: "2025-10-14"
+      - name: "Design Phase"
+        status: completed
+        due_date: "2025-11-15"
+        completion_date: "2025-11-12"
+      - name: "Development Sprint 1"
+        status: completed
+        due_date: "2025-12-15"
+        completion_date: "2025-12-14"
+      - name: "Development Sprint 2"
+        status: in_progress
+        due_date: "2026-01-15"
+        completion_percentage: 65
+      - name: "QA and Testing"
+        status: not_started
+        due_date: "2026-02-10"
+      - name: "Deployment"
+        status: not_started
+        due_date: "2026-02-28"
+    
+    progress: 65
+    health: green
+    
+  PROJ_2025_002:
+    project_id: PROJ_2025_002
+    name: "Marketing Automation Platform"
+    code: "MAP-2025"
+    description: "Implementation of automated marketing workflows"
+    department: Marketing
+    status: in_progress
+    priority: medium
+    start_date: "2025-11-01"
+    target_end_date: "2026-03-31"
+    budget: 180000
+    current_spending: 72000
+    budget_utilization: 0.40
+    
+    project_manager:
+      employee_id: EMP001046
+      name: "Grace Kim"
+    
+    team_members:
+      - employee_id: EMP001046
+        name: "Grace Kim"
+        role: "Project Lead"
+        allocation: 100
+      - employee_id: EMP001040
+        name: "Angela Martinez"
+        role: "Designer"
+        allocation: 40
+      - employee_id: EMP001003
+        name: "Michael Brown"
+        role: "Marketing Specialist"
+        allocation: 80
+    
+    milestones:
+      - name: "Platform Selection"
+        status: completed
+        due_date: "2025-11-15"
+        completion_date: "2025-11-10"
+      - name: "Configuration"
+        status: in_progress
+        due_date: "2025-12-31"
+        completion_percentage: 70
+      - name: "Training"
+        status: not_started
+        due_date: "2026-02-15"
+      - name: "Go Live"
+        status: not_started
+        due_date: "2026-03-31"
+    
+    progress: 45
+    health: yellow
+    
+  PROJ_2025_003:
+    project_id: PROJ_2025_003
+    name: "Data Analytics Infrastructure"
+    code: "DAI-2025"
+    description: "Build comprehensive data analytics and reporting infrastructure"
+    department: IT
+    status: in_progress
+    priority: high
+    start_date: "2025-09-01"
+    target_end_date: "2026-01-31"
+    budget: 320000
+    current_spending: 256000
+    budget_utilization: 0.80
+    
+    project_manager:
+      employee_id: EMP001043
+      name: "Derek Thompson"
+    
+    team_members:
+      - employee_id: EMP001043
+        name: "Derek Thompson"
+        role: "Lead Engineer"
+        allocation: 100
+      - employee_id: EMP001041
+        name: "Brandon Lee"
+        role: "Data Analyst"
+        allocation: 100
+      - employee_id: EMP001047
+        name: "Henry Patel"
+        role: "Business Analyst"
+        allocation: 80
+    
+    milestones:
+      - name: "Infrastructure Setup"
+        status: completed
+        due_date: "2025-09-30"
+        completion_date: "2025-09-28"
+      - name: "Data Pipeline Development"
+        status: completed
+        due_date: "2025-11-30"
+        completion_date: "2025-11-27"
+      - name: "Dashboard Creation"
+        status: in_progress
+        due_date: "2025-12-31"
+        completion_percentage: 85
+      - name: "Integration Testing"
+        status: not_started
+        due_date: "2026-01-15"
+      - name: "Production Deployment"
+        status: not_started
+        due_date: "2026-01-31"
+    
+    progress: 80
+    health: green
+    
+  PROJ_2025_004:
+    project_id: PROJ_2025_004
+    name: "Sales CRM Implementation"
+    code: "CRM-2025"
+    description: "Deploy and customize new CRM system for sales team"
+    department: Sales
+    status: planning
+    priority: medium
+    start_date: "2026-01-15"
+    target_end_date: "2026-05-31"
+    budget: 200000
+    current_spending: 25000
+    budget_utilization: 0.125
+    
+    project_manager:
+      employee_id: EMP001042
+      name: "Christina Wong"
+    
+    team_members:
+      - employee_id: EMP001042
+        name: "Christina Wong"
+        role: "Implementation Lead"
+        allocation: 100
+      - employee_id: EMP001049
+        name: "Jack Morrison"
+        role: "Sales Rep"
+        allocation: 30
+    
+    milestones:
+      - name: "Vendor Selection"
+        status: in_progress
+        due_date: "2026-01-31"
+        completion_percentage: 40
+      - name: "Customization"
+        status: not_started
+        due_date: "2026-03-31"
+      - name: "Data Migration"
+        status: not_started
+        due_date: "2026-04-30"
+      - name: "Training"
+        status: not_started
+        due_date: "2026-05-15"
+      - name: "Go Live"
+        status: not_started
+        due_date: "2026-05-31"
+    
+    progress: 10
+    health: green
+
+tasks:
+  TASK_2025_001:
+    task_id: TASK_2025_001
+    project_id: PROJ_2025_001
+    title: "Implement user authentication flow"
+    description: "Develop secure authentication system with JWT tokens"
+    assigned_to: EMP001001
+    assigned_to_name: "John Smith"
+    status: in_progress
+    priority: high
+    estimated_hours: 40
+    actual_hours: 32
+    start_date: "2025-12-20"
+    due_date: "2026-01-10"
+    progress: 80
+    
+  TASK_2025_002:
+    task_id: TASK_2025_002
+    project_id: PROJ_2025_001
+    title: "Design responsive dashboard interface"
+    description: "Create modern, responsive dashboard UI with mobile support"
+    assigned_to: EMP001040
+    assigned_to_name: "Angela Martinez"
+    status: completed
+    priority: high
+    estimated_hours: 60
+    actual_hours: 58
+    start_date: "2025-11-01"
+    due_date: "2025-11-30"
+    completion_date: "2025-11-28"
+    progress: 100
+    
+  TASK_2025_003:
+    task_id: TASK_2025_003
+    project_id: PROJ_2025_001
+    title: "Develop API endpoints for data access"
+    description: "Create RESTful API endpoints for all data operations"
+    assigned_to: EMP001001
+    assigned_to_name: "John Smith"
+    status: completed
+    priority: high
+    estimated_hours: 50
+    actual_hours: 48
+    start_date: "2025-11-15"
+    due_date: "2025-12-15"
+    completion_date: "2025-12-14"
+    progress: 100
+    
+  TASK_2025_004:
+    task_id: TASK_2025_004
+    project_id: PROJ_2025_003
+    title: "Configure data warehouse"
+    description: "Set up and configure cloud data warehouse infrastructure"
+    assigned_to: EMP001043
+    assigned_to_name: "Derek Thompson"
+    status: completed
+    priority: high
+    estimated_hours: 80
+    actual_hours: 85
+    start_date: "2025-09-01"
+    due_date: "2025-09-30"
+    completion_date: "2025-09-28"
+    progress: 100
+    
+  TASK_2025_005:
+    task_id: TASK_2025_005
+    project_id: PROJ_2025_003
+    title: "Create sales analytics dashboard"
+    description: "Build comprehensive sales analytics and reporting dashboard"
+    assigned_to: EMP001041
+    assigned_to_name: "Brandon Lee"
+    status: in_progress
+    priority: medium
+    estimated_hours: 60
+    actual_hours: 48
+    start_date: "2025-12-01"
+    due_date: "2025-12-31"
+    progress: 80
+
+statistics:
+  total_projects: 4
+  active_projects: 3
+  planning_projects: 1
+  completed_projects: 0
+  total_budget: 950000
+  total_spending: 478000
+  overall_utilization: 0.503
+  projects_on_track: 3
+  projects_at_risk: 1
+  total_tasks: 5
+  completed_tasks: 3
+  in_progress_tasks: 2
+  average_task_completion_rate: 0.88

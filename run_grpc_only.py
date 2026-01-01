@@ -13,7 +13,7 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from .services.service_manager import service_manager
+from services.service_manager import service_manager
 
 logging.basicConfig(
     level=logging.INFO,

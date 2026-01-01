@@ -1,0 +1,182 @@
+# Employee Probation Records
+# Tracks employees currently on probation and their progress
+
+probation_records:
+  PROB_2025_001:
+    probation_id: PROB_2025_001
+    employee_id: EMP001020
+    employee_name: "Rachel Green"
+    department: Marketing
+    position: "Marketing Coordinator"
+    hire_date: "2025-10-01"
+    probation_start: "2025-10-01"
+    probation_end: "2026-01-31"
+    probation_period_months: 4
+    status: active
+    progress: 75
+    supervisor: EMP001007
+    supervisor_name: "Robert Taylor"
+    
+    reviews:
+      - review_date: "2025-11-01"
+        reviewer: EMP001007
+        rating: 4.0
+        strengths:
+          - "Quick learner"
+          - "Good communication skills"
+          - "Team player"
+        areas_for_improvement:
+          - "Time management"
+          - "Project prioritization"
+        comments: "Shows great potential. Needs to work on managing multiple projects."
+        
+      - review_date: "2025-12-01"
+        reviewer: EMP001007
+        rating: 4.5
+        strengths:
+          - "Improved time management"
+          - "Creative problem solving"
+          - "Takes initiative"
+        areas_for_improvement:
+          - "Needs more industry knowledge"
+        comments: "Significant improvement. On track for successful completion."
+    
+    expected_outcome: pass
+    
+  PROB_2025_002:
+    probation_id: PROB_2025_002
+    employee_id: EMP001021
+    employee_name: "Tom Anderson"
+    department: IT
+    position: "Systems Administrator"
+    hire_date: "2025-09-15"
+    probation_start: "2025-09-15"
+    probation_end: "2026-01-14"
+    probation_period_months: 4
+    status: active
+    progress: 85
+    supervisor: EMP001022
+    supervisor_name: "Alice Cooper"
+    
+    reviews:
+      - review_date: "2025-10-15"
+        reviewer: EMP001022
+        rating: 4.5
+        strengths:
+          - "Strong technical skills"
+          - "Proactive problem solver"
+          - "Good documentation"
+        areas_for_improvement:
+          - "Customer service communication"
+        comments: "Excellent technical performance. Recommend continuing."
+        
+      - review_date: "2025-11-15"
+        reviewer: EMP001022
+        rating: 5.0
+        strengths:
+          - "Outstanding technical expertise"
+          - "Improved communication"
+          - "Mentors junior staff"
+        areas_for_improvement: []
+        comments: "Exceeding expectations. Strong recommendation for permanent position."
+        
+      - review_date: "2025-12-15"
+        reviewer: EMP001022
+        rating: 5.0
+        strengths:
+          - "Consistently excellent performance"
+          - "Leadership potential"
+        comments: "Recommend early probation completion."
+        
+    expected_outcome: early_pass
+    early_completion_recommended: true
+    
+  PROB_2025_003:
+    probation_id: PROB_2025_003
+    employee_id: EMP001023
+    employee_name: "Nicole Martinez"
+    department: Finance
+    position: "Junior Accountant"
+    hire_date: "2025-11-01"
+    probation_start: "2025-11-01"
+    probation_end: "2026-03-31"
+    probation_period_months: 5
+    status: active
+    progress: 40
+    supervisor: EMP001024
+    supervisor_name: "George Williams"
+    
+    reviews:
+      - review_date: "2025-12-01"
+        reviewer: EMP001024
+        rating: 3.5
+        strengths:
+          - "Detail-oriented"
+          - "Punctual"
+        areas_for_improvement:
+          - "Accounting software proficiency"
+          - "Speed of work"
+          - "Confidence in decision making"
+        comments: "Needs additional training on accounting systems. Set up weekly check-ins."
+        
+    performance_improvement_plan: true
+    pip_start_date: "2025-12-15"
+    pip_goals:
+      - "Complete advanced Excel training by Jan 15"
+      - "Improve processing speed by 30%"
+      - "Demonstrate independent problem-solving"
+    expected_outcome: under_review
+    
+  PROB_2025_004:
+    probation_id: PROB_2025_004
+    employee_id: EMP001025
+    employee_name: "Brian Foster"
+    department: Sales
+    position: "Sales Representative"
+    hire_date: "2025-08-01"
+    probation_start: "2025-08-01"
+    probation_end: "2025-12-31"
+    probation_period_months: 5
+    status: completed
+    progress: 100
+    supervisor: EMP001026
+    supervisor_name: "Linda Johnson"
+    outcome: passed
+    completion_date: "2025-12-31"
+    final_rating: 4.7
+    
+    reviews:
+      - review_date: "2025-09-01"
+        reviewer: EMP001026
+        rating: 4.0
+        
+      - review_date: "2025-10-01"
+        reviewer: EMP001026
+        rating: 4.5
+        
+      - review_date: "2025-11-01"
+        reviewer: EMP001026
+        rating: 4.8
+        
+      - review_date: "2025-12-01"
+        reviewer: EMP001026
+        rating: 5.0
+        comments: "Exceeded all expectations. Top performer in sales team."
+        
+    final_comments: "Successfully completed probation. Permanent position confirmed."
+
+probation_policies:
+  default_period_months: 4
+  review_frequency_months: 1
+  passing_score: 3.5
+  extension_allowed: true
+  max_extension_months: 2
+  early_completion_threshold: 4.8
+  pip_threshold: 3.0
+  
+statistics:
+  total_active: 3
+  total_completed_this_year: 15
+  pass_rate: 0.87
+  average_rating: 4.2
+  pip_rate: 0.13

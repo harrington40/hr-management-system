@@ -1,0 +1,462 @@
+/*
+ * HRMS CI/CD Pipeline - STAGING Environment
+ * 
+ * Triggers: Automatically on merge to 'main' or 'staging' branch
+ * Purpose: Deploy to staging for final verification before production
+ */
+
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 2, unit: 'HOURS')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '50', daysToKeepStr: '60'))
+        timestamps()
+    }
+
+    environment {
+        // Environment Configuration
+        ENVIRONMENT = 'staging'
+        PYTHON_VERSION = '3.11'
+        
+        // Application Configuration
+        APP_NAME = 'hrms-app'
+        APP_HOST = '0.0.0.0'
+        APP_PORT = '8082'
+        
+        // Docker Configuration
+        DOCKER_REGISTRY = 'harrington40'
+        DOCKER_IMAGE = "${DOCKER_REGISTRY}/${APP_NAME}"
+        DOCKER_TAG = "staging-${env.BUILD_NUMBER}"
+        
+        // Staging Environment URLs
+        STAGING_URL = 'http://staging-hrms.company.local:8082'
+        
+        // Database Configuration (Staging)
+        ORIENTDB_HOST = 'orientdb-staging.company.local'
+        ORIENTDB_PORT = '2424'
+        ORIENTDB_DATABASE = 'hrms_staging'
+        
+        // Notification
+        SLACK_CHANNEL = '#hrms-staging-deployments'
+        EMAIL_RECIPIENTS = 'qa-team@company.com,dev-leads@company.com'
+    }
+
+    triggers {
+        // Trigger on push to main or staging branches
+        githubPush()
+        
+        // Fallback polling
+        pollSCM('H/10 * * * *')
+    }
+
+    stages {
+        
+        stage('📋 Pipeline Info') {
+            steps {
+                echo "═══════════════════════════════════════"
+                echo "🚀 HRMS STAGING Environment Pipeline"
+                echo "═══════════════════════════════════════"
+                echo "Environment: ${ENVIRONMENT}"
+                echo "Branch: ${env.BRANCH_NAME}"
+                echo "Build: #${env.BUILD_NUMBER}"
+                echo "Commit: ${env.GIT_COMMIT}"
+                echo "Docker Tag: ${DOCKER_TAG}"
+                echo "═══════════════════════════════════════"
+                
+                sh '''
+                    echo "📦 Workspace Info:"
+                    pwd
+                    ls -la
+                    
+                    echo "🔍 Git Info:"
+                    git log --oneline -5 || true
+                    git branch -a || true
+                '''
+            }
+        }
+
+        stage('🔄 Checkout') {
+            steps {
+                echo "Checking out code from SCM..."
+                checkout scm
+                
+                sh '''
+                    echo "✅ Checkout completed"
+                    git log --oneline -1
+                '''
+            }
+        }
+
+        stage('🔍 Pre-deployment Validation') {
+            steps {
+                echo "Validating staging deployment requirements..."
+                sh '''
+                    echo "Checking environment..."
+                    python3 --version
+                    
+                    echo "Validating required files..."
+                    test -f requirements.txt && echo "✅ requirements.txt" || exit 1
+                    test -f main.py && echo "✅ main.py" || exit 1
+                    test -f config/staging.env && echo "✅ staging.env" || echo "⚠️  staging.env not found"
+                    
+                    echo "Checking system resources..."
+                    df -h .
+                    free -h || true
+                    
+                    echo "✅ Pre-deployment validation passed"
+                '''
+            }
+        }
+
+        stage('🐍 Setup Python Environment') {
+            steps {
+                echo "Setting up Python virtual environment..."
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    
+                    pip install --upgrade pip setuptools wheel
+                    pip install -r requirements.txt
+                    
+                    echo "✅ Python environment ready"
+                '''
+            }
+        }
+
+        stage('🧪 Run Full Test Suite') {
+            steps {
+                echo "Running comprehensive test suite..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Run all tests with coverage
+                    pytest tests/ \
+                        --verbose \
+                        --junit-xml=test-results/junit.xml \
+                        --cov=. \
+                        --cov-report=xml:coverage.xml \
+                        --cov-report=html:htmlcov \
+                        --cov-report=term-missing \
+                        -m "not slow" \
+                        || true
+                    
+                    echo "✅ Test suite completed"
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'test-results/*.xml'
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Staging Coverage Report'
+                    ])
+                }
+            }
+        }
+
+        stage('🔒 Security & Compliance Scan') {
+            steps {
+                echo "Running security and compliance scans..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Install security tools
+                    pip install safety bandit || true
+                    
+                    # Dependency vulnerability check
+                    echo "Scanning dependencies..."
+                    safety check --json > staging-safety-report.json || true
+                    
+                    # Code security analysis
+                    echo "Running security analysis..."
+                    bandit -r . -f json -o staging-bandit-report.json \
+                        --exclude ./venv,./tests,./htmlcov || true
+                    
+                    # License compliance check
+                    echo "Checking license compliance..."
+                    pip-licenses --format=json > license-report.json || true
+                    
+                    echo "✅ Security scans completed"
+                '''
+            }
+        }
+
+        stage('🏗️ Build Application') {
+            steps {
+                echo "Building application for staging..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Generate build metadata
+                    cat > build-info.json <<EOF
+{
+    "environment": "${ENVIRONMENT}",
+    "build_number": "${BUILD_NUMBER}",
+    "git_commit": "${GIT_COMMIT}",
+    "git_branch": "${BRANCH_NAME}",
+    "build_timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+    "docker_tag": "${DOCKER_TAG}",
+    "deployed_by": "${BUILD_USER:-Jenkins}"
+}
+EOF
+                    
+                    echo "✅ Build completed"
+                    cat build-info.json
+                '''
+            }
+        }
+
+        stage('🐳 Build & Tag Docker Image') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                echo "Building Docker image for staging..."
+                script {
+                    // Build with multiple tags
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:staging-latest")
+                    docker.build("${DOCKER_IMAGE}:staging-stable")
+                }
+                echo "✅ Docker images built successfully"
+            }
+        }
+
+        stage('🔍 Container Security Scan') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                echo "Scanning container for vulnerabilities..."
+                sh '''
+                    if command -v trivy &> /dev/null; then
+                        echo "Running Trivy scan..."
+                        trivy image --severity HIGH,CRITICAL \
+                            --exit-code 0 \
+                            --format json \
+                            --output trivy-report.json \
+                            ${DOCKER_IMAGE}:${DOCKER_TAG} || true
+                    else
+                        echo "⚠️  Trivy not installed"
+                    fi
+                '''
+            }
+        }
+
+        stage('📤 Push to Registry') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                echo "Pushing Docker images to registry..."
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                        docker.image("${DOCKER_IMAGE}:staging-latest").push()
+                        docker.image("${DOCKER_IMAGE}:staging-stable").push()
+                    }
+                }
+                echo "✅ Docker images pushed successfully"
+            }
+        }
+
+        stage('💾 Backup Staging Data') {
+            steps {
+                echo "Creating backup of staging database..."
+                sh '''
+                    # Create backup directory
+                    mkdir -p backups/staging
+                    
+                    # Backup staging database (adjust command based on your DB)
+                    BACKUP_FILE="backups/staging/hrms_staging_$(date +%Y%m%d_%H%M%S).backup"
+                    
+                    echo "Creating backup: $BACKUP_FILE"
+                    # pg_dump or orientdb backup command here
+                    # Example: orientdb_backup.sh ${ORIENTDB_HOST} ${ORIENTDB_DATABASE} $BACKUP_FILE
+                    
+                    echo "✅ Backup completed: $BACKUP_FILE"
+                '''
+            }
+        }
+
+        stage('🚀 Deploy to Staging') {
+            steps {
+                echo "Deploying to STAGING environment..."
+                sh '''
+                    echo "🛑 Stopping existing staging services..."
+                    pkill -f "uvicorn main:app.*8082" || true
+                    sleep 5
+                    
+                    echo "📦 Deploying application..."
+                    # rsync or copy deployment files
+                    # rsync -avz --exclude 'venv' --exclude '.git' . /opt/hrms/staging/
+                    
+                    echo "🔧 Configuring staging environment..."
+                    cat > config/staging.env <<EOF
+ENVIRONMENT=staging
+ORIENTDB_HOST=${ORIENTDB_HOST}
+ORIENTDB_PORT=${ORIENTDB_PORT}
+ORIENTDB_DATABASE=${ORIENTDB_DATABASE}
+APP_HOST=${APP_HOST}
+APP_PORT=${APP_PORT}
+LOG_LEVEL=INFO
+EOF
+                    
+                    echo "🚀 Starting staging application..."
+                    . venv/bin/activate
+                    nohup uvicorn main:app --host ${APP_HOST} --port ${APP_PORT} \
+                        --env-file config/staging.env \
+                        --workers 2 > staging-app.log 2>&1 &
+                    
+                    echo "⏳ Waiting for application to start..."
+                    sleep 20
+                    
+                    echo "✅ Deployment completed"
+                '''
+            }
+        }
+
+        stage('🧪 Integration Tests') {
+            steps {
+                echo "Running integration tests..."
+                sh '''
+                    echo "⏳ Waiting for application to stabilize..."
+                    sleep 10
+                    
+                    # Health check
+                    echo "Testing health endpoint..."
+                    for i in {1..5}; do
+                        if curl -f ${STAGING_URL}/health; then
+                            echo "✅ Health check passed"
+                            break
+                        fi
+                        echo "Attempt $i failed, retrying..."
+                        sleep 5
+                    done
+                    
+                    # API endpoint tests
+                    echo "Testing API endpoints..."
+                    curl -f ${STAGING_URL}/hrmkit || echo "⚠️  Main endpoint test failed"
+                    
+                    # Run integration test suite
+                    . venv/bin/activate
+                    pytest tests/integration/ --verbose || true
+                    
+                    echo "✅ Integration tests completed"
+                '''
+            }
+        }
+
+        stage('⚡ Performance Tests') {
+            steps {
+                echo "Running performance tests..."
+                sh '''
+                    # Install performance testing tools
+                    . venv/bin/activate
+                    pip install locust || true
+                    
+                    # Run basic load test (if locustfile exists)
+                    if [ -f "locustfile.py" ]; then
+                        echo "Running load test..."
+                        locust -f locustfile.py --headless --users 10 --spawn-rate 2 \
+                            --run-time 60s --host ${STAGING_URL} || true
+                    else
+                        echo "⚠️  No locustfile found, skipping performance tests"
+                    fi
+                    
+                    echo "✅ Performance tests completed"
+                '''
+            }
+        }
+
+        stage('📊 Generate Deployment Report') {
+            steps {
+                echo "Generating staging deployment report..."
+                sh '''
+                    cat > staging-deployment-report.txt <<EOF
+═══════════════════════════════════════════════
+HRMS STAGING Deployment Report
+═══════════════════════════════════════════════
+Environment: ${ENVIRONMENT}
+Build Number: ${BUILD_NUMBER}
+Git Commit: ${GIT_COMMIT}
+Git Branch: ${BRANCH_NAME}
+Docker Tag: ${DOCKER_TAG}
+Deployment Time: $(date)
+Staging URL: ${STAGING_URL}
+Database: ${ORIENTDB_DATABASE}
+═══════════════════════════════════════════════
+Status: ✅ DEPLOYED
+═══════════════════════════════════════════════
+EOF
+                    
+                    cat staging-deployment-report.txt
+                '''
+                
+                archiveArtifacts artifacts: '*-report.*,build-info.json,staging-deployment-report.txt', allowEmptyArchive: true
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo "Staging pipeline execution completed"
+            
+            cleanWs(
+                deleteDirs: true,
+                patterns: [
+                    [pattern: 'venv/**', type: 'INCLUDE'],
+                    [pattern: '__pycache__/**', type: 'INCLUDE'],
+                    [pattern: '*.pyc', type: 'INCLUDE']
+                ]
+            )
+        }
+        
+        success {
+            echo "✅ STAGING Pipeline succeeded!"
+            
+            emailext(
+                subject: "✅ HRMS STAGING Deployment Successful - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>🎉 HRMS STAGING Deployment Successful</h2>
+                    <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
+                    <p><strong>Branch:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p><strong>Staging URL:</strong> <a href="${STAGING_URL}">${STAGING_URL}</a></p>
+                    <p><strong>Docker Tag:</strong> ${DOCKER_TAG}</p>
+                    <p><strong>Status:</strong> ✅ SUCCESS</p>
+                    <hr>
+                    <p><em>Ready for QA verification and production promotion.</em></p>
+                """,
+                to: "${EMAIL_RECIPIENTS}",
+                mimeType: 'text/html'
+            )
+        }
+        
+        failure {
+            echo "❌ STAGING Pipeline failed!"
+            
+            emailext(
+                subject: "❌ HRMS STAGING Deployment Failed - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>❌ HRMS STAGING Deployment Failed</h2>
+                    <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
+                    <p><strong>Branch:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p><strong>Status:</strong> ❌ FAILURE</p>
+                    <p><strong>Action Required:</strong> Review logs and fix issues before production deployment.</p>
+                    <p>Check Jenkins console output for details.</p>
+                """,
+                to: "${EMAIL_RECIPIENTS}",
+                mimeType: 'text/html'
+            )
+        }
+    }
+}

@@ -1,0 +1,301 @@
+# Assets Inventory Configuration
+# Tracks company assets assigned to employees and departments
+
+assets:
+  # Laptops
+  LAPTOP_001:
+    asset_id: LAPTOP_001
+    category: laptop
+    type: "MacBook Pro 16\""
+    brand: Apple
+    model: "MacBook Pro M2"
+    serial_number: "MBP2023-XYZ-001"
+    purchase_date: "2023-05-15"
+    purchase_price: 2999.00
+    warranty_expiry: "2026-05-15"
+    status: assigned
+    condition: excellent
+    assigned_to: EMP001001
+    assigned_to_name: "John Smith"
+    department: Engineering
+    location: "Floor 3 - Desk 301"
+    last_maintenance: "2025-11-01"
+    next_maintenance: "2026-05-01"
+    
+  LAPTOP_002:
+    asset_id: LAPTOP_002
+    category: laptop
+    type: "Dell XPS 15"
+    brand: Dell
+    model: "XPS 15 9520"
+    serial_number: "DELL2023-ABC-002"
+    purchase_date: "2023-06-20"
+    purchase_price: 2299.00
+    warranty_expiry: "2026-06-20"
+    status: assigned
+    condition: good
+    assigned_to: EMP001002
+    assigned_to_name: "Sarah Johnson"
+    department: "Human Resources"
+    location: "Floor 2 - Desk 205"
+    
+  LAPTOP_003:
+    asset_id: LAPTOP_003
+    category: laptop
+    type: "ThinkPad X1 Carbon"
+    brand: Lenovo
+    model: "X1 Carbon Gen 11"
+    serial_number: "LNV2024-DEF-003"
+    purchase_date: "2024-01-10"
+    purchase_price: 1899.00
+    warranty_expiry: "2027-01-10"
+    status: in_storage
+    condition: excellent
+    location: "IT Storage Room"
+    notes: "Available for new hire"
+    
+  # Monitors
+  MONITOR_001:
+    asset_id: MONITOR_001
+    category: monitor
+    type: "27\" 4K Display"
+    brand: Dell
+    model: "UltraSharp U2723DE"
+    serial_number: "MON2023-001"
+    purchase_date: "2023-03-15"
+    purchase_price: 699.00
+    warranty_expiry: "2026-03-15"
+    status: assigned
+    condition: excellent
+    assigned_to: EMP001001
+    assigned_to_name: "John Smith"
+    department: Engineering
+    location: "Floor 3 - Desk 301"
+    
+  MONITOR_002:
+    asset_id: MONITOR_002
+    category: monitor
+    type: "32\" Curved Display"
+    brand: Samsung
+    model: "Odyssey G7"
+    serial_number: "SAM2023-002"
+    purchase_date: "2023-04-20"
+    purchase_price: 799.00
+    warranty_expiry: "2026-04-20"
+    status: assigned
+    condition: good
+    assigned_to: EMP001005
+    assigned_to_name: "Alex Johnson"
+    department: Engineering
+    location: "Floor 3 - Manager Office"
+    
+  # Mobile Phones
+  PHONE_001:
+    asset_id: PHONE_001
+    category: phone
+    type: "iPhone 14 Pro"
+    brand: Apple
+    model: "iPhone 14 Pro 256GB"
+    serial_number: "IPH2023-001"
+    purchase_date: "2023-10-15"
+    purchase_price: 1099.00
+    warranty_expiry: "2024-10-15"
+    status: assigned
+    condition: good
+    assigned_to: EMP001005
+    assigned_to_name: "Alex Johnson"
+    department: Engineering
+    phone_number: "+1-555-0350"
+    carrier: Verizon
+    monthly_cost: 85.00
+    
+  PHONE_002:
+    asset_id: PHONE_002
+    category: phone
+    type: "Samsung Galaxy S23"
+    brand: Samsung
+    model: "Galaxy S23 Ultra"
+    serial_number: "SAM2024-002"
+    purchase_date: "2024-02-10"
+    purchase_price: 1199.00
+    warranty_expiry: "2025-02-10"
+    status: assigned
+    condition: excellent
+    assigned_to: EMP001026
+    assigned_to_name: "Michael Chen"
+    department: Sales
+    phone_number: "+1-555-0360"
+    carrier: AT&T
+    monthly_cost: 90.00
+    
+  # Desks & Furniture
+  DESK_301:
+    asset_id: DESK_301
+    category: furniture
+    type: "Standing Desk"
+    brand: Uplift
+    model: "V2 Commercial"
+    serial_number: "DESK2022-301"
+    purchase_date: "2022-08-15"
+    purchase_price: 899.00
+    status: in_use
+    condition: good
+    assigned_to: EMP001001
+    department: Engineering
+    location: "Floor 3 - Desk 301"
+    
+  CHAIR_301:
+    asset_id: CHAIR_301
+    category: furniture
+    type: "Ergonomic Chair"
+    brand: Herman Miller
+    model: "Aeron"
+    serial_number: "CHAIR2022-301"
+    purchase_date: "2022-08-15"
+    purchase_price: 1295.00
+    warranty_expiry: "2034-08-15"
+    status: in_use
+    condition: excellent
+    assigned_to: EMP001001
+    department: Engineering
+    location: "Floor 3 - Desk 301"
+    
+  # Networking Equipment
+  ROUTER_301:
+    asset_id: ROUTER_301
+    category: network_equipment
+    type: "Enterprise Router"
+    brand: Cisco
+    model: "ISR 4331"
+    serial_number: "RTR2021-001"
+    purchase_date: "2021-06-10"
+    purchase_price: 3500.00
+    warranty_expiry: "2026-06-10"
+    status: in_use
+    condition: good
+    location: "Floor 3 - Server Room"
+    department: IT
+    maintenance_schedule: quarterly
+    last_maintenance: "2025-12-01"
+    
+  # Printers
+  PRINTER_001:
+    asset_id: PRINTER_001
+    category: printer
+    type: "Multifunction Laser Printer"
+    brand: HP
+    model: "LaserJet Pro MFP M479fdw"
+    serial_number: "PRT2022-001"
+    purchase_date: "2022-03-20"
+    purchase_price: 599.00
+    warranty_expiry: "2025-03-20"
+    status: in_use
+    condition: good
+    location: "Floor 2 - Print Room"
+    department: shared
+    monthly_pages: 2500
+    toner_level: 45
+    maintenance_required: false
+    
+  PRINTER_002:
+    asset_id: PRINTER_002
+    category: printer
+    type: "Color Laser Printer"
+    brand: Canon
+    model: "imageCLASS MF644Cdw"
+    serial_number: "CAN2023-002"
+    purchase_date: "2023-07-10"
+    purchase_price: 499.00
+    warranty_expiry: "2026-07-10"
+    status: in_use
+    condition: excellent
+    location: "Floor 3 - Engineering"
+    department: Engineering
+    monthly_pages: 1200
+    toner_level: 78
+    
+  # Conference Equipment
+  PROJECTOR_001:
+    asset_id: PROJECTOR_001
+    category: conference_equipment
+    type: "4K Projector"
+    brand: Epson
+    model: "PowerLite 5050UB"
+    serial_number: "PROJ2022-001"
+    purchase_date: "2022-09-15"
+    purchase_price: 2999.00
+    warranty_expiry: "2025-09-15"
+    status: in_use
+    condition: good
+    location: "Floor 1 - Conference Room A"
+    department: shared
+    lamp_hours: 1850
+    lamp_life_hours: 5000
+    
+  WEBCAM_001:
+    asset_id: WEBCAM_001
+    category: conference_equipment
+    type: "4K Conference Camera"
+    brand: Logitech
+    model: "Rally Plus"
+    serial_number: "CAM2023-001"
+    purchase_date: "2023-01-20"
+    purchase_price: 1999.00
+    warranty_expiry: "2026-01-20"
+    status: in_use
+    condition: excellent
+    location: "Floor 2 - Conference Room B"
+    department: shared
+
+categories:
+  laptop:
+    total_count: 3
+    assigned: 2
+    in_storage: 1
+    total_value: 7197.00
+    
+  monitor:
+    total_count: 2
+    assigned: 2
+    total_value: 1498.00
+    
+  phone:
+    total_count: 2
+    assigned: 2
+    total_value: 2298.00
+    monthly_recurring: 175.00
+    
+  furniture:
+    total_count: 2
+    in_use: 2
+    total_value: 2194.00
+    
+  network_equipment:
+    total_count: 1
+    in_use: 1
+    total_value: 3500.00
+    
+  printer:
+    total_count: 2
+    in_use: 2
+    total_value: 1098.00
+    
+  conference_equipment:
+    total_count: 2
+    in_use: 2
+    total_value: 4998.00
+
+summary:
+  total_assets: 15
+  total_value: 22783.00
+  assigned_assets: 8
+  in_storage_assets: 1
+  in_use_assets: 6
+  assets_requiring_maintenance: 0
+  warranties_expiring_soon: 1
+
+maintenance_schedule:
+  next_maintenance_date: "2026-01-15"
+  assets_due_for_maintenance:
+    - LAPTOP_001
+    - ROUTER_301

@@ -1,0 +1,438 @@
+{
+  "database_schema": {
+    "description": "HRMS OrientDB Schema - JSON Format",
+    "version": "1.0",
+    "database_name": "hrms_db",
+    "classes": [
+      {
+        "name": "Employee",
+        "type": "document",
+        "description": "Employee master data",
+        "properties": {
+          "employeeId": { "type": "string", "required": true, "indexed": true },
+          "firstName": { "type": "string", "required": true },
+          "lastName": { "type": "string", "required": true },
+          "email": { "type": "string", "required": true, "indexed": true },
+          "phone": { "type": "string" },
+          "dateOfBirth": { "type": "date" },
+          "gender": { "type": "string", "enum": ["Male", "Female", "Other"] },
+          "ssn": { "type": "string", "indexed": true },
+          "address": { "type": "embedded", "properties": {
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "state": { "type": "string" },
+            "zipCode": { "type": "string" },
+            "country": { "type": "string" }
+          }},
+          "department": { "type": "link", "linkedClass": "Department" },
+          "position": { "type": "string" },
+          "employmentType": { "type": "string", "enum": ["Full-time", "Part-time", "Contract", "Temporary"] },
+          "startDate": { "type": "date", "required": true },
+          "endDate": { "type": "date" },
+          "status": { "type": "string", "enum": ["Active", "Inactive", "OnLeave", "Probation", "Terminated"], "indexed": true },
+          "salary": { "type": "decimal" },
+          "salaryGrade": { "type": "string" },
+          "reportingManager": { "type": "link", "linkedClass": "Employee" },
+          "workLocation": { "type": "string" },
+          "emergencyContact": { "type": "embedded", "properties": {
+            "name": { "type": "string" },
+            "relationship": { "type": "string" },
+            "phone": { "type": "string" },
+            "email": { "type": "string" }
+          }},
+          "documents": { "type": "linklist", "linkedClass": "Document" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" },
+          "createdBy": { "type": "link", "linkedClass": "User" },
+          "updatedBy": { "type": "link", "linkedClass": "User" }
+        },
+        "indexes": [
+          { "name": "Employee.employeeId", "type": "UNIQUE" },
+          { "name": "Employee.email", "type": "UNIQUE" },
+          { "name": "Employee.status", "type": "NOTUNIQUE" }
+        ]
+      },
+      {
+        "name": "Department",
+        "type": "document",
+        "description": "Department master data",
+        "properties": {
+          "departmentId": { "type": "string", "required": true, "indexed": true },
+          "name": { "type": "string", "required": true },
+          "code": { "type": "string", "unique": true },
+          "description": { "type": "string" },
+          "head": { "type": "link", "linkedClass": "Employee" },
+          "capacity": { "type": "integer" },
+          "currentStaff": { "type": "integer", "default": 0 },
+          "budget": { "type": "decimal" },
+          "location": { "type": "string" },
+          "status": { "type": "string", "enum": ["Active", "Inactive"], "default": "Active" },
+          "employees": { "type": "linklist", "linkedClass": "Employee" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "LeaveRequest",
+        "type": "document",
+        "description": "Employee leave requests",
+        "properties": {
+          "requestId": { "type": "string", "required": true, "indexed": true },
+          "employee": { "type": "link", "linkedClass": "Employee", "required": true },
+          "leaveType": { "type": "string", "enum": ["Annual", "Sick", "Casual", "Maternity", "Paternity", "Unpaid"], "required": true },
+          "startDate": { "type": "date", "required": true },
+          "endDate": { "type": "date", "required": true },
+          "numberOfDays": { "type": "integer" },
+          "reason": { "type": "string" },
+          "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected", "Cancelled"], "indexed": true },
+          "approver": { "type": "link", "linkedClass": "Employee" },
+          "approvalDate": { "type": "date" },
+          "comments": { "type": "string" },
+          "attachments": { "type": "linklist", "linkedClass": "Document" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        },
+        "indexes": [
+          { "name": "LeaveRequest.requestId", "type": "UNIQUE" },
+          { "name": "LeaveRequest.employee", "type": "NOTUNIQUE" },
+          { "name": "LeaveRequest.status", "type": "NOTUNIQUE" }
+        ]
+      },
+      {
+        "name": "TransferRequest",
+        "type": "document",
+        "description": "Employee transfer requests",
+        "properties": {
+          "transferId": { "type": "string", "required": true, "indexed": true },
+          "employee": { "type": "link", "linkedClass": "Employee", "required": true },
+          "currentDepartment": { "type": "link", "linkedClass": "Department" },
+          "requestedDepartment": { "type": "link", "linkedClass": "Department", "required": true },
+          "requestedPosition": { "type": "string" },
+          "reason": { "type": "string" },
+          "eligibilityScore": { "type": "decimal" },
+          "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected", "Transferred"], "indexed": true },
+          "approver": { "type": "link", "linkedClass": "Employee" },
+          "approvalDate": { "type": "date" },
+          "transferDate": { "type": "date" },
+          "comments": { "type": "string" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "Probation",
+        "type": "document",
+        "description": "Employee probation records",
+        "properties": {
+          "probationId": { "type": "string", "required": true, "indexed": true },
+          "employee": { "type": "link", "linkedClass": "Employee", "required": true },
+          "startDate": { "type": "date", "required": true },
+          "endDate": { "type": "date", "required": true },
+          "duration": { "type": "string", "enum": ["3 months", "6 months", "1 year"], "default": "3 months" },
+          "performanceRating": { "type": "decimal", "min": 0, "max": 5 },
+          "status": { "type": "string", "enum": ["Active", "Completed", "Extended", "Failed"], "indexed": true },
+          "reviews": { "type": "linklist", "linkedClass": "ProbationReview" },
+          "recommendations": { "type": "string" },
+          "comments": { "type": "string" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "ProbationReview",
+        "type": "document",
+        "description": "Probation period reviews",
+        "properties": {
+          "reviewId": { "type": "string", "required": true },
+          "probation": { "type": "link", "linkedClass": "Probation" },
+          "reviewer": { "type": "link", "linkedClass": "Employee" },
+          "reviewDate": { "type": "date" },
+          "performanceScore": { "type": "decimal", "min": 0, "max": 5 },
+          "attendance": { "type": "decimal", "min": 0, "max": 100 },
+          "behavioralAssessment": { "type": "string" },
+          "technicalSkills": { "type": "decimal", "min": 0, "max": 5 },
+          "teamwork": { "type": "decimal", "min": 0, "max": 5 },
+          "communication": { "type": "decimal", "min": 0, "max": 5 },
+          "comments": { "type": "string" },
+          "recommendation": { "type": "string", "enum": ["Pass", "Fail", "Extend"] },
+          "createdAt": { "type": "datetime", "default": "now()" }
+        }
+      },
+      {
+        "name": "Termination",
+        "type": "document",
+        "description": "Employee termination records",
+        "properties": {
+          "terminationId": { "type": "string", "required": true, "indexed": true },
+          "employee": { "type": "link", "linkedClass": "Employee", "required": true },
+          "terminationType": { "type": "string", "enum": ["Resignation", "Dismissal", "Retirement", "Contract End", "Death"], "required": true },
+          "terminationDate": { "type": "date", "required": true },
+          "noticePeriod": { "type": "integer" },
+          "reason": { "type": "string" },
+          "exitInterview": { "type": "embedded", "properties": {
+            "interviewDate": { "type": "date" },
+            "interviewer": { "type": "string" },
+            "feedback": { "type": "string" },
+            "wouldRehire": { "type": "boolean" }
+          }},
+          "finalPayment": { "type": "embedded", "properties": {
+            "salary": { "type": "decimal" },
+            "benefits": { "type": "decimal" },
+            "gratuity": { "type": "decimal" },
+            "total": { "type": "decimal" },
+            "paidDate": { "type": "date" }
+          }},
+          "status": { "type": "string", "enum": ["Pending", "Completed", "Appealed"], "indexed": true },
+          "documents": { "type": "linklist", "linkedClass": "Document" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "Attendance",
+        "type": "document",
+        "description": "Daily employee attendance records",
+        "properties": {
+          "attendanceId": { "type": "string", "required": true, "indexed": true },
+          "employee": { "type": "link", "linkedClass": "Employee", "required": true },
+          "attendanceDate": { "type": "date", "required": true },
+          "checkInTime": { "type": "datetime" },
+          "checkOutTime": { "type": "datetime" },
+          "hoursWorked": { "type": "decimal" },
+          "status": { "type": "string", "enum": ["Present", "Absent", "Late", "Leave", "Holiday"], "required": true },
+          "department": { "type": "link", "linkedClass": "Department" },
+          "remarks": { "type": "string" },
+          "isApproved": { "type": "boolean", "default": false },
+          "approvedBy": { "type": "link", "linkedClass": "Employee" },
+          "approvalDate": { "type": "date" },
+          "createdAt": { "type": "datetime", "default": "now()" }
+        },
+        "indexes": [
+          { "name": "Attendance.employee_date", "type": "NOTUNIQUE", "properties": ["employee", "attendanceDate"] }
+        ]
+      },
+      {
+        "name": "Timesheet",
+        "type": "document",
+        "description": "Employee timesheets",
+        "properties": {
+          "timesheetId": { "type": "string", "required": true, "indexed": true },
+          "employee": { "type": "link", "linkedClass": "Employee", "required": true },
+          "weekStartDate": { "type": "date", "required": true },
+          "weekEndDate": { "type": "date", "required": true },
+          "totalHours": { "type": "decimal" },
+          "days": { "type": "linklist", "linkedClass": "TimesheetDay" },
+          "status": { "type": "string", "enum": ["Draft", "Submitted", "Approved", "Rejected"], "indexed": true },
+          "approver": { "type": "link", "linkedClass": "Employee" },
+          "approvalDate": { "type": "date" },
+          "comments": { "type": "string" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "TimesheetDay",
+        "type": "document",
+        "description": "Daily timesheet entries",
+        "properties": {
+          "dayId": { "type": "string" },
+          "date": { "type": "date" },
+          "dayOfWeek": { "type": "string" },
+          "hoursWorked": { "type": "decimal" },
+          "taskDescription": { "type": "string" },
+          "project": { "type": "link", "linkedClass": "Project" },
+          "status": { "type": "string", "enum": ["Pending", "Submitted", "Approved"] }
+        }
+      },
+      {
+        "name": "Asset",
+        "type": "document",
+        "description": "Company assets",
+        "properties": {
+          "assetId": { "type": "string", "required": true, "indexed": true },
+          "name": { "type": "string", "required": true },
+          "category": { "type": "string", "enum": ["IT Equipment", "Furniture", "Office Supplies", "Vehicles", "Machinery", "Other"], "required": true },
+          "serialNumber": { "type": "string", "unique": true },
+          "location": { "type": "string" },
+          "assignedTo": { "type": "link", "linkedClass": "Employee" },
+          "purchaseDate": { "type": "date" },
+          "purchaseCost": { "type": "decimal" },
+          "status": { "type": "string", "enum": ["Active", "In Maintenance", "Retired", "Damaged", "Lost"], "indexed": true },
+          "condition": { "type": "string", "enum": ["Excellent", "Good", "Fair", "Poor"] },
+          "depreciationRate": { "type": "decimal" },
+          "currentValue": { "type": "decimal" },
+          "qrCode": { "type": "string" },
+          "barcode": { "type": "string" },
+          "attachments": { "type": "linklist", "linkedClass": "Document" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "Document",
+        "type": "document",
+        "description": "Employee and company documents",
+        "properties": {
+          "documentId": { "type": "string", "required": true, "indexed": true },
+          "documentType": { "type": "string", "enum": ["ID", "Passport", "Contract", "Certificate", "Medical", "Other"], "required": true },
+          "fileName": { "type": "string", "required": true },
+          "fileUrl": { "type": "string" },
+          "fileSize": { "type": "integer" },
+          "mimeType": { "type": "string" },
+          "uploadedBy": { "type": "link", "linkedClass": "User" },
+          "relatedEmployee": { "type": "link", "linkedClass": "Employee" },
+          "relatedAsset": { "type": "link", "linkedClass": "Asset" },
+          "issuanceDate": { "type": "date" },
+          "expiryDate": { "type": "date" },
+          "isExpired": { "type": "boolean" },
+          "createdAt": { "type": "datetime", "default": "now()" }
+        }
+      },
+      {
+        "name": "User",
+        "type": "document",
+        "description": "System users for authentication",
+        "properties": {
+          "userId": { "type": "string", "required": true, "indexed": true },
+          "username": { "type": "string", "required": true, "unique": true },
+          "email": { "type": "string", "required": true, "unique": true },
+          "passwordHash": { "type": "string", "required": true },
+          "employee": { "type": "link", "linkedClass": "Employee" },
+          "role": { "type": "string", "enum": ["Admin", "Manager", "Employee", "HR", "Finance"], "required": true },
+          "permissions": { "type": "linklist", "linkedClass": "Permission" },
+          "isActive": { "type": "boolean", "default": true },
+          "lastLogin": { "type": "datetime" },
+          "loginAttempts": { "type": "integer", "default": 0 },
+          "isLocked": { "type": "boolean", "default": false },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "Permission",
+        "type": "document",
+        "description": "System permissions",
+        "properties": {
+          "permissionId": { "type": "string", "required": true },
+          "name": { "type": "string", "required": true, "unique": true },
+          "description": { "type": "string" },
+          "module": { "type": "string", "enum": ["Employees", "Attendance", "Leaves", "Transfers", "Probation", "Termination", "Assets", "Administration"] },
+          "action": { "type": "string", "enum": ["Create", "Read", "Update", "Delete", "Approve"] }
+        }
+      },
+      {
+        "name": "Project",
+        "type": "document",
+        "description": "Company projects",
+        "properties": {
+          "projectId": { "type": "string", "required": true, "indexed": true },
+          "name": { "type": "string", "required": true },
+          "description": { "type": "string" },
+          "startDate": { "type": "date" },
+          "endDate": { "type": "date" },
+          "status": { "type": "string", "enum": ["Planning", "Active", "On Hold", "Completed", "Cancelled"] },
+          "projectManager": { "type": "link", "linkedClass": "Employee" },
+          "budget": { "type": "decimal" },
+          "team": { "type": "linklist", "linkedClass": "Employee" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      },
+      {
+        "name": "AuditLog",
+        "type": "document",
+        "description": "System audit logs",
+        "properties": {
+          "logId": { "type": "string", "required": true, "indexed": true },
+          "user": { "type": "link", "linkedClass": "User" },
+          "action": { "type": "string", "required": true },
+          "module": { "type": "string" },
+          "entityType": { "type": "string" },
+          "entityId": { "type": "string" },
+          "oldValues": { "type": "string" },
+          "newValues": { "type": "string" },
+          "ipAddress": { "type": "string" },
+          "userAgent": { "type": "string" },
+          "status": { "type": "string", "enum": ["Success", "Failure"] },
+          "errorMessage": { "type": "string" },
+          "timestamp": { "type": "datetime", "default": "now()", "indexed": true }
+        },
+        "indexes": [
+          { "name": "AuditLog.user_timestamp", "type": "NOTUNIQUE", "properties": ["user", "timestamp"] }
+        ]
+      },
+      {
+        "name": "InstitutionProfile",
+        "type": "document",
+        "description": "Organization/Institution master data",
+        "properties": {
+          "institutionId": { "type": "string", "required": true, "indexed": true },
+          "name": { "type": "string", "required": true },
+          "abbreviation": { "type": "string" },
+          "type": { "type": "string", "enum": ["Corporation", "NGO", "Government", "Educational", "Healthcare", "Other"] },
+          "registrationNumber": { "type": "string", "unique": true },
+          "taxId": { "type": "string" },
+          "address": { "type": "embedded", "properties": {
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "state": { "type": "string" },
+            "zipCode": { "type": "string" },
+            "country": { "type": "string" }
+          }},
+          "phoneNumber": { "type": "string" },
+          "email": { "type": "string" },
+          "website": { "type": "string" },
+          "ceo": { "type": "string" },
+          "hro": { "type": "link", "linkedClass": "Employee" },
+          "establishedDate": { "type": "date" },
+          "totalEmployees": { "type": "integer", "default": 0 },
+          "totalDepartments": { "type": "integer", "default": 0 },
+          "financialYear": { "type": "string" },
+          "businessHours": { "type": "embedded", "properties": {
+            "startTime": { "type": "string" },
+            "endTime": { "type": "string" },
+            "workDays": { "type": "string" }
+          }},
+          "logo": { "type": "link", "linkedClass": "Document" },
+          "policies": { "type": "linklist", "linkedClass": "Document" },
+          "createdAt": { "type": "datetime", "default": "now()" },
+          "updatedAt": { "type": "datetime" }
+        }
+      }
+    ],
+    "relationships": [
+      { "from": "Employee", "to": "Department", "type": "has-one", "label": "works_in" },
+      { "from": "Department", "to": "Employee", "type": "has-many", "label": "has_employees" },
+      { "from": "Employee", "to": "Employee", "type": "has-one", "label": "reports_to" },
+      { "from": "Employee", "to": "LeaveRequest", "type": "has-many", "label": "has_leave_requests" },
+      { "from": "Employee", "to": "TransferRequest", "type": "has-many", "label": "has_transfer_requests" },
+      { "from": "Employee", "to": "Probation", "type": "has-many", "label": "has_probations" },
+      { "from": "Employee", "to": "Termination", "type": "has-many", "label": "has_terminations" },
+      { "from": "Employee", "to": "Attendance", "type": "has-many", "label": "has_attendance" },
+      { "from": "Employee", "to": "Timesheet", "type": "has-many", "label": "has_timesheets" },
+      { "from": "Employee", "to": "Asset", "type": "has-many", "label": "assigned_assets" },
+      { "from": "Employee", "to": "Project", "type": "has-many", "label": "assigned_to_projects" }
+    ],
+    "notes": {
+      "orientdb_version": "3.2+",
+      "features": [
+        "Full JSON document support",
+        "Embedded properties for nested data",
+        "Link-based relationships",
+        "Indexes for performance",
+        "CRUD operations via gRPC/MQTT",
+        "Audit trail for all changes",
+        "Role-based access control",
+        "Multi-tenant ready"
+      ],
+      "json_advantages": [
+        "Flexible schema - add properties without migration",
+        "Nested structures for related data",
+        "Easy serialization for gRPC",
+        "Natural mapping to MQTT messages",
+        "Direct JSON storage in OrientDB",
+        "No ORM complexity needed"
+      ]
+    }
+  }
+}

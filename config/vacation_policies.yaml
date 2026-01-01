@@ -1,0 +1,150 @@
+# Vacation Policies Configuration
+# Defines vacation and leave policies for different employee types
+
+vacation_policies:
+  full_time:
+    name: "Full-Time Employee Policy"
+    annual_days: 20
+    sick_days: 10
+    personal_days: 5
+    accrual_rate: 1.67  # days per month
+    max_carryover: 5
+    probation_eligible: false
+    minimum_service_months: 3
+    advance_booking_days: 14
+    max_consecutive_days: 15
+    blackout_periods:
+      - start: "2025-12-20"
+        end: "2026-01-05"
+        reason: "Holiday Season"
+    approval_required: true
+    
+  part_time:
+    name: "Part-Time Employee Policy"
+    annual_days: 10
+    sick_days: 5
+    personal_days: 2
+    accrual_rate: 0.83  # days per month
+    max_carryover: 3
+    probation_eligible: false
+    minimum_service_months: 6
+    advance_booking_days: 7
+    max_consecutive_days: 10
+    approval_required: true
+    
+  contractor:
+    name: "Contractor Policy"
+    annual_days: 0
+    sick_days: 0
+    personal_days: 0
+    accrual_rate: 0
+    max_carryover: 0
+    probation_eligible: false
+    approval_required: false
+    notes: "No paid leave. Unpaid time off by agreement only."
+    
+  executive:
+    name: "Executive/Management Policy"
+    annual_days: 25
+    sick_days: 15
+    personal_days: 10
+    accrual_rate: 2.08  # days per month
+    max_carryover: 10
+    probation_eligible: true
+    minimum_service_months: 0
+    advance_booking_days: 30
+    max_consecutive_days: 30
+    approval_required: true
+    flexible_scheduling: true
+
+leave_types:
+  vacation:
+    name: "Vacation Leave"
+    paid: true
+    requires_documentation: false
+    advance_notice_days: 14
+    color: "#3B82F6"
+    icon: "🏖️"
+    
+  sick:
+    name: "Sick Leave"
+    paid: true
+    requires_documentation: true
+    documentation_after_days: 3
+    advance_notice_days: 0
+    color: "#EF4444"
+    icon: "🤒"
+    
+  personal:
+    name: "Personal Leave"
+    paid: true
+    requires_documentation: false
+    advance_notice_days: 2
+    color: "#8B5CF6"
+    icon: "👤"
+    
+  bereavement:
+    name: "Bereavement Leave"
+    paid: true
+    max_days: 5
+    requires_documentation: true
+    advance_notice_days: 0
+    color: "#6B7280"
+    icon: "🕊️"
+    
+  maternity:
+    name: "Maternity Leave"
+    paid: true
+    max_days: 90
+    requires_documentation: true
+    advance_notice_days: 30
+    color: "#EC4899"
+    icon: "👶"
+    
+  paternity:
+    name: "Paternity Leave"
+    paid: true
+    max_days: 14
+    requires_documentation: true
+    advance_notice_days: 30
+    color: "#06B6D4"
+    icon: "👨‍👶"
+    
+  unpaid:
+    name: "Unpaid Leave"
+    paid: false
+    requires_documentation: true
+    advance_notice_days: 30
+    color: "#9CA3AF"
+    icon: "📅"
+
+approval_workflow:
+  levels:
+    - level: 1
+      role: manager
+      description: "Direct supervisor approval"
+      required: true
+      
+    - level: 2
+      role: hr
+      description: "HR department approval"
+      required_for_days: 10
+      
+    - level: 3
+      role: executive
+      description: "Executive approval"
+      required_for_days: 20
+
+  auto_approval:
+    enabled: true
+    conditions:
+      - max_days: 2
+      - leave_type: personal
+      - balance_sufficient: true
+
+notification_settings:
+  notify_manager: true
+  notify_hr: true
+  notify_team: true
+  reminder_days_before: 7
+  confirmation_email: true

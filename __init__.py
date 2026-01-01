@@ -7,7 +7,7 @@ __author__ = "KWARECOM Inc."
 # from .components import *
 # from .assets import *
 # from .layout import *
-from .frontend import init  
+from frontend import init  
 # from .services import *
 # Note: Relative imports removed to avoid pytest collection issues
 # Import modules directly when needed instead of through root __init__.py  

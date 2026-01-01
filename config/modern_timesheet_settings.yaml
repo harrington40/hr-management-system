@@ -1,0 +1,18 @@
+ai_features:
+  anomaly_detection: true
+  optimal_scheduling: true
+  predictive_analytics: true
+  productivity_scoring: true
+notifications:
+  anomaly_alerts: true
+  approval_reminders: true
+  payroll_deadlines: true
+overtime:
+  auto_approval_limit: 2.0
+  daily_threshold: 8.0
+  multiplier: 1.5
+  weekly_threshold: 40.0
+work_modes:
+  flexible_hours: true
+  hybrid_scheduling: true
+  remote_work_enabled: true

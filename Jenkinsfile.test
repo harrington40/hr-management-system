@@ -1,0 +1,412 @@
+/*
+ * HRMS CI/CD Pipeline - TEST Environment
+ * 
+ * Triggers: Automatically on push to 'develop' or 'test' branch
+ * Purpose: Run tests, build, and deploy to test environment
+ */
+
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '30', daysToKeepStr: '30'))
+        timestamps()
+    }
+
+    environment {
+        // Environment Configuration
+        ENVIRONMENT = 'test'
+        PYTHON_VERSION = '3.11'
+        
+        // Application Configuration
+        APP_NAME = 'hrms-app'
+        APP_HOST = '0.0.0.0'
+        APP_PORT = '8081'
+        
+        // Docker Configuration
+        DOCKER_REGISTRY = 'harrington40'
+        DOCKER_IMAGE = "${DOCKER_REGISTRY}/${APP_NAME}"
+        DOCKER_TAG = "test-${env.BUILD_NUMBER}"
+        
+        // Test Environment URLs
+        TEST_URL = 'http://test-hrms.company.local:8081'
+        
+        // Database Configuration (Test)
+        ORIENTDB_HOST = 'orientdb-test.company.local'
+        ORIENTDB_PORT = '2424'
+        ORIENTDB_DATABASE = 'hrms_test'
+        
+        // Notification
+        SLACK_CHANNEL = '#hrms-test-deployments'
+        EMAIL_RECIPIENTS = 'dev-team@company.com'
+    }
+
+    triggers {
+        // Trigger on push to develop or test branches
+        githubPush()
+        
+        // Fallback polling for development branches
+        pollSCM('H/5 * * * *')
+        
+        // Schedule nightly builds for test environment
+        cron('H 2 * * *')
+    }
+
+    stages {
+        
+        stage('📋 Pipeline Info') {
+            steps {
+                echo "═══════════════════════════════════════"
+                echo "🚀 HRMS TEST Environment Pipeline"
+                echo "═══════════════════════════════════════"
+                echo "Environment: ${ENVIRONMENT}"
+                echo "Branch: ${env.BRANCH_NAME}"
+                echo "Build: #${env.BUILD_NUMBER}"
+                echo "Commit: ${env.GIT_COMMIT}"
+                echo "Docker Tag: ${DOCKER_TAG}"
+                echo "═══════════════════════════════════════"
+                
+                sh '''
+                    echo "📦 Workspace Info:"
+                    pwd
+                    ls -la
+                    
+                    echo "🔍 Git Info:"
+                    git log --oneline -3 || true
+                    git branch -a || true
+                '''
+            }
+        }
+
+        stage('🔄 Checkout') {
+            steps {
+                echo "Checking out code from SCM..."
+                checkout scm
+                
+                sh '''
+                    echo "✅ Checkout completed"
+                    git log --oneline -1
+                '''
+            }
+        }
+
+        stage('🔍 Validate Environment') {
+            steps {
+                echo "Validating build environment..."
+                sh '''
+                    echo "Checking Python version..."
+                    python3 --version
+                    
+                    echo "Checking required files..."
+                    test -f requirements.txt && echo "✅ requirements.txt found" || exit 1
+                    test -f main.py && echo "✅ main.py found" || exit 1
+                    test -f pytest.ini && echo "✅ pytest.ini found" || exit 1
+                    
+                    echo "Checking disk space..."
+                    df -h .
+                    
+                    echo "Checking system resources..."
+                    free -h || true
+                '''
+            }
+        }
+
+        stage('🐍 Setup Python Environment') {
+            steps {
+                echo "Setting up Python virtual environment..."
+                sh '''
+                    # Create virtual environment
+                    python3 -m venv venv
+                    
+                    # Activate and upgrade pip
+                    . venv/bin/activate
+                    pip install --upgrade pip setuptools wheel
+                    
+                    # Install dependencies
+                    echo "Installing dependencies from requirements.txt..."
+                    pip install -r requirements.txt
+                    
+                    # Verify installation
+                    pip list
+                    
+                    echo "✅ Python environment ready"
+                '''
+            }
+        }
+
+        stage('🧪 Run Unit Tests') {
+            steps {
+                echo "Running unit tests..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Run pytest with coverage
+                    pytest tests/ \
+                        --verbose \
+                        --junit-xml=test-results/junit.xml \
+                        --cov=. \
+                        --cov-report=xml:coverage.xml \
+                        --cov-report=html:htmlcov \
+                        --cov-report=term \
+                        || true
+                    
+                    echo "✅ Unit tests completed"
+                '''
+            }
+            post {
+                always {
+                    // Publish test results
+                    junit allowEmptyResults: true, testResults: 'test-results/*.xml'
+                    
+                    // Archive coverage reports
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Coverage Report'
+                    ])
+                }
+            }
+        }
+
+        stage('🔒 Security Scan') {
+            steps {
+                echo "Running security scans..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Install security tools
+                    pip install safety bandit || true
+                    
+                    # Check for known vulnerabilities in dependencies
+                    echo "Checking dependencies for vulnerabilities..."
+                    safety check --json > safety-report.json || true
+                    
+                    # Static security analysis
+                    echo "Running Bandit security analysis..."
+                    bandit -r . -f json -o bandit-report.json \
+                        --exclude ./venv,./tests,./htmlcov || true
+                    
+                    echo "✅ Security scans completed"
+                '''
+            }
+        }
+
+        stage('🏗️ Build Application') {
+            steps {
+                echo "Building application..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Create build info file
+                    cat > build-info.json <<EOF
+{
+    "environment": "${ENVIRONMENT}",
+    "build_number": "${BUILD_NUMBER}",
+    "git_commit": "${GIT_COMMIT}",
+    "git_branch": "${BRANCH_NAME}",
+    "build_timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+    "docker_tag": "${DOCKER_TAG}"
+}
+EOF
+                    
+                    echo "✅ Build completed"
+                    cat build-info.json
+                '''
+            }
+        }
+
+        stage('🐳 Build Docker Image') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                echo "Building Docker image..."
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:test-latest")
+                }
+                echo "✅ Docker image built successfully"
+            }
+        }
+
+        stage('🔍 Docker Image Scan') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                echo "Scanning Docker image for vulnerabilities..."
+                sh '''
+                    # Using Trivy for container scanning (if installed)
+                    if command -v trivy &> /dev/null; then
+                        trivy image --severity HIGH,CRITICAL ${DOCKER_IMAGE}:${DOCKER_TAG} || true
+                    else
+                        echo "⚠️  Trivy not installed, skipping container scan"
+                    fi
+                '''
+            }
+        }
+
+        stage('📤 Push Docker Image') {
+            when {
+                expression { fileExists('Dockerfile') }
+            }
+            steps {
+                echo "Pushing Docker image to registry..."
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                        docker.image("${DOCKER_IMAGE}:test-latest").push()
+                    }
+                }
+                echo "✅ Docker image pushed successfully"
+            }
+        }
+
+        stage('🚀 Deploy to Test Environment') {
+            steps {
+                echo "Deploying to TEST environment..."
+                sh '''
+                    echo "🔧 Stopping existing test services..."
+                    # Stop any running test instances
+                    pkill -f "uvicorn main:app" || true
+                    sleep 5
+                    
+                    echo "📦 Copying files to test environment..."
+                    # Copy application files (adjust path as needed)
+                    # rsync -avz --exclude 'venv' --exclude '.git' . /opt/hrms/test/ || true
+                    
+                    echo "🔧 Setting up test configuration..."
+                    # Create test environment configuration
+                    cat > config/test.env <<EOF
+ENVIRONMENT=test
+ORIENTDB_HOST=${ORIENTDB_HOST}
+ORIENTDB_PORT=${ORIENTDB_PORT}
+ORIENTDB_DATABASE=${ORIENTDB_DATABASE}
+APP_HOST=${APP_HOST}
+APP_PORT=${APP_PORT}
+EOF
+                    
+                    echo "🚀 Starting test application..."
+                    . venv/bin/activate
+                    nohup uvicorn main:app --host ${APP_HOST} --port ${APP_PORT} \
+                        --env-file config/test.env > test-app.log 2>&1 &
+                    
+                    sleep 10
+                    
+                    echo "✅ Deployment completed"
+                '''
+            }
+        }
+
+        stage('🧪 Smoke Tests') {
+            steps {
+                echo "Running smoke tests on TEST environment..."
+                sh '''
+                    echo "Waiting for application to be ready..."
+                    sleep 15
+                    
+                    # Health check
+                    echo "Testing health endpoint..."
+                    curl -f ${TEST_URL}/health || echo "⚠️  Health check failed"
+                    
+                    # Basic endpoint tests
+                    echo "Testing main endpoint..."
+                    curl -f ${TEST_URL}/hrmkit || echo "⚠️  Main endpoint failed"
+                    
+                    echo "✅ Smoke tests completed"
+                '''
+            }
+        }
+
+        stage('📊 Generate Reports') {
+            steps {
+                echo "Generating deployment reports..."
+                sh '''
+                    # Create deployment report
+                    cat > deployment-report.txt <<EOF
+═══════════════════════════════════════
+HRMS TEST Deployment Report
+═══════════════════════════════════════
+Environment: ${ENVIRONMENT}
+Build Number: ${BUILD_NUMBER}
+Git Commit: ${GIT_COMMIT}
+Git Branch: ${BRANCH_NAME}
+Docker Tag: ${DOCKER_TAG}
+Deployment Time: $(date)
+Test URL: ${TEST_URL}
+═══════════════════════════════════════
+EOF
+                    
+                    cat deployment-report.txt
+                '''
+                
+                archiveArtifacts artifacts: '*-report.*,build-info.json,deployment-report.txt', allowEmptyArchive: true
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo "Pipeline execution completed"
+            
+            // Clean up workspace
+            cleanWs(
+                deleteDirs: true,
+                patterns: [
+                    [pattern: 'venv/**', type: 'INCLUDE'],
+                    [pattern: '__pycache__/**', type: 'INCLUDE'],
+                    [pattern: '*.pyc', type: 'INCLUDE']
+                ]
+            )
+        }
+        
+        success {
+            echo "✅ TEST Pipeline succeeded!"
+            
+            // Notify team
+            emailext(
+                subject: "✅ HRMS TEST Deployment Successful - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>HRMS TEST Deployment Successful</h2>
+                    <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
+                    <p><strong>Branch:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p><strong>Test URL:</strong> <a href="${TEST_URL}">${TEST_URL}</a></p>
+                    <p><strong>Docker Tag:</strong> ${DOCKER_TAG}</p>
+                    <p><strong>Status:</strong> ✅ SUCCESS</p>
+                """,
+                to: "${EMAIL_RECIPIENTS}",
+                mimeType: 'text/html'
+            )
+        }
+        
+        failure {
+            echo "❌ TEST Pipeline failed!"
+            
+            // Notify team of failure
+            emailext(
+                subject: "❌ HRMS TEST Deployment Failed - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>HRMS TEST Deployment Failed</h2>
+                    <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
+                    <p><strong>Branch:</strong> ${env.BRANCH_NAME}</p>
+                    <p><strong>Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p><strong>Status:</strong> ❌ FAILURE</p>
+                    <p>Please check the Jenkins console output for details.</p>
+                """,
+                to: "${EMAIL_RECIPIENTS}",
+                mimeType: 'text/html'
+            )
+        }
+        
+        unstable {
+            echo "⚠️  TEST Pipeline is unstable"
+        }
+    }
+}

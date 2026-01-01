@@ -1,0 +1,97 @@
+# System Audit Log
+# Tracks all system activities for security and compliance
+
+audit_entries:
+  - id: AUD_20251231_001
+    timestamp: "2025-12-31T08:15:30"
+    user_id: ADMIN_001
+    username: admin
+    action: login
+    resource: system
+    details: "Successful login from IP: 192.168.1.100"
+    ip_address: 192.168.1.100
+    status: success
+    
+  - id: AUD_20251231_002
+    timestamp: "2025-12-31T08:20:15"
+    user_id: ADMIN_001
+    username: admin
+    action: create
+    resource: employee
+    resource_id: EMP001010
+    details: "Created new employee record: Jane Wilson"
+    ip_address: 192.168.1.100
+    status: success
+    
+  - id: AUD_20251231_003
+    timestamp: "2025-12-31T09:05:45"
+    user_id: EMP001001
+    username: john.smith
+    action: update
+    resource: attendance
+    resource_id: ATT_20251231_001
+    details: "Checked in for work"
+    ip_address: 192.168.1.105
+    status: success
+    
+  - id: AUD_20251231_004
+    timestamp: "2025-12-31T09:30:22"
+    user_id: EMP001002
+    username: sarah.johnson
+    action: create
+    resource: leave_request
+    resource_id: LEAVE_2025_045
+    details: "Submitted vacation leave request for Jan 15-20, 2026"
+    ip_address: 192.168.1.110
+    status: success
+    
+  - id: AUD_20251231_005
+    timestamp: "2025-12-31T10:15:00"
+    user_id: ADMIN_001
+    username: admin
+    action: update
+    resource: system_settings
+    details: "Updated system backup schedule"
+    ip_address: 192.168.1.100
+    status: success
+    
+  - id: AUD_20251231_006
+    timestamp: "2025-12-31T11:00:33"
+    user_id: EMP001003
+    username: michael.brown
+    action: failed_login
+    resource: system
+    details: "Failed login attempt - incorrect password"
+    ip_address: 192.168.1.115
+    status: failure
+    
+  - id: AUD_20251231_007
+    timestamp: "2025-12-31T11:45:12"
+    user_id: ADMIN_001
+    username: admin
+    action: delete
+    resource: employee
+    resource_id: EMP001099
+    details: "Archived terminated employee record"
+    ip_address: 192.168.1.100
+    status: success
+
+audit_settings:
+  retention_days: 365
+  log_level: detailed
+  monitored_actions:
+    - login
+    - logout
+    - failed_login
+    - create
+    - update
+    - delete
+    - export
+    - import
+  alert_on_actions:
+    - failed_login
+    - delete
+    - unauthorized_access
+  alert_threshold:
+    failed_logins: 3
+    suspicious_activity: 5

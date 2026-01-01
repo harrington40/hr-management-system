@@ -1,0 +1,303 @@
+# Training and Certifications
+# Employee training records and professional certifications
+
+training_programs:
+  TRN_2025_001:
+    program_id: TRN_2025_001
+    name: "Advanced Python Development"
+    category: "Technical Skills"
+    description: "Comprehensive Python programming course covering advanced topics"
+    provider: "TechEdu Academy"
+    format: online
+    duration_hours: 40
+    cost_per_participant: 499
+    max_participants: 20
+    start_date: "2026-01-15"
+    end_date: "2026-02-15"
+    status: scheduled
+    instructor: "Dr. Maria Santos"
+    
+    enrolled_employees:
+      - employee_id: EMP001045
+        name: "Frank O'Brien"
+        enrollment_date: "2025-12-20"
+        status: enrolled
+      - employee_id: EMP001003
+        name: "Michael Brown"
+        enrollment_date: "2025-12-21"
+        status: enrolled
+    
+  TRN_2025_002:
+    program_id: TRN_2025_002
+    name: "Leadership Excellence Program"
+    category: "Leadership & Management"
+    description: "Comprehensive leadership training for managers and team leads"
+    provider: "Executive Leadership Institute"
+    format: hybrid
+    duration_hours: 60
+    cost_per_participant: 1299
+    max_participants: 15
+    start_date: "2026-02-01"
+    end_date: "2026-03-31"
+    status: scheduled
+    instructor: "James Patterson, MBA"
+    
+    enrolled_employees:
+      - employee_id: EMP001005
+        name: "Alex Johnson"
+        enrollment_date: "2025-12-10"
+        status: enrolled
+      - employee_id: EMP001044
+        name: "Elena Ivanova"
+        enrollment_date: "2025-12-12"
+        status: enrolled
+      - employee_id: EMP001046
+        name: "Grace Kim"
+        enrollment_date: "2025-12-15"
+        status: enrolled
+    
+  TRN_2025_003:
+    program_id: TRN_2025_003
+    name: "Cybersecurity Fundamentals"
+    category: "Security & Compliance"
+    description: "Essential cybersecurity training for all employees"
+    provider: "SecureLearn"
+    format: online
+    duration_hours: 8
+    cost_per_participant: 99
+    max_participants: 100
+    start_date: "2025-11-01"
+    end_date: "2025-12-31"
+    status: in_progress
+    mandatory: true
+    
+    enrolled_employees:
+      - employee_id: EMP001001
+        name: "John Smith"
+        enrollment_date: "2025-11-01"
+        status: completed
+        completion_date: "2025-11-15"
+        score: 95
+      - employee_id: EMP001002
+        name: "Sarah Johnson"
+        enrollment_date: "2025-11-01"
+        status: completed
+        completion_date: "2025-11-20"
+        score: 92
+      - employee_id: EMP001043
+        name: "Derek Thompson"
+        enrollment_date: "2025-11-01"
+        status: completed
+        completion_date: "2025-11-10"
+        score: 98
+      - employee_id: EMP001040
+        name: "Angela Martinez"
+        enrollment_date: "2025-11-05"
+        status: in_progress
+        progress: 75
+
+certifications:
+  CERT_001:
+    certification_id: CERT_001
+    employee_id: EMP001001
+    employee_name: "John Smith"
+    certification_name: "AWS Certified Solutions Architect - Professional"
+    issuing_organization: "Amazon Web Services"
+    certification_type: "Professional"
+    issue_date: "2024-06-15"
+    expiry_date: "2027-06-15"
+    certification_number: "AWS-CSA-PRO-2024-12345"
+    status: active
+    verification_url: "https://aws.amazon.com/verification/12345"
+    cost: 300
+    company_sponsored: true
+    
+  CERT_002:
+    certification_id: CERT_002
+    employee_id: EMP001043
+    employee_name: "Derek Thompson"
+    certification_name: "Certified Information Systems Security Professional (CISSP)"
+    issuing_organization: "ISC2"
+    certification_type: "Professional"
+    issue_date: "2023-09-20"
+    expiry_date: "2026-09-20"
+    certification_number: "CISSP-2023-67890"
+    status: active
+    verification_url: "https://isc2.org/verify/67890"
+    cost: 699
+    company_sponsored: true
+    continuing_education_required: true
+    cpe_hours_required: 120
+    cpe_hours_completed: 85
+    
+  CERT_003:
+    certification_id: CERT_003
+    employee_id: EMP001044
+    employee_name: "Elena Ivanova"
+    certification_name: "Project Management Professional (PMP)"
+    issuing_organization: "Project Management Institute"
+    certification_type: "Professional"
+    issue_date: "2022-03-10"
+    expiry_date: "2025-03-10"
+    certification_number: "PMP-2022-11223"
+    status: expiring_soon
+    verification_url: "https://pmi.org/verify/11223"
+    cost: 555
+    company_sponsored: true
+    renewal_required: true
+    renewal_date: "2025-02-10"
+    
+  CERT_004:
+    certification_id: CERT_004
+    employee_id: EMP001041
+    employee_name: "Brandon Lee"
+    certification_name: "Certified Business Analysis Professional (CBAP)"
+    issuing_organization: "IIBA"
+    certification_type: "Professional"
+    issue_date: "2024-08-20"
+    expiry_date: "2027-08-20"
+    certification_number: "CBAP-2024-44556"
+    status: active
+    cost: 325
+    company_sponsored: true
+    
+  CERT_005:
+    certification_id: CERT_005
+    employee_id: EMP001040
+    employee_name: "Angela Martinez"
+    certification_name: "Google UX Design Professional Certificate"
+    issuing_organization: "Google"
+    certification_type: "Professional"
+    issue_date: "2024-05-15"
+    expiry_date: null
+    certification_number: "GUXD-2024-77889"
+    status: active
+    verification_url: "https://coursera.org/verify/77889"
+    cost: 199
+    company_sponsored: false
+    
+  CERT_006:
+    certification_id: CERT_006
+    employee_id: EMP001047
+    employee_name: "Henry Patel"
+    certification_name: "Certified Financial Analyst (CFA) Level I"
+    issuing_organization: "CFA Institute"
+    certification_type: "Professional"
+    issue_date: "2024-12-10"
+    expiry_date: null
+    certification_number: "CFA-L1-2024-99001"
+    status: active
+    cost: 1000
+    company_sponsored: true
+    next_level: "CFA Level II"
+    next_exam_date: "2026-06-15"
+
+skills_assessments:
+  ASSESS_2025_001:
+    assessment_id: ASSESS_2025_001
+    employee_id: EMP001001
+    employee_name: "John Smith"
+    assessment_date: "2025-12-01"
+    assessment_type: "Technical Skills"
+    
+    skills:
+      - name: "Python"
+        level: expert
+        score: 95
+      - name: "JavaScript"
+        level: advanced
+        score: 88
+      - name: "SQL"
+        level: expert
+        score: 92
+      - name: "AWS"
+        level: advanced
+        score: 90
+      - name: "Docker"
+        level: advanced
+        score: 85
+    
+    overall_score: 90
+    assessor: "Alex Johnson"
+    next_assessment_date: "2026-06-01"
+    
+  ASSESS_2025_002:
+    assessment_id: ASSESS_2025_002
+    employee_id: EMP001040
+    employee_name: "Angela Martinez"
+    assessment_date: "2025-11-15"
+    assessment_type: "Design Skills"
+    
+    skills:
+      - name: "UI/UX Design"
+        level: expert
+        score: 93
+      - name: "Figma"
+        level: expert
+        score: 95
+      - name: "Adobe XD"
+        level: advanced
+        score: 87
+      - name: "User Research"
+        level: advanced
+        score: 88
+      - name: "Prototyping"
+        level: expert
+        score: 91
+    
+    overall_score: 91
+    assessor: "Jennifer Wilson"
+    next_assessment_date: "2026-05-15"
+
+training_budget:
+  annual_budget: 100000
+  current_spending: 45670
+  budget_utilization: 0.457
+  remaining_budget: 54330
+  
+  by_department:
+    Engineering:
+      budget: 35000
+      spent: 18500
+      utilization: 0.529
+    
+    Marketing:
+      budget: 20000
+      spent: 8900
+      utilization: 0.445
+    
+    Sales:
+      budget: 15000
+      spent: 6500
+      utilization: 0.433
+    
+    Finance:
+      budget: 12000
+      spent: 5200
+      utilization: 0.433
+    
+    "Human Resources":
+      budget: 10000
+      spent: 4100
+      utilization: 0.410
+    
+    IT:
+      budget: 8000
+      spent: 2470
+      utilization: 0.309
+
+statistics:
+  total_training_programs: 3
+  active_programs: 2
+  completed_programs: 0
+  total_enrollments: 10
+  completion_rate: 0.30
+  average_score: 95.0
+  total_certifications: 6
+  active_certifications: 5
+  expiring_certifications: 1
+  expired_certifications: 0
+  company_sponsored_certifications: 5
+  total_certification_cost: 2878
+  employees_with_certifications: 6
+  certification_rate: 0.107

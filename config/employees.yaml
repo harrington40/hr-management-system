@@ -1,0 +1,108 @@
+EMP001001:
+  address:
+    city: Tech City
+    country: USA
+    state: CA
+    street: 123 Main St
+    zip: '90210'
+  benefits:
+    dental_insurance: true
+    health_insurance: true
+    retirement_401k: true
+    sick_days: 10
+    vacation_days: 20
+  biometric_id: BIO001001
+  created_at: '2025-12-01T15:56:06.659490'
+  department: Engineering
+  email: john.smith@company.com
+  emergency_contact:
+    name: Jane Smith
+    phone: +1-555-0102
+    relationship: Spouse
+  employee_id: EMP001001
+  employment_type: full_time
+  first_name: John
+  hire_date: '2023-01-15'
+  hourly_rate: null
+  last_name: Smith
+  manager_id: EMP001005
+  performance_rating: 4.2
+  phone: +1-555-0101
+  position: Senior Software Engineer
+  rfid_card: RFID001001
+  role: employee
+  salary: 95000.0
+  status: active
+  updated_at: '2025-12-01T15:56:06.659490'
+EMP001002:
+  address:
+    city: Business Park
+    country: USA
+    state: CA
+    street: 456 Oak Ave
+    zip: '90211'
+  benefits:
+    dental_insurance: true
+    health_insurance: true
+    retirement_401k: true
+    sick_days: 15
+    vacation_days: 25
+  biometric_id: BIO001002
+  created_at: '2025-12-01T15:56:06.659490'
+  department: Human Resources
+  email: sarah.johnson@company.com
+  emergency_contact:
+    name: Michael Johnson
+    phone: +1-555-0104
+    relationship: Partner
+  employee_id: EMP001002
+  employment_type: full_time
+  first_name: Sarah
+  hire_date: '2022-11-08'
+  hourly_rate: null
+  last_name: Johnson
+  manager_id: null
+  performance_rating: 4.7
+  phone: +1-555-0103
+  position: HR Manager
+  rfid_card: RFID001002
+  role: hr_admin
+  salary: 85000.0
+  status: active
+  updated_at: '2025-12-01T15:56:06.659490'
+EMP001003:
+  address:
+    city: Sales District
+    country: USA
+    state: CA
+    street: 789 Pine Rd
+    zip: '90212'
+  benefits:
+    dental_insurance: false
+    health_insurance: true
+    retirement_401k: true
+    sick_days: 8
+    vacation_days: 15
+  biometric_id: BIO001003
+  created_at: '2025-12-01T15:56:06.659490'
+  department: Sales
+  email: david.wilson@company.com
+  emergency_contact:
+    name: Lisa Wilson
+    phone: +1-555-0106
+    relationship: Spouse
+  employee_id: EMP001003
+  employment_type: full_time
+  first_name: David
+  hire_date: '2023-03-22'
+  hourly_rate: 25.0
+  last_name: Wilson
+  manager_id: EMP001007
+  performance_rating: 3.9
+  phone: +1-555-0105
+  position: Sales Representative
+  rfid_card: RFID001003
+  role: employee
+  salary: null
+  status: active
+  updated_at: '2025-12-01T15:56:06.659490'

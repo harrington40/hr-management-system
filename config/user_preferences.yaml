@@ -1,0 +1,56 @@
+# User Preferences Configuration
+# Stores individual user preferences for dashboard customization
+
+default_preferences:
+  theme: light
+  language: en
+  timezone: America/New_York
+  date_format: "MM/DD/YYYY"
+  time_format: "12h"
+  dashboard_layout: default
+  notifications_enabled: true
+  email_notifications: true
+  dashboard_widgets:
+    - attendance_summary
+    - staff_overview
+    - quick_actions
+    - recent_activities
+
+user_preferences:
+  ADMIN_001:
+    theme: dark
+    language: en
+    timezone: America/New_York
+    date_format: "MM/DD/YYYY"
+    time_format: "12h"
+    dashboard_layout: custom
+    notifications_enabled: true
+    email_notifications: true
+    dashboard_widgets:
+      - attendance_summary
+      - staff_overview
+      - performance_metrics
+      - system_health
+      - quick_actions
+      - recent_activities
+    favorite_pages:
+      - /reporting/dashboard
+      - /attendance/staff_status
+      - /administration/institution
+    
+  EMP001001:
+    theme: light
+    language: en
+    timezone: America/Los_Angeles
+    date_format: "MM/DD/YYYY"
+    time_format: "24h"
+    dashboard_layout: minimal
+    notifications_enabled: true
+    email_notifications: false
+    dashboard_widgets:
+      - my_attendance
+      - my_timesheet
+      - team_overview
+    favorite_pages:
+      - /employees/request-leave
+      - /reporting/employees/timesheet

@@ -1,0 +1,372 @@
+# Expanded Employee Database
+# Additional employee records for comprehensive testing
+
+EMP001040:
+  employee_id: EMP001040
+  first_name: Angela
+  last_name: Martinez
+  email: angela.martinez@company.com
+  phone: +1-555-0440
+  position: "UX Designer"
+  department: Marketing
+  manager_id: EMP001007
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2024-03-15"
+  salary: 75000.0
+  hourly_rate: null
+  performance_rating: 4.3
+  biometric_id: BIO001040
+  rfid_card: RFID001040
+  address:
+    street: "789 Design Ave"
+    city: "Creative City"
+    state: CA
+    zip: "90212"
+    country: USA
+  emergency_contact:
+    name: "Carlos Martinez"
+    phone: "+1-555-0441"
+    relationship: Brother
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2024-03-15T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001041:
+  employee_id: EMP001041
+  first_name: Brandon
+  last_name: Lee
+  email: brandon.lee@company.com
+  phone: +1-555-0441
+  position: "Data Analyst"
+  department: Finance
+  manager_id: EMP001010
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2024-06-01"
+  salary: 68000.0
+  hourly_rate: null
+  performance_rating: 4.1
+  biometric_id: BIO001041
+  rfid_card: RFID001041
+  address:
+    street: "321 Analytics Blvd"
+    city: "Data City"
+    state: CA
+    zip: "90213"
+    country: USA
+  emergency_contact:
+    name: "Michelle Lee"
+    phone: "+1-555-0442"
+    relationship: Wife
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2024-06-01T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001042:
+  employee_id: EMP001042
+  first_name: Christina
+  last_name: Wong
+  email: christina.wong@company.com
+  phone: +1-555-0442
+  position: "Customer Success Manager"
+  department: Sales
+  manager_id: EMP001026
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2023-09-10"
+  salary: 72000.0
+  hourly_rate: null
+  performance_rating: 4.6
+  biometric_id: BIO001042
+  rfid_card: RFID001042
+  address:
+    street: "555 Success St"
+    city: "Business Park"
+    state: CA
+    zip: "90214"
+    country: USA
+  emergency_contact:
+    name: "Henry Wong"
+    phone: "+1-555-0443"
+    relationship: Father
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2023-09-10T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001043:
+  employee_id: EMP001043
+  first_name: Derek
+  last_name: Thompson
+  email: derek.thompson@company.com
+  phone: +1-555-0443
+  position: "Security Engineer"
+  department: IT
+  manager_id: EMP001022
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2023-11-20"
+  salary: 95000.0
+  hourly_rate: null
+  performance_rating: 4.4
+  biometric_id: BIO001043
+  rfid_card: RFID001043
+  address:
+    street: "888 Secure Way"
+    city: "Tech City"
+    state: CA
+    zip: "90215"
+    country: USA
+  emergency_contact:
+    name: "Laura Thompson"
+    phone: "+1-555-0444"
+    relationship: Sister
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2023-11-20T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001044:
+  employee_id: EMP001044
+  first_name: Elena
+  last_name: Ivanova
+  email: elena.ivanova@company.com
+  phone: +1-555-0444
+  position: "Product Manager"
+  department: Engineering
+  manager_id: EMP001005
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2022-07-15"
+  salary: 105000.0
+  hourly_rate: null
+  performance_rating: 4.7
+  biometric_id: BIO001044
+  rfid_card: RFID001044
+  address:
+    street: "999 Product Plaza"
+    city: "Innovation City"
+    state: CA
+    zip: "90216"
+    country: USA
+  emergency_contact:
+    name: "Dmitri Ivanov"
+    phone: "+1-555-0445"
+    relationship: Spouse
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 25
+    sick_days: 15
+  created_at: "2022-07-15T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001045:
+  employee_id: EMP001045
+  first_name: Frank
+  last_name: O'Brien
+  email: frank.obrien@company.com
+  phone: +1-555-0445
+  position: "QA Engineer"
+  department: Engineering
+  manager_id: EMP001005
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2024-02-01"
+  salary: 78000.0
+  hourly_rate: null
+  performance_rating: 4.2
+  biometric_id: BIO001045
+  rfid_card: RFID001045
+  address:
+    street: "777 Quality Road"
+    city: "Test City"
+    state: CA
+    zip: "90217"
+    country: USA
+  emergency_contact:
+    name: "Mary O'Brien"
+    phone: "+1-555-0446"
+    relationship: Mother
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2024-02-01T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001046:
+  employee_id: EMP001046
+  first_name: Grace
+  last_name: Kim
+  email: grace.kim@company.com
+  phone: +1-555-0446
+  position: "Content Marketing Manager"
+  department: Marketing
+  manager_id: EMP001007
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2023-04-10"
+  salary: 82000.0
+  hourly_rate: null
+  performance_rating: 4.5
+  biometric_id: BIO001046
+  rfid_card: RFID001046
+  address:
+    street: "444 Content Ave"
+    city: "Media City"
+    state: CA
+    zip: "90218"
+    country: USA
+  emergency_contact:
+    name: "David Kim"
+    phone: "+1-555-0447"
+    relationship: Husband
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2023-04-10T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001047:
+  employee_id: EMP001047
+  first_name: Henry
+  last_name: Patel
+  email: henry.patel@company.com
+  phone: +1-555-0447
+  position: "Business Analyst"
+  department: Finance
+  manager_id: EMP001010
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2024-08-15"
+  salary: 71000.0
+  hourly_rate: null
+  performance_rating: 4.0
+  biometric_id: BIO001047
+  rfid_card: RFID001047
+  address:
+    street: "222 Business St"
+    city: "Enterprise City"
+    state: CA
+    zip: "90219"
+    country: USA
+  emergency_contact:
+    name: "Priya Patel"
+    phone: "+1-555-0448"
+    relationship: Sister
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2024-08-15T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001048:
+  employee_id: EMP001048
+  first_name: Isabella
+  last_name: Garcia
+  email: isabella.garcia@company.com
+  phone: +1-555-0448
+  position: "Training Coordinator"
+  department: "Human Resources"
+  manager_id: EMP001002
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2024-05-20"
+  salary: 58000.0
+  hourly_rate: null
+  performance_rating: 4.3
+  biometric_id: BIO001048
+  rfid_card: RFID001048
+  address:
+    street: "666 Learning Lane"
+    city: "Education City"
+    state: CA
+    zip: "90220"
+    country: USA
+  emergency_contact:
+    name: "Miguel Garcia"
+    phone: "+1-555-0449"
+    relationship: Father
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 20
+    sick_days: 10
+  created_at: "2024-05-20T08:00:00"
+  updated_at: "2025-12-31T10:00:00"
+
+EMP001049:
+  employee_id: EMP001049
+  first_name: Jack
+  last_name: Morrison
+  email: jack.morrison@company.com
+  phone: +1-555-0449
+  position: "Sales Development Representative"
+  department: Sales
+  manager_id: EMP001026
+  role: employee
+  status: active
+  employment_type: full_time
+  hire_date: "2024-10-01"
+  salary: 52000.0
+  hourly_rate: null
+  performance_rating: 3.9
+  biometric_id: BIO001049
+  rfid_card: RFID001049
+  address:
+    street: "111 Growth Blvd"
+    city: "Sales City"
+    state: CA
+    zip: "90221"
+    country: USA
+  emergency_contact:
+    name: "Sarah Morrison"
+    phone: "+1-555-0450"
+    relationship: Wife
+  benefits:
+    health_insurance: true
+    dental_insurance: true
+    retirement_401k: true
+    vacation_days: 15
+    sick_days: 10
+  created_at: "2024-10-01T08:00:00"
+  updated_at: "2025-12-31T10:00:00"

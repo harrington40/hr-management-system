@@ -1,0 +1,241 @@
+# Institution Profile
+# Company/Organization information
+
+institution:
+  id: INST_001
+  name: "TechCorp Solutions Inc."
+  legal_name: "TechCorp Solutions Incorporated"
+  short_name: "TechCorp"
+  tagline: "Innovating Tomorrow's Technology Today"
+  
+  registration:
+    registration_number: "TC-2020-XYZ-12345"
+    tax_id: "98-7654321"
+    registration_date: "2020-01-15"
+    registration_authority: "State of California"
+    business_type: "C Corporation"
+    industry: "Information Technology"
+    sub_industry: "Software Development"
+  
+  contact:
+    headquarters:
+      street: "123 Innovation Boulevard"
+      suite: "Suite 500"
+      city: "San Francisco"
+      state: "California"
+      zip: "94105"
+      country: "United States"
+    
+    phone: "+1-555-0100"
+    fax: "+1-555-0101"
+    email: "info@techcorp.com"
+    website: "https://www.techcorp.com"
+    support_email: "support@techcorp.com"
+    hr_email: "hr@techcorp.com"
+  
+  social_media:
+    linkedin: "https://linkedin.com/company/techcorp"
+    twitter: "@TechCorpInc"
+    facebook: "https://facebook.com/techcorp"
+    instagram: "@techcorp"
+    youtube: "https://youtube.com/techcorp"
+  
+  leadership:
+    ceo:
+      name: "Dr. Katherine Roberts"
+      email: "kroberts@techcorp.com"
+      phone: "+1-555-0110"
+    
+    cfo:
+      name: "Richard Chang"
+      email: "rchang@techcorp.com"
+      phone: "+1-555-0111"
+    
+    cto:
+      name: "Marcus Williams"
+      email: "mwilliams@techcorp.com"
+      phone: "+1-555-0112"
+    
+    coo:
+      name: "Jennifer Martinez"
+      email: "jmartinez@techcorp.com"
+      phone: "+1-555-0113"
+    
+    chro:
+      name: "Sarah Johnson"
+      email: "sjohnson@techcorp.com"
+      phone: "+1-555-0114"
+  
+  company_size:
+    total_employees: 56
+    full_time: 52
+    part_time: 4
+    contractors: 8
+    interns: 2
+  
+  locations:
+    - id: LOC_001
+      name: "Headquarters"
+      type: "main_office"
+      address:
+        street: "123 Innovation Boulevard"
+        suite: "Suite 500"
+        city: "San Francisco"
+        state: "California"
+        zip: "94105"
+        country: "United States"
+      phone: "+1-555-0100"
+      employee_count: 45
+      square_footage: 15000
+      floors: [3, 4, 5]
+    
+    - id: LOC_002
+      name: "East Coast Office"
+      type: "branch_office"
+      address:
+        street: "456 Technology Park"
+        suite: "Floor 2"
+        city: "New York"
+        state: "New York"
+        zip: "10001"
+        country: "United States"
+      phone: "+1-555-0200"
+      employee_count: 11
+      square_footage: 5000
+      floors: [2]
+  
+  financials:
+    fiscal_year_start: "01-01"
+    fiscal_year_end: "12-31"
+    annual_revenue: 12500000
+    currency: "USD"
+    bank_name: "First National Bank"
+    bank_account: "XXXX-XXXX-XXXX-9876"
+    payroll_frequency: "bi-weekly"
+  
+  compliance:
+    iso_certifications:
+      - "ISO 9001:2015"
+      - "ISO 27001:2013"
+    licenses:
+      - name: "Business License"
+        number: "BL-2020-12345"
+        expiry: "2026-01-15"
+      - name: "Software Development License"
+        number: "SDL-2020-67890"
+        expiry: "2025-12-31"
+    insurance:
+      - type: "General Liability"
+        provider: "ABC Insurance"
+        policy_number: "GL-12345678"
+        coverage: 2000000
+        expiry: "2026-06-30"
+      - type: "Professional Liability"
+        provider: "ABC Insurance"
+        policy_number: "PL-87654321"
+        coverage: 1000000
+        expiry: "2026-06-30"
+      - type: "Workers Compensation"
+        provider: "XYZ Insurance"
+        policy_number: "WC-11223344"
+        coverage: 500000
+        expiry: "2026-03-31"
+  
+  policies:
+    work_hours:
+      standard_hours_per_week: 40
+      standard_workday_start: "09:00"
+      standard_workday_end: "18:00"
+      lunch_break_minutes: 60
+      flexible_hours: true
+      remote_work_allowed: true
+    
+    leave_policy:
+      annual_leave_days: 20
+      sick_leave_days: 10
+      personal_days: 5
+      parental_leave_weeks: 12
+      bereavement_days: 5
+    
+    benefits:
+      health_insurance: true
+      dental_insurance: true
+      vision_insurance: true
+      life_insurance: true
+      disability_insurance: true
+      retirement_401k: true
+      retirement_401k_match: 6.0
+      professional_development: 2000
+      wellness_program: true
+      gym_membership: true
+      commuter_benefits: true
+  
+  working_hours:
+    timezone: "America/Los_Angeles"
+    business_hours:
+      monday: "09:00-18:00"
+      tuesday: "09:00-18:00"
+      wednesday: "09:00-18:00"
+      thursday: "09:00-18:00"
+      friday: "09:00-17:00"
+      saturday: "closed"
+      sunday: "closed"
+    
+    holidays_per_year: 12
+    floating_holidays: 2
+  
+  culture:
+    mission: "To deliver innovative technology solutions that empower businesses to achieve their full potential."
+    vision: "To be the leading provider of cutting-edge software solutions globally."
+    values:
+      - "Innovation"
+      - "Integrity"
+      - "Collaboration"
+      - "Excellence"
+      - "Customer Focus"
+    
+    diversity_commitment: "We are committed to building a diverse and inclusive workplace where everyone feels valued and respected."
+  
+  technology:
+    primary_platforms:
+      - "Python"
+      - "JavaScript"
+      - "React"
+      - "Node.js"
+      - "AWS"
+    
+    tools:
+      - "GitHub"
+      - "Jira"
+      - "Slack"
+      - "Zoom"
+      - "Google Workspace"
+  
+  awards:
+    - name: "Best Place to Work 2024"
+      issuer: "Tech Industry Awards"
+      date: "2024-06-15"
+    - name: "Innovation Excellence Award"
+      issuer: "California Tech Council"
+      date: "2023-11-20"
+  
+  memberships:
+    - "California Technology Council"
+    - "Software & Information Industry Association"
+    - "American Chamber of Commerce"
+  
+  statistics:
+    founded_year: 2020
+    years_in_business: 5
+    employee_satisfaction_score: 4.3
+    customer_satisfaction_score: 4.6
+    glassdoor_rating: 4.4
+    retention_rate: 0.89
+
+branding:
+  logo_url: "/assets/images/logo.png"
+  primary_color: "#2563EB"
+  secondary_color: "#1E40AF"
+  accent_color: "#10B981"
+  font_primary: "Inter"
+  font_secondary: "Roboto"

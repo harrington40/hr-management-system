@@ -6,11 +6,11 @@ Coordinates all services (MQTT, Backblaze, gRPC, OrientDB)
 import logging
 # import sys
 # import os
-from ..services.mqtt_service import mqtt_service
-from ..services.backblaze_service import backblaze_service
-from ..services.grpc_service import grpc_service
-from ..services.database_service import database_service
-from ..services.auth_service import AuthService
+from .mqtt_service import mqtt_service
+from .backblaze_service import backblaze_service
+from .grpc_service import grpc_service
+from .database_service import database_service
+from .auth_service import AuthService
 
 logger = logging.getLogger(__name__)
 

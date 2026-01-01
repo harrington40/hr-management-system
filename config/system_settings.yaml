@@ -1,0 +1,37 @@
+backup_retention:
+  category: system
+  data_type: integer
+  description: Number of days to retain backups
+  is_sensitive: false
+  last_modified_at: '2025-12-01T20:26:26.456368'
+  last_modified_by: SYSTEM
+  name: Backup Retention
+  requires_restart: false
+  setting_id: backup_retention
+  value: 30
+password_policy:
+  category: security
+  data_type: json
+  description: Password complexity requirements
+  is_sensitive: false
+  last_modified_at: '2025-12-01T20:26:26.456368'
+  last_modified_by: SYSTEM
+  name: Password Policy
+  requires_restart: false
+  setting_id: password_policy
+  value:
+    expiry_days: 90
+    min_length: 12
+    require_numbers: true
+    require_uppercase: true
+session_timeout:
+  category: security
+  data_type: integer
+  description: Session timeout in seconds
+  is_sensitive: false
+  last_modified_at: '2025-12-01T20:26:26.456368'
+  last_modified_by: SYSTEM
+  name: Session Timeout
+  requires_restart: false
+  setting_id: session_timeout
+  value: 3600

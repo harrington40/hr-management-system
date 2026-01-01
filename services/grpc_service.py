@@ -8,7 +8,7 @@ import logging
 # import grpc
 from concurrent import futures
 from typing import Callable, Dict, Any
-from ..config.services import config
+from config.services import config
 # from services.hrms_service import hrms_servicer
 
 logger = logging.getLogger(__name__)

@@ -7,7 +7,7 @@ import json
 import logging
 from typing import Callable, Dict, Any
 import paho.mqtt.client as mqtt
-from ..config.services import config
+from config.services import config
 
 logger = logging.getLogger(__name__)
 

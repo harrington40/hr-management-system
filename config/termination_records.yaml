@@ -1,0 +1,241 @@
+# Employee Termination Records
+# Tracks employee terminations and exit procedures
+
+termination_records:
+  TERM_2025_001:
+    termination_id: TERM_2025_001
+    employee_id: EMP001030
+    employee_name: "Mark Stevens"
+    department: Sales
+    position: "Sales Representative"
+    hire_date: "2023-06-15"
+    termination_date: "2025-11-30"
+    termination_type: voluntary
+    reason: "Accepted position at another company"
+    notice_period_days: 14
+    notice_given_date: "2025-11-16"
+    last_working_day: "2025-11-30"
+    exit_interview_completed: true
+    exit_interview_date: "2025-11-28"
+    final_settlement_amount: 8500.00
+    unused_vacation_days: 5
+    
+    exit_interview_feedback:
+      overall_experience: positive
+      would_recommend_company: true
+      reason_for_leaving: "Better career opportunity"
+      suggestions:
+        - "More competitive salary packages"
+        - "Better work-life balance programs"
+    
+    clearance_checklist:
+      returned_laptop: true
+      returned_access_card: true
+      returned_keys: true
+      it_access_revoked: true
+      email_forwarded: true
+      knowledge_transfer_completed: true
+      final_paycheck_processed: true
+    
+    status: completed
+    
+  TERM_2025_002:
+    termination_id: TERM_2025_002
+    employee_id: EMP001031
+    employee_name: "Susan Parker"
+    department: Marketing
+    position: "Marketing Manager"
+    hire_date: "2021-03-10"
+    termination_date: "2025-12-15"
+    termination_type: voluntary
+    reason: "Retirement"
+    notice_period_days: 30
+    notice_given_date: "2025-11-15"
+    last_working_day: "2025-12-15"
+    exit_interview_completed: true
+    exit_interview_date: "2025-12-10"
+    final_settlement_amount: 45000.00
+    unused_vacation_days: 12
+    retirement_benefits: true
+    
+    exit_interview_feedback:
+      overall_experience: very_positive
+      would_recommend_company: true
+      reason_for_leaving: "Retirement after long career"
+      highlights:
+        - "Great work culture"
+        - "Supportive management"
+        - "Good benefits package"
+    
+    clearance_checklist:
+      returned_laptop: true
+      returned_access_card: true
+      returned_keys: true
+      it_access_revoked: true
+      email_forwarded: true
+      knowledge_transfer_completed: true
+      final_paycheck_processed: true
+      retirement_paperwork_completed: true
+    
+    status: completed
+    farewell_event: true
+    
+  TERM_2025_003:
+    termination_id: TERM_2025_003
+    employee_id: EMP001032
+    employee_name: "Jason Miller"
+    department: IT
+    position: "Junior Developer"
+    hire_date: "2024-08-01"
+    termination_date: "2025-10-15"
+    termination_type: involuntary
+    reason: "Performance issues - failed probation"
+    notice_period_days: 0
+    last_working_day: "2025-10-15"
+    exit_interview_completed: false
+    final_settlement_amount: 3200.00
+    severance_package: false
+    
+    performance_issues:
+      - "Consistently missed deadlines"
+      - "Poor code quality"
+      - "Lack of improvement despite coaching"
+    
+    documentation:
+      - "Performance improvement plan initiated 2025-08-15"
+      - "Multiple coaching sessions documented"
+      - "Final warning issued 2025-09-30"
+    
+    clearance_checklist:
+      returned_laptop: true
+      returned_access_card: true
+      returned_keys: true
+      it_access_revoked: true
+      final_paycheck_processed: true
+    
+    status: completed
+    
+  TERM_2025_004:
+    termination_id: TERM_2025_004
+    employee_id: EMP001033
+    employee_name: "Rebecca Chen"
+    department: Finance
+    position: "Financial Analyst"
+    hire_date: "2022-02-20"
+    termination_date: "2025-12-31"
+    termination_type: voluntary
+    reason: "Relocation to another state"
+    notice_period_days: 21
+    notice_given_date: "2025-12-10"
+    last_working_day: "2025-12-31"
+    exit_interview_completed: true
+    exit_interview_date: "2025-12-28"
+    final_settlement_amount: 12500.00
+    unused_vacation_days: 8
+    
+    exit_interview_feedback:
+      overall_experience: positive
+      would_recommend_company: true
+      reason_for_leaving: "Spouse job relocation"
+      willing_to_return: true
+    
+    clearance_checklist:
+      returned_laptop: true
+      returned_access_card: true
+      returned_keys: true
+      it_access_revoked: true
+      email_forwarded: true
+      knowledge_transfer_completed: true
+      final_paycheck_processed: true
+    
+    status: in_progress
+    
+  TERM_2025_005:
+    termination_id: TERM_2025_005
+    employee_id: EMP001034
+    employee_name: "Carlos Rodriguez"
+    department: Engineering
+    position: "Software Engineer"
+    hire_date: "2020-05-10"
+    termination_date: "2026-01-15"
+    termination_type: voluntary
+    reason: "Starting own business"
+    notice_period_days: 30
+    notice_given_date: "2025-12-15"
+    last_working_day: "2026-01-15"
+    exit_interview_scheduled: "2026-01-12"
+    final_settlement_pending: true
+    
+    status: scheduled
+    
+  TERM_2025_006:
+    termination_id: TERM_2025_006
+    employee_id: EMP001035
+    employee_name: "Patricia Hayes"
+    department: "Human Resources"
+    position: "HR Coordinator"
+    hire_date: "2023-11-01"
+    termination_date: "2025-09-30"
+    termination_type: involuntary
+    reason: "Position eliminated - restructuring"
+    notice_period_days: 0
+    last_working_day: "2025-09-30"
+    exit_interview_completed: true
+    severance_package: true
+    severance_weeks: 8
+    final_settlement_amount: 18000.00
+    outplacement_support: true
+    
+    exit_interview_feedback:
+      overall_experience: neutral
+      would_recommend_company: true
+      reason_for_leaving: "Position eliminated"
+      suggestions:
+        - "Better communication during restructuring"
+    
+    clearance_checklist:
+      returned_laptop: true
+      returned_access_card: true
+      returned_keys: true
+      it_access_revoked: true
+      email_forwarded: true
+      knowledge_transfer_completed: true
+      final_paycheck_processed: true
+      severance_processed: true
+    
+    status: completed
+
+termination_policies:
+  notice_period:
+    employee: 14
+    manager: 30
+    executive: 60
+  exit_interview_mandatory: true
+  severance_eligibility:
+    involuntary: true
+    voluntary: false
+    restructuring: true
+  severance_calculation:
+    base_weeks: 2
+    per_year_service: 1
+  clearance_required:
+    - laptop
+    - access_card
+    - keys
+    - documents
+    - it_access
+  final_paycheck_days: 7
+
+statistics:
+  year_2025:
+    total_terminations: 6
+    voluntary: 4
+    involuntary: 2
+    average_tenure_years: 2.8
+    top_reasons:
+      - "Career opportunity": 2
+      - "Relocation": 1
+      - "Retirement": 1
+      - "Performance": 1
+      - "Restructuring": 1
+    exit_interview_completion_rate: 0.83

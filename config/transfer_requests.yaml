@@ -1,0 +1,134 @@
+# Transfer Requests Database
+# Tracks all employee department/position transfer requests
+
+transfer_requests:
+  TRANS_2025_001:
+    request_id: TRANS_2025_001
+    employee_id: EMP001012
+    employee_name: "Amanda Rodriguez"
+    current_department: Sales
+    current_position: "Sales Representative"
+    requested_department: Marketing
+    requested_position: "Marketing Specialist"
+    reason: "Career growth and interest in digital marketing"
+    status: approved
+    requested_date: "2025-11-15T10:00:00"
+    approved_by: HR_001
+    approved_date: "2025-11-20T14:30:00"
+    effective_date: "2026-01-01"
+    salary_change: 5000
+    comments: "Approved - good fit for marketing team needs"
+    
+  TRANS_2025_002:
+    request_id: TRANS_2025_002
+    employee_id: EMP001013
+    employee_name: "Kevin Thompson"
+    current_department: IT
+    current_position: "Junior Developer"
+    requested_department: Engineering
+    requested_position: "Software Engineer"
+    reason: "Seeking more challenging technical projects"
+    status: approved
+    requested_date: "2025-12-01T09:30:00"
+    approved_by: HR_001
+    approved_date: "2025-12-05T16:00:00"
+    effective_date: "2026-01-15"
+    salary_change: 8000
+    probation_period_months: 3
+    
+  TRANS_2025_003:
+    request_id: TRANS_2025_003
+    employee_id: EMP001014
+    employee_name: "Patricia Lee"
+    current_department: "Human Resources"
+    current_position: "HR Assistant"
+    requested_department: Finance
+    requested_position: "Payroll Specialist"
+    reason: "Experience in payroll during HR tenure, interested in specializing"
+    status: pending
+    requested_date: "2025-12-10T11:00:00"
+    review_notes: "Under review - awaiting Finance department feedback"
+    
+  TRANS_2025_004:
+    request_id: TRANS_2025_004
+    employee_id: EMP001015
+    employee_name: "Christopher White"
+    current_department: Marketing
+    current_position: "Marketing Coordinator"
+    requested_department: Sales
+    requested_position: "Account Manager"
+    reason: "Strong customer relationship skills, want to transition to sales"
+    status: pending
+    requested_date: "2025-12-20T14:15:00"
+    
+  TRANS_2025_005:
+    request_id: TRANS_2025_005
+    employee_id: EMP001016
+    employee_name: "Jennifer Clark"
+    current_department: Finance
+    current_position: "Financial Analyst"
+    requested_department: Finance
+    requested_position: "Senior Financial Analyst"
+    reason: "Promotion request - 3 years experience, consistent high performance"
+    status: approved
+    requested_date: "2025-12-05T10:30:00"
+    approved_by: HR_001
+    approved_date: "2025-12-08T15:00:00"
+    effective_date: "2026-01-01"
+    salary_change: 12000
+    is_promotion: true
+    
+  TRANS_2025_006:
+    request_id: TRANS_2025_006
+    employee_id: EMP001017
+    employee_name: "Daniel Harris"
+    current_department: Engineering
+    current_position: "Backend Developer"
+    requested_department: Engineering
+    requested_position: "Full Stack Developer"
+    reason: "Expanded skillset to include frontend, seeking role utilizing both"
+    status: rejected
+    requested_date: "2025-11-25T09:00:00"
+    rejected_by: HR_001
+    rejected_date: "2025-11-28T13:00:00"
+    rejection_reason: "Current backend projects require specialized focus. Recommend reapplying in 6 months."
+    
+  TRANS_2025_007:
+    request_id: TRANS_2025_007
+    employee_id: EMP001018
+    employee_name: "Michelle Taylor"
+    current_department: Sales
+    current_position: "Senior Account Manager"
+    requested_department: Sales
+    requested_position: "Sales Director"
+    reason: "Team leadership experience, exceeded targets for 2 consecutive years"
+    status: under_review
+    requested_date: "2025-12-15T11:00:00"
+    interview_scheduled: "2026-01-10T14:00:00"
+    review_notes: "Strong candidate - scheduled for executive interview"
+
+transfer_policies:
+  minimum_tenure_months: 12
+  probation_eligible: false
+  approval_levels:
+    - same_department: ["manager", "hr"]
+    - cross_department: ["current_manager", "new_manager", "hr", "executive"]
+    - promotion: ["manager", "hr", "executive"]
+  average_processing_days: 14
+  blackout_periods:
+    - start: "2025-12-15"
+      end: "2026-01-05"
+      reason: "Year-end processing"
+
+statistics:
+  total_requests: 7
+  pending: 2
+  under_review: 1
+  approved: 3
+  rejected: 1
+  average_processing_days: 12
+  approval_rate: 0.75
+  most_requested_departments:
+    - Engineering
+    - Marketing
+    - Finance

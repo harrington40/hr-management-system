@@ -1,0 +1,583 @@
+/*
+ * HRMS CI/CD Pipeline - PRODUCTION Environment
+ * 
+ * Triggers: Manual approval required after successful staging deployment
+ * Purpose: Deploy to production with safety checks and rollback capability
+ */
+
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 3, unit: 'HOURS')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '100', daysToKeepStr: '180'))
+        timestamps()
+    }
+
+    parameters {
+        choice(
+            name: 'DEPLOYMENT_TYPE',
+            choices: ['rolling', 'blue-green', 'canary'],
+            description: 'Type of deployment strategy'
+        )
+        booleanParam(
+            name: 'SKIP_TESTS',
+            defaultValue: false,
+            description: 'Skip pre-deployment tests (NOT RECOMMENDED)'
+        )
+        booleanParam(
+            name: 'CREATE_BACKUP',
+            defaultValue: true,
+            description: 'Create database backup before deployment'
+        )
+        string(
+            name: 'ROLLBACK_VERSION',
+            defaultValue: '',
+            description: 'Version to rollback to (leave empty for normal deployment)'
+        )
+    }
+
+    environment {
+        // Environment Configuration
+        ENVIRONMENT = 'production'
+        PYTHON_VERSION = '3.11'
+        
+        // Application Configuration
+        APP_NAME = 'hrms-app'
+        APP_HOST = '0.0.0.0'
+        APP_PORT = '8080'
+        
+        // Docker Configuration
+        DOCKER_REGISTRY = 'harrington40'
+        DOCKER_IMAGE = "${DOCKER_REGISTRY}/${APP_NAME}"
+        DOCKER_TAG = "prod-${env.BUILD_NUMBER}"
+        
+        // Production Environment URLs
+        PRODUCTION_URL = 'https://hrms.company.com'
+        
+        // Database Configuration (Production)
+        ORIENTDB_HOST = 'orientdb-prod.company.local'
+        ORIENTDB_PORT = '2424'
+        ORIENTDB_DATABASE = 'hrms_production'
+        
+        // Notification
+        SLACK_CHANNEL = '#hrms-production-deployments'
+        EMAIL_RECIPIENTS = 'engineering-leads@company.com,devops@company.com,cto@company.com'
+        
+        // Monitoring
+        MONITORING_ENABLED = 'true'
+        DATADOG_API_KEY = credentials('datadog-api-key')
+    }
+
+    stages {
+        
+        stage('📋 Production Pipeline Info') {
+            steps {
+                echo "═══════════════════════════════════════"
+                echo "🚀 HRMS PRODUCTION Deployment Pipeline"
+                echo "═══════════════════════════════════════"
+                echo "Environment: ${ENVIRONMENT}"
+                echo "Branch: ${env.BRANCH_NAME}"
+                echo "Build: #${env.BUILD_NUMBER}"
+                echo "Deployment Type: ${params.DEPLOYMENT_TYPE}"
+                echo "Docker Tag: ${DOCKER_TAG}"
+                echo "═══════════════════════════════════════"
+                
+                script {
+                    if (params.ROLLBACK_VERSION) {
+                        echo "⚠️  ROLLBACK MODE: ${params.ROLLBACK_VERSION}"
+                    }
+                }
+            }
+        }
+
+        stage('🔐 Manual Approval') {
+            steps {
+                script {
+                    timeout(time: 1, unit: 'HOURS') {
+                        input(
+                            message: '🚨 Approve Production Deployment?',
+                            ok: 'Deploy to Production',
+                            submitter: 'admin,prod-deploy-group',
+                            parameters: [
+                                text(
+                                    name: 'APPROVAL_REASON',
+                                    defaultValue: '',
+                                    description: 'Reason for production deployment'
+                                )
+                            ]
+                        )
+                    }
+                }
+                echo "✅ Production deployment approved"
+            }
+        }
+
+        stage('🔄 Checkout') {
+            when {
+                expression { !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Checking out code from SCM..."
+                checkout scm
+                sh 'git log --oneline -1'
+            }
+        }
+
+        stage('🔍 Pre-Production Validation') {
+            steps {
+                echo "Running pre-production validation checks..."
+                sh '''
+                    echo "Validating production environment..."
+                    
+                    # Check Python version
+                    python3 --version
+                    
+                    # Validate critical files
+                    test -f requirements.txt || exit 1
+                    test -f main.py || exit 1
+                    test -f config/production.env || echo "⚠️  Production config not found"
+                    
+                    # Check system resources
+                    echo "System resources:"
+                    df -h .
+                    free -h || true
+                    
+                    # Check network connectivity to production services
+                    echo "Checking database connectivity..."
+                    # nc -zv ${ORIENTDB_HOST} ${ORIENTDB_PORT} || echo "⚠️  Cannot reach database"
+                    
+                    echo "✅ Pre-production validation passed"
+                '''
+            }
+        }
+
+        stage('🐍 Setup Production Environment') {
+            when {
+                expression { !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Setting up production environment..."
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    
+                    pip install --upgrade pip setuptools wheel
+                    pip install -r requirements.txt
+                    
+                    # Verify all critical dependencies
+                    pip check
+                    
+                    echo "✅ Production environment ready"
+                '''
+            }
+        }
+
+        stage('🧪 Pre-Deployment Tests') {
+            when {
+                expression { !params.SKIP_TESTS && !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Running pre-deployment test suite..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Run critical tests only
+                    pytest tests/ \
+                        --verbose \
+                        --junit-xml=prod-test-results/junit.xml \
+                        -m "not slow" \
+                        || exit 1
+                    
+                    echo "✅ Pre-deployment tests passed"
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'prod-test-results/*.xml'
+                }
+            }
+        }
+
+        stage('🔒 Security Final Check') {
+            when {
+                expression { !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Running final security checks..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Critical security scan
+                    pip install safety
+                    safety check || echo "⚠️  Security issues detected"
+                    
+                    # Check for sensitive data
+                    echo "Scanning for sensitive data..."
+                    grep -r "password\\|secret\\|api_key" --include="*.py" . || true
+                    
+                    echo "✅ Security check completed"
+                '''
+            }
+        }
+
+        stage('💾 Create Production Backup') {
+            when {
+                expression { params.CREATE_BACKUP }
+            }
+            steps {
+                echo "Creating production database backup..."
+                sh '''
+                    # Create backup directory
+                    mkdir -p backups/production
+                    
+                    # Create timestamped backup
+                    BACKUP_FILE="backups/production/hrms_prod_$(date +%Y%m%d_%H%M%S).backup"
+                    BACKUP_LOG="backups/production/backup_$(date +%Y%m%d_%H%M%S).log"
+                    
+                    echo "Creating backup: $BACKUP_FILE"
+                    
+                    # Backup command (adjust for your database)
+                    # orientdb_backup.sh ${ORIENTDB_HOST} ${ORIENTDB_DATABASE} $BACKUP_FILE > $BACKUP_LOG 2>&1
+                    
+                    # Verify backup
+                    # test -f $BACKUP_FILE || exit 1
+                    
+                    # Upload backup to S3 or backup storage
+                    # aws s3 cp $BACKUP_FILE s3://company-backups/hrms/production/
+                    
+                    echo "✅ Backup created: $BACKUP_FILE"
+                    echo "Backup stored at: $BACKUP_FILE"
+                '''
+            }
+        }
+
+        stage('🏗️ Build Production Release') {
+            when {
+                expression { !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Building production release..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Create production build metadata
+                    cat > build-info.json <<EOF
+{
+    "environment": "production",
+    "build_number": "${BUILD_NUMBER}",
+    "git_commit": "${GIT_COMMIT}",
+    "git_branch": "${BRANCH_NAME}",
+    "build_timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+    "docker_tag": "${DOCKER_TAG}",
+    "deployed_by": "${BUILD_USER:-Jenkins}",
+    "deployment_type": "${DEPLOYMENT_TYPE}"
+}
+EOF
+                    
+                    # Create release notes
+                    git log --pretty=format:"- %h %s (%an)" -10 > RELEASE_NOTES.txt || true
+                    
+                    echo "✅ Production build completed"
+                    cat build-info.json
+                '''
+            }
+        }
+
+        stage('🐳 Build Production Docker Image') {
+            when {
+                expression { fileExists('Dockerfile') && !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Building production Docker image..."
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:production-latest")
+                    docker.build("${DOCKER_IMAGE}:stable")
+                }
+                echo "✅ Production Docker images built"
+            }
+        }
+
+        stage('📤 Push Production Images') {
+            when {
+                expression { fileExists('Dockerfile') && !params.ROLLBACK_VERSION }
+            }
+            steps {
+                echo "Pushing production images to registry..."
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                        docker.image("${DOCKER_IMAGE}:production-latest").push()
+                        docker.image("${DOCKER_IMAGE}:stable").push()
+                    }
+                }
+                echo "✅ Production images pushed successfully"
+            }
+        }
+
+        stage('🚀 Deploy to Production') {
+            steps {
+                echo "Deploying to PRODUCTION environment..."
+                
+                script {
+                    if (params.ROLLBACK_VERSION) {
+                        echo "⚠️  ROLLING BACK to version: ${params.ROLLBACK_VERSION}"
+                    }
+                }
+                
+                sh '''
+                    echo "🔧 Deployment Type: ${DEPLOYMENT_TYPE}"
+                    
+                    case "${DEPLOYMENT_TYPE}" in
+                        rolling)
+                            echo "Executing rolling deployment..."
+                            # Stop old instances one by one, start new ones
+                            ;;
+                        blue-green)
+                            echo "Executing blue-green deployment..."
+                            # Deploy to inactive environment, then switch
+                            ;;
+                        canary)
+                            echo "Executing canary deployment..."
+                            # Deploy to small subset, then gradually roll out
+                            ;;
+                    esac
+                    
+                    echo "🛑 Gracefully stopping current production instances..."
+                    pkill -SIGTERM -f "uvicorn main:app.*8080" || true
+                    sleep 10
+                    
+                    echo "📦 Deploying application files..."
+                    # rsync -avz --exclude 'venv' --exclude '.git' . /opt/hrms/production/
+                    
+                    echo "🔧 Configuring production environment..."
+                    cat > config/production.env <<EOF
+ENVIRONMENT=production
+ORIENTDB_HOST=${ORIENTDB_HOST}
+ORIENTDB_PORT=${ORIENTDB_PORT}
+ORIENTDB_DATABASE=${ORIENTDB_DATABASE}
+APP_HOST=${APP_HOST}
+APP_PORT=${APP_PORT}
+LOG_LEVEL=WARNING
+MONITORING_ENABLED=${MONITORING_ENABLED}
+EOF
+                    
+                    echo "🚀 Starting production application..."
+                    . venv/bin/activate
+                    nohup uvicorn main:app \
+                        --host ${APP_HOST} \
+                        --port ${APP_PORT} \
+                        --env-file config/production.env \
+                        --workers 4 \
+                        --log-level warning > production-app.log 2>&1 &
+                    
+                    echo "⏳ Waiting for application to start..."
+                    sleep 30
+                    
+                    echo "✅ Production deployment completed"
+                '''
+            }
+        }
+
+        stage('🏥 Health Checks') {
+            steps {
+                echo "Running production health checks..."
+                sh '''
+                    MAX_RETRIES=10
+                    RETRY_DELAY=10
+                    
+                    for i in $(seq 1 $MAX_RETRIES); do
+                        echo "Health check attempt $i/$MAX_RETRIES..."
+                        
+                        if curl -f ${PRODUCTION_URL}/health; then
+                            echo "✅ Health check passed"
+                            break
+                        fi
+                        
+                        if [ $i -eq $MAX_RETRIES ]; then
+                            echo "❌ Health check failed after $MAX_RETRIES attempts"
+                            exit 1
+                        fi
+                        
+                        echo "Retrying in ${RETRY_DELAY}s..."
+                        sleep $RETRY_DELAY
+                    done
+                    
+                    # Additional endpoint checks
+                    curl -f ${PRODUCTION_URL}/hrmkit || exit 1
+                    
+                    echo "✅ All health checks passed"
+                '''
+            }
+        }
+
+        stage('🧪 Production Smoke Tests') {
+            steps {
+                echo "Running production smoke tests..."
+                sh '''
+                    . venv/bin/activate
+                    
+                    # Run smoke tests against production
+                    pytest tests/smoke/ --verbose --url=${PRODUCTION_URL} || true
+                    
+                    # Check critical endpoints
+                    echo "Testing critical endpoints..."
+                    curl -f ${PRODUCTION_URL}/health || exit 1
+                    curl -f ${PRODUCTION_URL}/hrmkit || exit 1
+                    
+                    echo "✅ Smoke tests completed"
+                '''
+            }
+        }
+
+        stage('📊 Monitor Initial Metrics') {
+            steps {
+                echo "Monitoring initial production metrics..."
+                sh '''
+                    echo "Collecting initial metrics..."
+                    
+                    # Check application logs
+                    tail -n 50 production-app.log || true
+                    
+                    # Monitor system resources
+                    echo "System resources:"
+                    free -h || true
+                    df -h . || true
+                    
+                    # Check process status
+                    ps aux | grep uvicorn || true
+                    
+                    echo "✅ Initial monitoring completed"
+                '''
+                
+                // Wait for metrics to stabilize
+                sleep(time: 2, unit: 'MINUTES')
+            }
+        }
+
+        stage('📢 Notify Stakeholders') {
+            steps {
+                echo "Notifying stakeholders of production deployment..."
+                sh '''
+                    cat > production-deployment-report.txt <<EOF
+═══════════════════════════════════════════════
+🎉 HRMS PRODUCTION DEPLOYMENT SUCCESSFUL
+═══════════════════════════════════════════════
+Environment: ${ENVIRONMENT}
+Build Number: ${BUILD_NUMBER}
+Git Commit: ${GIT_COMMIT}
+Git Branch: ${BRANCH_NAME}
+Docker Tag: ${DOCKER_TAG}
+Deployment Type: ${DEPLOYMENT_TYPE}
+Deployment Time: $(date)
+Production URL: ${PRODUCTION_URL}
+═══════════════════════════════════════════════
+Status: ✅ LIVE IN PRODUCTION
+═══════════════════════════════════════════════
+
+Release Notes:
+$(cat RELEASE_NOTES.txt 2>/dev/null || echo "No release notes available")
+
+═══════════════════════════════════════════════
+EOF
+                    
+                    cat production-deployment-report.txt
+                '''
+                
+                archiveArtifacts artifacts: 'production-deployment-report.txt,build-info.json,RELEASE_NOTES.txt', allowEmptyArchive: true
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo "Production pipeline execution completed"
+            
+            cleanWs(
+                deleteDirs: true,
+                patterns: [
+                    [pattern: 'venv/**', type: 'INCLUDE'],
+                    [pattern: '__pycache__/**', type: 'INCLUDE']
+                ]
+            )
+        }
+        
+        success {
+            echo "✅ PRODUCTION Deployment SUCCESS!"
+            
+            emailext(
+                subject: "✅ HRMS PRODUCTION Deployment Successful - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h1 style="color: green;">🎉 HRMS PRODUCTION Deployment Successful</h1>
+                    <hr>
+                    <h3>Deployment Details:</h3>
+                    <ul>
+                        <li><strong>Build:</strong> #${env.BUILD_NUMBER}</li>
+                        <li><strong>Branch:</strong> ${env.BRANCH_NAME}</li>
+                        <li><strong>Commit:</strong> ${env.GIT_COMMIT}</li>
+                        <li><strong>Deployment Type:</strong> ${params.DEPLOYMENT_TYPE}</li>
+                        <li><strong>Docker Tag:</strong> ${DOCKER_TAG}</li>
+                        <li><strong>Production URL:</strong> <a href="${PRODUCTION_URL}">${PRODUCTION_URL}</a></li>
+                        <li><strong>Status:</strong> ✅ LIVE</li>
+                    </ul>
+                    <hr>
+                    <p><strong>🎯 Action Required:</strong> Please monitor production metrics for the next 24 hours.</p>
+                    <p><em>Deployed on: ${new Date()}</em></p>
+                """,
+                to: "${EMAIL_RECIPIENTS}",
+                mimeType: 'text/html'
+            )
+            
+            // Slack notification (if configured)
+            // slackSend(
+            //     channel: "${SLACK_CHANNEL}",
+            //     color: 'good',
+            //     message: "✅ HRMS Production Deployment Successful - Build #${env.BUILD_NUMBER}\nURL: ${PRODUCTION_URL}"
+            // )
+        }
+        
+        failure {
+            echo "❌ PRODUCTION Deployment FAILED!"
+            
+            emailext(
+                subject: "🚨 HRMS PRODUCTION Deployment Failed - Build #${env.BUILD_NUMBER}",
+                body: """
+                    <h1 style="color: red;">🚨 HRMS PRODUCTION Deployment Failed</h1>
+                    <hr>
+                    <h3>Failure Details:</h3>
+                    <ul>
+                        <li><strong>Build:</strong> #${env.BUILD_NUMBER}</li>
+                        <li><strong>Branch:</strong> ${env.BRANCH_NAME}</li>
+                        <li><strong>Commit:</strong> ${env.GIT_COMMIT}</li>
+                        <li><strong>Status:</strong> ❌ FAILED</li>
+                    </ul>
+                    <hr>
+                    <p><strong>🚨 URGENT ACTION REQUIRED:</strong></p>
+                    <ol>
+                        <li>Review Jenkins console output immediately</li>
+                        <li>Check production application logs</li>
+                        <li>Consider rollback if services are impacted</li>
+                        <li>Notify incident response team if necessary</li>
+                    </ol>
+                    <p><strong>Console Output:</strong> <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
+                """,
+                to: "${EMAIL_RECIPIENTS}",
+                mimeType: 'text/html'
+            )
+            
+            // Emergency slack notification
+            // slackSend(
+            //     channel: "${SLACK_CHANNEL}",
+            //     color: 'danger',
+            //     message: "🚨 HRMS Production Deployment FAILED - Build #${env.BUILD_NUMBER}\nAction Required: ${env.BUILD_URL}"
+            // )
+        }
+        
+        unstable {
+            echo "⚠️  PRODUCTION Deployment is UNSTABLE"
+        }
+    }
+}

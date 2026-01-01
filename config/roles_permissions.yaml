@@ -1,0 +1,40 @@
+employee:
+  description: Basic employee access
+  name: Employee
+  permissions:
+  - timesheet.read_own
+  - timesheet.update_own
+  - profile.read_own
+  - profile.update_basic
+  - schedule.view_own
+  - leave.request
+hr_admin:
+  description: Human Resources administrative access
+  name: HR Administrator
+  permissions:
+  - employee.create
+  - employee.read
+  - employee.update
+  - employee.delete
+  - timesheet.read
+  - timesheet.update
+  - timesheet.approve
+  - payroll.read
+  - payroll.process
+  - reports.generate
+  - audit.view
+manager:
+  description: Department management access
+  name: Department Manager
+  permissions:
+  - employee.read
+  - employee.update_subordinates
+  - timesheet.read_department
+  - timesheet.approve_department
+  - reports.department
+  - schedule.manage
+super_admin:
+  description: Full system access and control
+  name: Super Administrator
+  permissions:
+  - '*'

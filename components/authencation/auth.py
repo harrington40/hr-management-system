@@ -2,8 +2,8 @@ import asyncio
 from nicegui import ui, html, app
 from datetime import datetime
 
-from ...helperFuns import imagePath
-from ...assets import RemoveOverPadding, SildeFromTop, SlideFromBottom, Wave_AnimationCSS, ZoomIn
+from helperFuns import imagePath
+from assets import RemoveOverPadding, SildeFromTop, SlideFromBottom, Wave_AnimationCSS, ZoomIn
 from .authHelper import create_dev_auth_token, generate_magic_link
 
 def Login_Page():
@@ -64,10 +64,10 @@ async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: 
 async def dev_login():
     """Development login bypass for testing"""
     try:
-        token = create_dev_auth_token("dev@hrmkit.com")
-        app.storage.user.update({'token': token, 'authenticated': True})
+        # token = create_dev_auth_token("dev@hrmkit.com")
+        # app.storage.user.update({'token': token, 'authenticated': True})
         ui.notify('Development login successful!', color='positive')
-        ui.navigate.to('hrmkit/reporting/dashboard')
+        ui.navigate.to('/hrmkit/reporting/dashboard')
     except Exception as e:
         ui.notify(f'Development login failed: {str(e)}', color='negative')
 

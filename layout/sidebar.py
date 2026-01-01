@@ -1,7 +1,7 @@
 from datetime import datetime
 from nicegui import ui
-from ..helperFuns import imagePath, Toggle_Boolean
-from ..assets import SearchBox
+from helperFuns import imagePath, Toggle_Boolean
+from assets import SearchBox
 
 drawerState = Toggle_Boolean()
 active_Expansion_label = 'reporting'
@@ -35,7 +35,7 @@ linkData = {
       "label": 'Enroll Departments',
       "route": '/hrmkit/administration/departments'
     },
-    { "id": 3, "label": 'Enroll New Staff', "route": '/administration/employee/enroll-staff'},
+    { "id": 3, "label": 'Enroll New Staff', "route": '/hrmkit/administration/employee/enroll-staff'},
     {
       "id": 4,
       "label": 'Probation',

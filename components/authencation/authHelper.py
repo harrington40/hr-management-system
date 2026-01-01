@@ -16,15 +16,30 @@ import hashlib
 import time
 # import base64
 from urllib.parse import urlencode, urlparse, parse_qs
-from ...helperFuns import readEnv
+from helperFuns import readEnv
 # import jwt as PyJWT
-from jwt import JWT as PyJWT, jwk_from_bytes
+# from jwt import JWT as PyJWT, jwk_from_bytes
 
 # import helperFuns.helperFuns
 current_url = ''
 unrestricted_page_routes = {'/'}
 routes_to_reroute = ['/']
 JWT_TOKEN_LIFETIME = timedelta(days=7)
+
+# Simple JWT encoding without jwk_from_bytes
+import json
+import base64
+def encode_jwt_simple(payload):
+    """Simple JWT encoding without external dependencies"""
+    try:
+        header = {"alg": "HS256", "typ": "JWT"}
+        payload_str = json.dumps(payload)
+        header_b64 = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip('=')
+        payload_b64 = base64.urlsafe_b64encode(payload_str.encode()).decode().rstrip('=')
+        return f"{header_b64}.{payload_b64}.signature"
+    except Exception as e:
+        print(f"Error encoding JWT: {e}")
+        return None
 # Email configuration using built-in SMTP - more reliable
 SMTP_CONFIG = {
     'server': readEnv('SMTP_SERVER'),

@@ -1,0 +1,116 @@
+# Leave Requests Database
+# Tracks all employee leave requests and their status
+
+leave_requests:
+  LEAVE_2025_001:
+    request_id: LEAVE_2025_001
+    employee_id: EMP001001
+    employee_name: "John Smith"
+    department: Engineering
+    leave_type: vacation
+    start_date: "2026-01-15"
+    end_date: "2026-01-20"
+    total_days: 6
+    reason: "Family vacation"
+    status: approved
+    requested_date: "2025-12-15T10:30:00"
+    approved_by: EMP001005
+    approved_date: "2025-12-16T14:20:00"
+    comments: "Approved - adequate coverage arranged"
+    
+  LEAVE_2025_002:
+    request_id: LEAVE_2025_002
+    employee_id: EMP001002
+    employee_name: "Sarah Johnson"
+    department: "Human Resources"
+    leave_type: personal
+    start_date: "2026-01-10"
+    end_date: "2026-01-10"
+    total_days: 1
+    reason: "Personal matters"
+    status: approved
+    requested_date: "2025-12-20T09:15:00"
+    approved_by: EMP001006
+    approved_date: "2025-12-20T11:30:00"
+    
+  LEAVE_2025_003:
+    request_id: LEAVE_2025_003
+    employee_id: EMP001003
+    employee_name: "Michael Brown"
+    department: Marketing
+    leave_type: sick
+    start_date: "2025-12-28"
+    end_date: "2025-12-30"
+    total_days: 3
+    reason: "Medical appointment and recovery"
+    status: approved
+    requested_date: "2025-12-27T18:45:00"
+    approved_by: EMP001007
+    approved_date: "2025-12-28T08:00:00"
+    documentation_provided: true
+    
+  LEAVE_2025_004:
+    request_id: LEAVE_2025_004
+    employee_id: EMP001004
+    employee_name: "Emily Davis"
+    department: Sales
+    leave_type: vacation
+    start_date: "2026-02-14"
+    end_date: "2026-02-21"
+    total_days: 8
+    reason: "Anniversary trip"
+    status: pending
+    requested_date: "2025-12-30T14:00:00"
+    
+  LEAVE_2025_005:
+    request_id: LEAVE_2025_005
+    employee_id: EMP001008
+    employee_name: "David Wilson"
+    department: IT
+    leave_type: vacation
+    start_date: "2026-03-01"
+    end_date: "2026-03-07"
+    total_days: 7
+    reason: "Spring break"
+    status: pending
+    requested_date: "2025-12-31T10:00:00"
+    
+  LEAVE_2025_006:
+    request_id: LEAVE_2025_006
+    employee_id: EMP001009
+    employee_name: "Lisa Anderson"
+    department: Finance
+    leave_type: bereavement
+    start_date: "2025-12-20"
+    end_date: "2025-12-24"
+    total_days: 5
+    reason: "Family bereavement"
+    status: approved
+    requested_date: "2025-12-19T16:30:00"
+    approved_by: EMP001010
+    approved_date: "2025-12-19T17:00:00"
+    documentation_provided: true
+    
+  LEAVE_2025_007:
+    request_id: LEAVE_2025_007
+    employee_id: EMP001011
+    employee_name: "James Martinez"
+    department: Engineering
+    leave_type: vacation
+    start_date: "2026-04-01"
+    end_date: "2026-04-10"
+    total_days: 10
+    reason: "Extended vacation"
+    status: rejected
+    requested_date: "2025-12-25T13:20:00"
+    rejected_by: EMP001005
+    rejected_date: "2025-12-26T09:00:00"
+    rejection_reason: "Conflicts with project deadline"
+
+statistics:
+  total_requests: 7
+  pending: 2
+  approved: 4
+  rejected: 1
+  average_processing_time_hours: 6.5
+  approval_rate: 0.857

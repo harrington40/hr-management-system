@@ -7,7 +7,7 @@ import logging
 import os
 from typing import Optional, BinaryIO
 from b2sdk.v2 import B2Api, InMemoryAccountInfo, Bucket
-from ..config.services import config
+from config.services import config
 
 logger = logging.getLogger(__name__)
 

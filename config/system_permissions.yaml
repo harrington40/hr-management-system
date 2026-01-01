@@ -1,0 +1,49 @@
+emp_create:
+  actions:
+  - create
+  created_at: '2025-12-01T20:26:26.446528'
+  description: Create new employee records
+  module: employee_management
+  name: Create Employee
+  permission_id: emp_create
+  resource: employee
+emp_read:
+  actions:
+  - read
+  created_at: '2025-12-01T20:26:26.446528'
+  description: View employee records
+  module: employee_management
+  name: View Employee
+  permission_id: emp_read
+  resource: employee
+emp_update:
+  actions:
+  - update
+  created_at: '2025-12-01T20:26:26.446528'
+  description: Update employee records
+  module: employee_management
+  name: Update Employee
+  permission_id: emp_update
+  resource: employee
+sys_admin:
+  actions:
+  - create
+  - read
+  - update
+  - delete
+  - configure
+  created_at: '2025-12-01T20:26:26.446528'
+  description: Full system administration access
+  module: system_administration
+  name: System Administration
+  permission_id: sys_admin
+  resource: system
+ts_approve:
+  actions:
+  - approve
+  created_at: '2025-12-01T20:26:26.446528'
+  description: Approve employee timesheets
+  module: timesheet_management
+  name: Approve Timesheets
+  permission_id: ts_approve
+  resource: timesheet

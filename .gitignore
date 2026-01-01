@@ -1,20 +1,91 @@
-# Environment variables
+# ============================================
+# SECURITY & CREDENTIALS
+# ============================================
+# Environment variables and secrets
 .env
+.env.*
 .env.local
+.env.development
+.env.test
+.env.staging
 .env.production
+*.env
+env.sh
+env.bat
 
-# NiceGUI storage files
-.nicegui/
+# API Keys, Tokens, and Credentials
+**/secrets/
+**/credentials/
+*.key
+*.pem
+*.p12
+*.pfx
+*.cert
+*.crt
+*.der
+*.cer
+secret.txt
+secrets.txt
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+token.txt
+tokens.txt
+api_key.txt
+api_keys.txt
+auth_token.txt
+access_token.txt
+refresh_token.txt
+private_key.txt
+*.private
+*_private.*
 
-# Python virtual environment
-venv/
-env/
-ENV/
+# SSH Keys
+id_rsa
+id_rsa.pub
+id_dsa
+id_dsa.pub
+id_ecdsa
+id_ecdsa.pub
+id_ed25519
+id_ed25519.pub
+*.ppk
 
-# Python cache and build files
+# Docker secrets
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Cloud credentials
+.aws/
+.azure/
+.gcloud/
+gcloud-credentials.json
+aws-credentials.json
+azure-credentials.json
+
+# Database passwords and configs
+database.yml
+database.ini
+database.cfg
+db_config.json
+connection_strings.txt
+
+# ============================================
+# PYTHON
+# ============================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 *.pyc
 *.pyo
 *.pyd
+
+# C extensions
+*.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -28,33 +99,278 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+virtualenv/
+pipenv/
 
-# OS files
-.DS_Store
-Thumbs.db
+# PyInstaller
+*.manifest
+*.spec
 
-# Logs
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+test-results/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ============================================
+# NICEGUI & APPLICATION
+# ============================================
+# NiceGUI storage files
+.nicegui/
+nicegui.storage/
+
+# Application logs
 *.log
 logs/
+log/
+*.log.*
+nohup.out
 
-# Coverage reports
-.coverage
-htmlcov/
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
+# Backup files
+*.backup
+*.bak
+*.old
+backups/
+backup/
+*.sql.gz
+*.dump
 
 # Temporary files
 *.tmp
 *.temp
+tmp/
+temp/
+
+# ============================================
+# IDE & EDITORS
+# ============================================
+# Visual Studio Code
+.vscode/
+.vscode-test/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# Atom
+.atom/
+
+# ============================================
+# OPERATING SYSTEMS
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# DATABASES
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.rdb
+*.dat
+*.bak
+*.sql
+*.mdf
+*.ldf
+
+# OrientDB
+orientdb/
+databases/
+*.odb
+
+# ============================================
+# DOCKER
+# ============================================
+# Docker volumes and data
+docker-data/
+.dockerignore.local
+
+# ============================================
+# JENKINS & CI/CD
+# ============================================
+# Jenkins workspace
+.jenkins/
+jenkins-workspace/
+
+# Build artifacts
+build-info.json
+deployment-report.txt
+*-report.json
+*-report.txt
+trivy-report.json
+bandit-report.json
+safety-report.json
+license-report.json
+
+# ============================================
+# TESTING
+# ============================================
+# Test output
+test-output/
+test_output/
+.pytest_cache/
+junit.xml
+
+# ============================================
+# NODE.JS (if using any JS/TS tools)
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn/
+package-lock.json
+yarn.lock
+
+# ============================================
+# MISC
+# ============================================
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Large files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.wav
+*.mp3
+
+# User-specific files
+.user
+.personal
+personal/
+private/

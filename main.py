@@ -1,13 +1,15 @@
 # import uvicorn
 from fastapi.responses import RedirectResponse
-from .frontend import init
+from frontend import init
 from fastapi import FastAPI #Depends, HTTPException
 # from contextlib import asynccontextmanager
 import logging
+from starlette.middleware.sessions import SessionMiddleware
+import secrets
 
 # Import service manager
-from .services import get_service_manager
-from .components import validate_magic_link_server, create_jwt_token
+from services import get_service_manager
+from components import validate_magic_link_server, create_jwt_token
     
 
 # from sqlmodel import select
@@ -21,6 +23,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()  # Remove lifespan for debugging
+
+# Add SessionMiddleware for NiceGUI first (added in reverse order)
+# Initialize session with required 'id' key
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class SessionInitMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        if 'session' not in request.scope:
+            request.scope['session'] = {}
+        # Ensure 'id' exists in session
+        if 'id' not in request.scope.get('session', {}):
+            request.scope['session']['id'] = secrets.token_urlsafe(16)
+        response = await call_next(request)
+        return response
+
+# Add in reverse order: SessionInitMiddleware first, then SessionMiddleware
+app.add_middleware(SessionInitMiddleware)
+app.add_middleware(SessionMiddleware, secret_key=secrets.token_urlsafe(32))
+
 service_manager = get_service_manager()
 # Initialize services immediately
 logger.info("Initializing HRMS services...")

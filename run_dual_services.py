@@ -13,7 +13,7 @@ import os
 # Add the project root to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from .services.service_manager import service_manager
+from services.service_manager import service_manager
 import uvicorn
 from main import app
 
