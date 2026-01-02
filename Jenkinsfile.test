@@ -31,7 +31,7 @@ pipeline {
         DOCKER_TAG = "test-${env.BUILD_NUMBER}"
         
         // Test Environment URLs
-        TEST_URL = 'http://localhost:8081'
+        TEST_URL = 'http://test.transtechologies.com:8081'
         
         // Database Configuration (Test)
         ORIENTDB_HOST = 'orientdb-test.company.local'

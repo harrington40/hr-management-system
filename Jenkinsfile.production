@@ -54,7 +54,7 @@ pipeline {
         DOCKER_TAG = "prod-${env.BUILD_NUMBER}"
         
         // Production Environment URLs
-        PRODUCTION_URL = 'https://hrms.company.com'
+        PRODUCTION_URL = 'http://prod.transtechologies.com:8080'
         
         // Database Configuration (Production)
         ORIENTDB_HOST = 'orientdb-prod.company.local'
