@@ -14,7 +14,7 @@ def create_integrated_dashboard_menu():
         # Header
         with ui.row().classes('w-full p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white'):
             with ui.row().classes('w-full justify-between items-center'):
-                ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">🏢</span>HR Management System</h1>', sanitize=False)
+                ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">🏢</span>HR Management System</h1>')
                 
                 with ui.row().classes('gap-4'):
                     ui.button('🏠 Modern Dashboard', on_click=lambda: ui.navigate.to('/dashboard')).classes('bg-white text-blue-600 hover:bg-gray-100')
@@ -27,7 +27,7 @@ def create_integrated_dashboard_menu():
             with ui.column().classes('w-1/2'):
                 with ui.card().classes('w-full'):
                     with ui.card_section().classes('p-6'):
-                        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">🚀</span>Modern Dashboard Features</h2>', sanitize=False)
+                        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">🚀</span>Modern Dashboard Features</h2>')
                         
                         dashboard_features = [
                             {
@@ -78,10 +78,10 @@ def create_integrated_dashboard_menu():
                             with ui.card().classes(f'w-full mb-4 border-l-4 border-{feature["color"]}-500 hover:shadow-lg transition-shadow cursor-pointer'):
                                 with ui.card_section().classes('p-4'):
                                     with ui.row().classes('w-full items-start gap-4'):
-                                        ui.html(f'<span class="text-4xl">{feature["icon"]}</span>', sanitize=False)
+                                        ui.html(f'<span class="text-4xl">{feature["icon"]}</span>')
                                         with ui.column().classes('flex-1'):
-                                            ui.html(f'<h3 class="text-lg font-semibold text-gray-800 mb-2">{feature["title"]}</h3>', sanitize=False)
-                                            ui.html(f'<p class="text-sm text-gray-600 mb-3">{feature["description"]}</p>', sanitize=False)
+                                            ui.html(f'<h3 class="text-lg font-semibold text-gray-800 mb-2">{feature["title"]}</h3>')
+                                            ui.html(f'<p class="text-sm text-gray-600 mb-3">{feature["description"]}</p>')
                                             ui.button(f'Open {feature["title"].split()[0]} →', 
                                                      on_click=lambda route=feature["route"]: ui.navigate.to(route)
                                             ).classes(f'bg-{feature["color"]}-500 text-white text-sm')
@@ -90,7 +90,7 @@ def create_integrated_dashboard_menu():
             with ui.column().classes('w-1/2'):
                 with ui.card().classes('w-full'):
                     with ui.card_section().classes('p-6'):
-                        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">📋</span>Traditional Menu Access</h2>', sanitize=False)
+                        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">📋</span>Traditional Menu Access</h2>')
                         
                         # Administration section
                         with ui.expansion('🏛️ Administration', icon='admin_panel_settings').classes('w-full mb-4'):
@@ -159,11 +159,11 @@ def create_integrated_dashboard_menu():
         # Footer with quick stats
         with ui.row().classes('w-full p-6 bg-gray-100 border-t'):
             with ui.row().classes('w-full justify-center gap-8'):
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-blue-600">63</div><div class="text-sm text-gray-600">Total Employees</div></div>', sanitize=False)
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-green-600">49</div><div class="text-sm text-gray-600">Currently Active</div></div>', sanitize=False)
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-yellow-600">7</div><div class="text-sm text-gray-600">On Break</div></div>', sanitize=False)
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-purple-600">6</div><div class="text-sm text-gray-600">Remote Workers</div></div>', sanitize=False)
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-indigo-600">4/4</div><div class="text-sm text-gray-600">Hardware Online</div></div>', sanitize=False)
+                ui.html('<div class="text-center"><div class="text-2xl font-bold text-blue-600">63</div><div class="text-sm text-gray-600">Total Employees</div></div>')
+                ui.html('<div class="text-center"><div class="text-2xl font-bold text-green-600">49</div><div class="text-sm text-gray-600">Currently Active</div></div>')
+                ui.html('<div class="text-center"><div class="text-2xl font-bold text-yellow-600">7</div><div class="text-sm text-gray-600">On Break</div></div>')
+                ui.html('<div class="text-center"><div class="text-2xl font-bold text-purple-600">6</div><div class="text-sm text-gray-600">Remote Workers</div></div>')
+                ui.html('<div class="text-center"><div class="text-2xl font-bold text-indigo-600">4/4</div><div class="text-sm text-gray-600">Hardware Online</div></div>')
 
 def create_dashboard_landing_page():
     """Create a landing page that offers both dashboard styles"""
@@ -172,8 +172,8 @@ def create_dashboard_landing_page():
         # Hero section
         with ui.row().classes('w-full p-12 text-center'):
             with ui.column().classes('w-full max-w-4xl mx-auto'):
-                ui.html('<h1 class="text-5xl font-bold text-gray-800 mb-6">🏢 Enterprise HR Management System</h1>', sanitize=False)
-                ui.html('<p class="text-xl text-gray-600 mb-8">Choose your preferred interface for comprehensive workforce management</p>', sanitize=False)
+                ui.html('<h1 class="text-5xl font-bold text-gray-800 mb-6">🏢 Enterprise HR Management System</h1>')
+                ui.html('<p class="text-xl text-gray-600 mb-8">Choose your preferred interface for comprehensive workforce management</p>')
                 
                 # Interface options
                 with ui.row().classes('w-full gap-8 justify-center'):
@@ -181,14 +181,14 @@ def create_dashboard_landing_page():
                     # Modern Dashboard Option
                     with ui.card().classes('w-96 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer'):
                         with ui.card_section().classes('p-8 text-center'):
-                            ui.html('<div class="text-6xl mb-4">🚀</div>', sanitize=False)
-                            ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">Modern Dashboard</h2>', sanitize=False)
-                            ui.html('<p class="text-gray-600 mb-6">Real-time analytics, AI insights, hardware integration, and comprehensive workforce management</p>', sanitize=False)
+                            ui.html('<div class="text-6xl mb-4">🚀</div>')
+                            ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">Modern Dashboard</h2>')
+                            ui.html('<p class="text-gray-600 mb-6">Real-time analytics, AI insights, hardware integration, and comprehensive workforce management</p>')
                             
                             # Features list
                             features = ['📊 Live Analytics', '🤖 AI-Powered Insights', '🔧 Hardware Integration', '📱 Mobile Responsive']
                             for feature in features:
-                                ui.html(f'<div class="text-sm text-blue-600 mb-1">✓ {feature}</div>', sanitize=False)
+                                ui.html(f'<div class="text-sm text-blue-600 mb-1">✓ {feature}</div>')
                             
                             ui.button('🏢 Open Modern Dashboard', 
                                      on_click=lambda: ui.navigate.to('/dashboard')
@@ -197,14 +197,14 @@ def create_dashboard_landing_page():
                     # Traditional Menu Option
                     with ui.card().classes('w-96 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer'):
                         with ui.card_section().classes('p-8 text-center'):
-                            ui.html('<div class="text-6xl mb-4">📋</div>', sanitize=False)
-                            ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">Traditional Menu</h2>', sanitize=False)
-                            ui.html('<p class="text-gray-600 mb-6">Classic navigation interface with organized menu structure and familiar layout</p>', sanitize=False)
+                            ui.html('<div class="text-6xl mb-4">📋</div>')
+                            ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">Traditional Menu</h2>')
+                            ui.html('<p class="text-gray-600 mb-6">Classic navigation interface with organized menu structure and familiar layout</p>')
                             
                             # Features list
                             features = ['📁 Organized Menus', '🎯 Direct Access', '📋 Structured Layout', '⚡ Quick Navigation']
                             for feature in features:
-                                ui.html(f'<div class="text-sm text-green-600 mb-1">✓ {feature}</div>', sanitize=False)
+                                ui.html(f'<div class="text-sm text-green-600 mb-1">✓ {feature}</div>')
                             
                             ui.button('📋 Open Traditional Menu', 
                                      on_click=lambda: ui.navigate.to('/dashboard?view=menu')
@@ -213,8 +213,8 @@ def create_dashboard_landing_page():
                 # Integration option
                 with ui.card().classes('w-full max-w-2xl mx-auto mt-8 border-2 border-indigo-200'):
                     with ui.card_section().classes('p-6 text-center'):
-                        ui.html('<h3 class="text-xl font-bold text-gray-800 mb-4">🔗 Integrated Menu System</h3>', sanitize=False)
-                        ui.html('<p class="text-gray-600 mb-4">Experience both interfaces in one comprehensive menu with seamless navigation between modern and traditional views</p>', sanitize=False)
+                        ui.html('<h3 class="text-xl font-bold text-gray-800 mb-4">🔗 Integrated Menu System</h3>')
+                        ui.html('<p class="text-gray-600 mb-4">Experience both interfaces in one comprehensive menu with seamless navigation between modern and traditional views</p>')
                         ui.button('🔗 Open Integrated Menu', 
                                  on_click=lambda: ui.navigate.to('/menu-integration')
                         ).classes('bg-indigo-600 text-white px-8 py-3')
@@ -222,7 +222,7 @@ def create_dashboard_landing_page():
         # System features overview
         with ui.row().classes('w-full p-12 bg-white'):
             with ui.column().classes('w-full max-w-6xl mx-auto'):
-                ui.html('<h2 class="text-3xl font-bold text-center text-gray-800 mb-12">🎯 Comprehensive HR Solution</h2>', sanitize=False)
+                ui.html('<h2 class="text-3xl font-bold text-center text-gray-800 mb-12">🎯 Comprehensive HR Solution</h2>')
                 
                 with ui.row().classes('w-full gap-8'):
                     system_features = [
@@ -255,15 +255,15 @@ def create_dashboard_landing_page():
                     for feature in system_features:
                         with ui.card().classes('flex-1'):
                             with ui.card_section().classes('p-6'):
-                                ui.html(f'<div class="text-4xl text-center mb-4">{feature["icon"]}</div>', sanitize=False)
-                                ui.html(f'<h3 class="text-xl font-bold text-gray-800 mb-3 text-center">{feature["title"]}</h3>', sanitize=False)
-                                ui.html(f'<p class="text-gray-600 mb-4 text-center">{feature["description"]}</p>', sanitize=False)
+                                ui.html(f'<div class="text-4xl text-center mb-4">{feature["icon"]}</div>')
+                                ui.html(f'<h3 class="text-xl font-bold text-gray-800 mb-3 text-center">{feature["title"]}</h3>')
+                                ui.html(f'<p class="text-gray-600 mb-4 text-center">{feature["description"]}</p>')
                                 
                                 for item in feature['items']:
-                                    ui.html(f'<div class="text-sm text-blue-600 mb-1">✓ {item}</div>', sanitize=False)
+                                    ui.html(f'<div class="text-sm text-blue-600 mb-1">✓ {item}</div>')
         
         # Footer
         with ui.row().classes('w-full p-6 bg-gray-800 text-white'):
             with ui.row().classes('w-full justify-between items-center'):
-                ui.html('<div class="text-lg font-semibold">HR-Kit Enterprise v2.1.0</div>', sanitize=False)
-                ui.html('<div class="text-sm opacity-75">Modern Workforce Management Solution</div>', sanitize=False)
+                ui.html('<div class="text-lg font-semibold">HR-Kit Enterprise v2.1.0</div>')
+                ui.html('<div class="text-sm opacity-75">Modern Workforce Management Solution</div>')
