@@ -159,8 +159,8 @@ def create_modern_shift_timetable_page():
         with ui.row().classes('w-full justify-between items-start mb-6'):
             # Title and description
             with ui.column().classes('gap-2'):
-                ui.html('<div class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">⏰ Shift Timetable</div>', sanitize=False)
-                ui.html('<div class="text-lg text-slate-600 font-medium">Advanced visual shift planning and workforce optimization</div>', sanitize=False)
+                ui.html('<div class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">⏰ Shift Timetable</div>')
+                ui.html('<div class="text-lg text-slate-600 font-medium">Advanced visual shift planning and workforce optimization</div>')
 
             # Quick Stats Cards
             with ui.row().classes('gap-4'):
@@ -168,28 +168,28 @@ def create_modern_shift_timetable_page():
                 with ui.card().classes('bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">⚡</div>', sanitize=False)
+                            ui.html('<div class="text-2xl">⚡</div>')
                             with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.efficiency_score:.1f}%</div>', sanitize=False)
-                                ui.html('<div class="text-sm opacity-90">Efficiency Score</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.efficiency_score:.1f}%</div>')
+                                ui.html('<div class="text-sm opacity-90">Efficiency Score</div>')
 
                 # Coverage Gaps Card
                 with ui.card().classes('bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">⚠️</div>', sanitize=False)
+                            ui.html('<div class="text-2xl">⚠️</div>')
                             with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.coverage_gaps}</div>', sanitize=False)
-                                ui.html('<div class="text-sm opacity-90">Coverage Gaps</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.coverage_gaps}</div>')
+                                ui.html('<div class="text-sm opacity-90">Coverage Gaps</div>')
 
                 # Active Shifts Card
                 with ui.card().classes('bg-gradient-to-r from-green-500 to-teal-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">🔄</div>', sanitize=False)
+                            ui.html('<div class="text-2xl">🔄</div>')
                             with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.total_shifts}</div>', sanitize=False)
-                                ui.html('<div class="text-sm opacity-90">Active Shifts</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.total_shifts}</div>')
+                                ui.html('<div class="text-sm opacity-90">Active Shifts</div>')
 
         # AI Optimization Banner
         optimization_data = manager.optimize_timetable()
@@ -197,10 +197,10 @@ def create_modern_shift_timetable_page():
             with ui.card().classes('w-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-md'):
                 with ui.card_section().classes('p-4'):
                     with ui.row().classes('items-center gap-4 w-full'):
-                        ui.html('<div class="text-2xl">🤖</div>', sanitize=False)
+                        ui.html('<div class="text-2xl">🤖</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="text-lg font-semibold text-indigo-800">AI Timetable Optimization Available</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-indigo-600">Smart recommendations to improve efficiency and reduce costs</div>', sanitize=False)
+                            ui.html('<div class="text-lg font-semibold text-indigo-800">AI Timetable Optimization Available</div>')
+                            ui.html('<div class="text-sm text-indigo-600">Smart recommendations to improve efficiency and reduce costs</div>')
 
                         with ui.row().classes('gap-2'):
                             for rec in optimization_data['recommendations'][:2]:
@@ -251,7 +251,7 @@ def create_modern_shift_timetable_page():
                 # Quick Actions Card
                 with ui.card().classes('bg-white shadow-lg border-0'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">⚡ Quick Actions</div>', sanitize=False)
+                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">⚡ Quick Actions</div>')
 
                         with ui.column().classes('gap-3'):
                             ui.button('➕ Create New Shift',
@@ -273,7 +273,7 @@ def create_modern_shift_timetable_page():
                 # Timetable Health Card
                 with ui.card().classes('bg-white shadow-lg border-0'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏥 Timetable Health</div>', sanitize=False)
+                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏥 Timetable Health</div>')
 
                         # Health indicators
                         health_items = [
@@ -290,24 +290,24 @@ def create_modern_shift_timetable_page():
                             }[item['status']]
 
                             with ui.row().classes('justify-between items-center p-2 rounded-lg mb-2'):
-                                ui.html(f'<div class="text-sm font-medium text-slate-700">{item["label"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm font-bold px-2 py-1 rounded {status_color}">{item["value"]}</div>', sanitize=False)
+                                ui.html(f'<div class="text-sm font-medium text-slate-700">{item["label"]}</div>')
+                                ui.html(f'<div class="text-sm font-bold px-2 py-1 rounded {status_color}">{item["value"]}</div>')
 
                 # Active Shifts Summary Card
                 with ui.card().classes('bg-white shadow-lg border-0'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Active Shifts</div>', sanitize=False)
+                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Active Shifts</div>')
 
                         shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
                         for shift_id, shift_data in list(shift_templates.items())[:3]:  # Show first 3
                             with ui.row().classes('items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer'):
                                 # Color indicator
                                 color = shift_data.get('color', '#6B7280')
-                                ui.html(f'<div class="w-3 h-3 rounded-full" style="background-color: {color}"></div>', sanitize=False)
+                                ui.html(f'<div class="w-3 h-3 rounded-full" style="background-color: {color}"></div>')
 
                                 with ui.column().classes('flex-1'):
-                                    ui.html(f'<div class="text-sm font-medium text-slate-800">{shift_data.get("name", shift_id)}</div>', sanitize=False)
-                                    ui.html(f'<div class="text-xs text-slate-500">{shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>', sanitize=False)
+                                    ui.html(f'<div class="text-sm font-medium text-slate-800">{shift_data.get("name", shift_id)}</div>')
+                                    ui.html(f'<div class="text-xs text-slate-500">{shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>')
 
 def create_modern_timetable_overview(manager):
     """Create modern timetable overview with visual schedule grid"""
@@ -319,7 +319,7 @@ def create_modern_timetable_overview(manager):
                  ).classes('bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg')
 
         current_week = datetime.now().strftime('%B %d, %Y')
-        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>', sanitize=False)
+        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>')
 
         ui.button('Next Week ➡️',
                  on_click=lambda: ui.notify('Next week navigation', type='info')
@@ -331,15 +331,15 @@ def create_modern_timetable_overview(manager):
 
     # Header row
     with ui.grid(columns='100px repeat(7, 1fr)').classes('gap-2 mb-4'):
-        ui.html('<div class="font-bold text-slate-700 p-3"></div>', sanitize=False)  # Empty corner
+        ui.html('<div class="font-bold text-slate-700 p-3"></div>')  # Empty corner
         for day in days:
             day_short = day[:3]
-            ui.html(f'<div class="font-bold text-slate-700 p-3 text-center bg-slate-100 rounded-lg">{day_short}</div>', sanitize=False)
+            ui.html(f'<div class="font-bold text-slate-700 p-3 text-center bg-slate-100 rounded-lg">{day_short}</div>')
 
         # Time slot rows
         for time_slot in time_slots:
             # Time column
-            ui.html(f'<div class="font-semibold text-slate-600 p-3 text-right bg-slate-50 rounded-lg">{time_slot}</div>', sanitize=False)
+            ui.html(f'<div class="font-semibold text-slate-600 p-3 text-right bg-slate-50 rounded-lg">{time_slot}</div>')
 
             # Day columns with shift indicators
             for day in days:
@@ -357,7 +357,7 @@ def create_modern_timetable_overview(manager):
                     bg_color = 'bg-gray-50'
                     shift_name = ''
 
-                ui.html(f'<div class="p-2 text-center text-xs font-medium rounded-lg {bg_color} border-2 border-white shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="console.log(\'{time_slot} {day}\')">{shift_name}</div>', sanitize=False)
+                ui.html(f'<div class="p-2 text-center text-xs font-medium rounded-lg {bg_color} border-2 border-white shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="console.log(\'{time_slot} {day}\')">{shift_name}</div>')
 
 def create_modern_shift_templates(manager):
     """Create modern shift templates management with visual cards"""
@@ -368,7 +368,7 @@ def create_modern_shift_templates(manager):
 
         # Header with add button
         with ui.row().classes('items-center justify-between mb-4'):
-            ui.html('<div class="text-2xl font-bold text-slate-800">⚙️ Shift Templates</div>', sanitize=False)
+            ui.html('<div class="text-2xl font-bold text-slate-800">⚙️ Shift Templates</div>')
             ui.button('➕ Add Template',
                      on_click=lambda: ui.notify('Add template functionality', type='info')
                      ).classes('bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-lg')
@@ -385,9 +385,9 @@ def create_modern_shift_templates(manager):
                             with ui.row().classes('items-center gap-3'):
                                 # Color indicator
                                 color = shift_data.get('color', '#6B7280')
-                                ui.html(f'<div class="w-4 h-4 rounded-full shadow-sm" style="background-color: {color}"></div>', sanitize=False)
+                                ui.html(f'<div class="w-4 h-4 rounded-full shadow-sm" style="background-color: {color}"></div>')
 
-                                ui.html(f'<div class="text-lg font-semibold text-slate-800">{shift_data.get("name", shift_id)}</div>', sanitize=False)
+                                ui.html(f'<div class="text-lg font-semibold text-slate-800">{shift_data.get("name", shift_id)}</div>')
 
                             ui.button('⋯',
                                      on_click=lambda s=shift_id: ui.notify(f'Options for {s}', type='info')
@@ -395,8 +395,8 @@ def create_modern_shift_templates(manager):
 
                         # Time information
                         with ui.row().classes('items-center gap-4 mb-3'):
-                            ui.html(f'<div class="text-sm text-slate-600">🕐 {shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>', sanitize=False)
-                            ui.html(f'<div class="text-sm text-slate-600">⏱️ {shift_data.get("duration", 0)}h</div>', sanitize=False)
+                            ui.html(f'<div class="text-sm text-slate-600">🕐 {shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>')
+                            ui.html(f'<div class="text-sm text-slate-600">⏱️ {shift_data.get("duration", 0)}h</div>')
 
                         # Capacity and skills
                         with ui.row().classes('items-center justify-between'):
@@ -416,7 +416,7 @@ def create_modern_department_schedules(manager):
 
     with ui.column().classes('gap-6'):
 
-        ui.html('<div class="text-2xl font-bold text-slate-800 mb-4">🏢 Department Schedules</div>', sanitize=False)
+        ui.html('<div class="text-2xl font-bold text-slate-800 mb-4">🏢 Department Schedules</div>')
 
         for dept_name, dept_schedule in department_schedules.items():
 
@@ -424,7 +424,7 @@ def create_modern_department_schedules(manager):
                 with ui.card_section().classes('p-4'):
 
                     # Department header
-                    ui.html(f'<div class="text-lg font-semibold text-slate-800 mb-4">{dept_name} Department</div>', sanitize=False)
+                    ui.html(f'<div class="text-lg font-semibold text-slate-800 mb-4">{dept_name} Department</div>')
 
                     # Weekly schedule grid
                     days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
@@ -433,14 +433,14 @@ def create_modern_department_schedules(manager):
                     with ui.grid(columns='60px repeat(7, 1fr)').classes('gap-1'):
 
                         # Header
-                        ui.html('<div class="text-xs font-medium text-slate-500 p-2"></div>', sanitize=False)
+                        ui.html('<div class="text-xs font-medium text-slate-500 p-2"></div>')
                         for day_name in day_names:
-                            ui.html(f'<div class="text-xs font-medium text-slate-700 p-2 text-center bg-slate-100 rounded">{day_name}</div>', sanitize=False)
+                            ui.html(f'<div class="text-xs font-medium text-slate-700 p-2 text-center bg-slate-100 rounded">{day_name}</div>')
 
                         # Time slots (simplified)
                         time_slots = ['8AM', '10AM', '12PM', '2PM', '4PM', '6PM', '8PM', '10PM']
                         for i, time_slot in enumerate(time_slots[:4]):  # Show first 4 slots
-                            ui.html(f'<div class="text-xs text-slate-500 p-2 text-right">{time_slot}</div>', sanitize=False)
+                            ui.html(f'<div class="text-xs text-slate-500 p-2 text-right">{time_slot}</div>')
 
                             for day in days:
                                 shifts = dept_schedule.get(day.lower(), [])
@@ -454,7 +454,7 @@ def create_modern_department_schedules(manager):
                                 else:
                                     bg_color = 'bg-gray-50'
 
-                                ui.html(f'<div class="h-6 rounded-sm {bg_color} border border-white"></div>', sanitize=False)
+                                ui.html(f'<div class="h-6 rounded-sm {bg_color} border border-white"></div>')
 
 def create_modern_timetable_analytics(manager, optimization_data):
     """Create modern timetable analytics dashboard"""
@@ -474,9 +474,9 @@ def create_modern_timetable_analytics(manager, optimization_data):
                 with ui.card().classes(f'bg-gradient-to-r {metric["color"]} text-white shadow-lg'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center justify-between'):
-                            ui.html(f'<div class="text-2xl">{metric["icon"]}</div>', sanitize=False)
-                            ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>', sanitize=False)
-                        ui.html(f'<div class="text-sm opacity-90">{metric["title"]}</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl">{metric["icon"]}</div>')
+                            ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>')
+                        ui.html(f'<div class="text-sm opacity-90">{metric["title"]}</div>')
 
         # Charts and Visualizations
         with ui.grid(columns='1fr 1fr').classes('gap-6'):
@@ -484,31 +484,31 @@ def create_modern_timetable_analytics(manager, optimization_data):
             # Shift Distribution Chart
             with ui.card().classes('bg-white shadow-lg border-0'):
                 with ui.card_section().classes('p-4'):
-                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Shift Distribution</div>', sanitize=False)
-                    ui.html('<div class="text-center text-slate-500 py-8">Interactive shift distribution chart would be displayed here showing morning/afternoon/night shift allocations.</div>', sanitize=False)
+                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Shift Distribution</div>')
+                    ui.html('<div class="text-center text-slate-500 py-8">Interactive shift distribution chart would be displayed here showing morning/afternoon/night shift allocations.</div>')
 
             # Department Coverage Chart
             with ui.card().classes('bg-white shadow-lg border-0'):
                 with ui.card_section().classes('p-4'):
-                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏢 Department Coverage</div>', sanitize=False)
-                    ui.html('<div class="text-center text-slate-500 py-8">Coverage analysis by department showing optimal/adequate/understaffed status.</div>', sanitize=False)
+                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏢 Department Coverage</div>')
+                    ui.html('<div class="text-center text-slate-500 py-8">Coverage analysis by department showing optimal/adequate/understaffed status.</div>')
 
         # AI Recommendations
         with ui.card().classes('bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-md'):
             with ui.card_section().classes('p-4'):
-                ui.html('<div class="text-lg font-semibold text-indigo-800 mb-4">🤖 AI Optimization Recommendations</div>', sanitize=False)
+                ui.html('<div class="text-lg font-semibold text-indigo-800 mb-4">🤖 AI Optimization Recommendations</div>')
 
                 recommendations = optimization_data.get('recommendations', [])
                 if recommendations:
                     for rec in recommendations:
                         with ui.row().classes('items-start gap-3 p-3 bg-white/50 rounded-lg mb-3'):
                             priority_icon = '🔴' if rec['priority'] == 'high' else '🟡'
-                            ui.html(f'<div class="text-lg">{priority_icon}</div>', sanitize=False)
+                            ui.html(f'<div class="text-lg">{priority_icon}</div>')
                             with ui.column().classes('flex-1'):
-                                ui.html(f'<div class="font-medium text-indigo-800">{rec["message"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm text-indigo-600">Priority: {rec.get("priority", "medium").title()}</div>', sanitize=False)
+                                ui.html(f'<div class="font-medium text-indigo-800">{rec["message"]}</div>')
+                                ui.html(f'<div class="text-sm text-indigo-600">Priority: {rec.get("priority", "medium").title()}</div>')
                 else:
-                    ui.html('<div class="text-indigo-600">✅ Timetable is optimally configured!</div>', sanitize=False)
+                    ui.html('<div class="text-indigo-600">✅ Timetable is optimally configured!</div>')
 
 # Legacy function - redirects to modern implementation
 def ShiftTimetable():
@@ -523,7 +523,7 @@ def ShiftTimetable():
             with ui.card_section().classes('p-6'):
                 with ui.row().classes('items-center justify-between w-full'):
                     with ui.column().classes('gap-2'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📅</span>Shift Timetable Management</h1>', sanitize=False).classes('mb-2')
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📅</span>Shift Timetable Management</h1>').classes('mb-2')
                         ui.label('Design and manage flexible shift schedules with visual timetable builder').classes('text-purple-100 text-lg')
                         ui.label(f'Last updated: {datetime.now().strftime("%B %d, %Y at %I:%M %p")}').classes('text-purple-200 text-sm')
                     
@@ -644,7 +644,7 @@ def ShiftTimetable():
 
 def create_schedule_overview_panel(manager: ModernShiftTimetableManager):
     """Create schedule overview panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Schedule Overview</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Schedule Overview</h2>')
     ui.label('Visual overview of your organization\'s shift schedules and coverage').classes('text-gray-600 mb-6')
     
     shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
@@ -768,7 +768,7 @@ def create_schedule_overview_panel(manager: ModernShiftTimetableManager):
 
 def create_shift_templates_panel(manager: ModernShiftTimetableManager):
     """Create shift templates configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Shift Templates</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Shift Templates</h2>')
     ui.label('Create and manage reusable shift templates for your organization').classes('text-gray-600 mb-6')
     
     shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
@@ -907,7 +907,7 @@ def create_shift_templates_panel(manager: ModernShiftTimetableManager):
 
 def create_modern_shift_templates(manager: ModernShiftTimetableManager):
     """Create modern interactive shift templates with active/selected states"""
-    ui.html('<h2 class="text-2xl font-bold text-slate-800 mb-4">⏰ Shift Templates</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-slate-800 mb-4">⏰ Shift Templates</h2>')
     ui.label('Create and manage reusable shift templates with interactive selection').classes('text-slate-600 mb-6')
 
     shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
@@ -962,7 +962,7 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
 
                             with ui.row().classes('items-center justify-between w-full'):
                                 with ui.row().classes('items-center gap-3'):
-                                    ui.html(f'<span class="text-2xl">{template.get("icon", "⏰")}</span>', sanitize=False)
+                                    ui.html(f'<span class="text-2xl">{template.get("icon", "⏰")}</span>')
                                     with ui.column().classes('gap-1'):
                                         ui.label(template.get('display_name', template_id)).classes('font-bold text-lg')
                                         ui.label(f'{template.get("start_time", "N/A")} - {template.get("end_time", "N/A")}').classes('text-sm opacity-80')
@@ -990,7 +990,7 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
 
                                     ui.label('🎨 Color').classes('text-sm font-medium text-slate-600 mt-2')
                                     color = template.get('color', '#6B7280')
-                                    ui.html(f'<div class="w-4 h-4 rounded-full border-2 border-white shadow-sm" style="background-color: {color}"></div>', sanitize=False)
+                                    ui.html(f'<div class="w-4 h-4 rounded-full border-2 border-white shadow-sm" style="background-color: {color}"></div>')
 
                             # Action buttons
                             with ui.row().classes('gap-2 w-full mt-4'):
@@ -1040,7 +1040,7 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
         # Empty state with call-to-action
         with ui.card().classes('w-full p-12 text-center bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300'):
             with ui.card_section().classes('p-8'):
-                ui.html('<div class="text-8xl mb-6">⏰</div>', sanitize=False)
+                ui.html('<div class="text-8xl mb-6">⏰</div>')
                 ui.label('No Shift Templates Created').classes('text-2xl font-bold text-slate-700 mb-3')
                 ui.label('Create your first interactive shift template to get started').classes('text-slate-600 mb-6')
 
@@ -1053,7 +1053,7 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
         with ui.dialog() as dialog, ui.card().classes('w-[600px] max-w-full'):
             with ui.card_section().classes('p-6'):
                 with ui.row().classes('items-center gap-3 mb-6'):
-                    ui.html('<span class="text-3xl">⏰</span>', sanitize=False)
+                    ui.html('<span class="text-3xl">⏰</span>')
                     ui.label('Create New Shift Template').classes('text-2xl font-bold text-slate-800')
 
                 with ui.tabs().classes('w-full') as tabs:
@@ -1149,7 +1149,7 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
 
         with ui.dialog() as confirm_dialog, ui.card().classes('w-96'):
             with ui.card_section().classes('p-6 text-center'):
-                ui.html('<span class="text-4xl mb-4 block">⚠️</span>', sanitize=False)
+                ui.html('<span class="text-4xl mb-4 block">⚠️</span>')
                 ui.label(f'Delete Template').classes('text-xl font-bold text-slate-800 mb-2')
                 ui.label(f'Are you sure you want to delete "{template_name}"?').classes('text-slate-600 mb-6')
                 ui.label('This action cannot be undone.').classes('text-sm text-red-600 mb-6')
@@ -1173,7 +1173,7 @@ def create_modern_shift_templates(manager: ModernShiftTimetableManager):
 
 def create_department_schedules_panel(manager: ModernShiftTimetableManager):
     """Create department schedules configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏢 Department Schedules</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏢 Department Schedules</h2>')
     ui.label('Configure department-specific shift patterns and requirements').classes('text-gray-600 mb-6')
     
     department_shifts = manager.timetable_data.get('shift_timetable', {}).get('department_shifts', {})
@@ -1210,7 +1210,7 @@ def create_department_schedules_panel(manager: ModernShiftTimetableManager):
 
 def create_weekly_patterns_panel(manager: ModernShiftTimetableManager):
     """Create weekly patterns configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📋 Weekly Schedule Patterns</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📋 Weekly Schedule Patterns</h2>')
     ui.label('Define recurring weekly work patterns and rotation schedules').classes('text-gray-600 mb-6')
     
     # Add content for weekly patterns
@@ -1220,7 +1220,7 @@ def create_weekly_patterns_panel(manager: ModernShiftTimetableManager):
 
 def create_shift_assignments_panel(manager: ModernShiftTimetableManager):
     """Create shift assignments configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">👥 Shift Assignment Rules</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">👥 Shift Assignment Rules</h2>')
     ui.label('Configure automated shift assignment and employee scheduling rules').classes('text-gray-600 mb-6')
     
     assignment_rules = manager.timetable_data.get('shift_timetable', {}).get('assignment_rules', {})
@@ -1281,7 +1281,7 @@ def create_shift_assignments_panel(manager: ModernShiftTimetableManager):
 
 def create_break_policies_panel(manager: ModernShiftTimetableManager):
     """Create break policies configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">☕ Break Time Policies</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">☕ Break Time Policies</h2>')
     ui.label('Configure break schedules and meal period policies for shifts').classes('text-gray-600 mb-6')
     
     # Add content for break policies
@@ -1291,7 +1291,7 @@ def create_break_policies_panel(manager: ModernShiftTimetableManager):
 
 def create_overtime_rules_panel(manager: ModernShiftTimetableManager):
     """Create overtime rules configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏱️ Overtime Management</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏱️ Overtime Management</h2>')
     ui.label('Configure overtime calculation and approval workflows for shifts').classes('text-gray-600 mb-6')
     
     overtime_rules = manager.timetable_data.get('shift_timetable', {}).get('overtime_rules', {})
@@ -1346,7 +1346,7 @@ def create_overtime_rules_panel(manager: ModernShiftTimetableManager):
 
 def create_reporting_panel(manager: ModernShiftTimetableManager):
     """Create reporting and analytics panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📈 Reports & Analytics</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📈 Reports & Analytics</h2>')
     ui.label('Generate reports and analyze shift scheduling performance').classes('text-gray-600 mb-6')
     
     # Report Categories

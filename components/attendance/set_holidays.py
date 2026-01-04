@@ -327,7 +327,7 @@ def SetHolidays() -> None:
             with ui.card_section().classes('p-6'):
                 with ui.row().classes('items-center justify-between w-full'):
                     with ui.column().classes('gap-2'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">�</span>HR Holiday & Vacation Management</h1>', sanitize=False).classes('mb-2')
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">�</span>HR Holiday & Vacation Management</h1>').classes('mb-2')
                         ui.label('Comprehensive employee vacation tracking, holiday calendar, and HR policy management').classes('text-indigo-100 text-lg')
                         ui.label(f'System Status: Active • Last Sync: {datetime.now().strftime("%B %d, %Y at %I:%M %p")}').classes('text-indigo-200 text-sm')
                     

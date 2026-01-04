@@ -285,7 +285,7 @@ def RequestTransfer():
                             <p class="text-indigo-100 text-lg">AI-powered transfer planning and intelligent career pathway optimization</p>
                         </div>
                     </div>
-                ''', sanitize=False)
+                ''')
                 
                 # Breadcrumb navigation
                 with ui.row().classes('items-center gap-2 text-sm text-indigo-200 mt-4'):
@@ -640,7 +640,7 @@ def create_smart_transfer_dashboard():
                         <div class="text-2xl font-bold text-indigo-800">89%</div>
                         <div class="text-indigo-700">Success Rate</div>
                     </div>
-                ''', sanitize=False)
+                ''')
             
             with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-purple-50 to-pink-100'):
                 ui.html('''
@@ -649,7 +649,7 @@ def create_smart_transfer_dashboard():
                         <div class="text-2xl font-bold text-purple-800">12</div>
                         <div class="text-purple-700">Open Positions</div>
                     </div>
-                ''', sanitize=False)
+                ''')
             
             with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-pink-50 to-rose-100'):
                 ui.html('''
@@ -658,7 +658,7 @@ def create_smart_transfer_dashboard():
                         <div class="text-2xl font-bold text-pink-800">96%</div>
                         <div class="text-pink-700">Match Accuracy</div>
                     </div>
-                ''', sanitize=False)
+                ''')
 
 async def show_career_pathways():
     """Show AI-powered career pathways dialog"""
@@ -673,7 +673,7 @@ async def show_career_pathways():
                     <p class="text-indigo-600">Intelligent career progression recommendations based on skills and opportunities</p>
                 </div>
             </div>
-        ''', sanitize=False)
+        ''')
         
         with ui.row().classes('w-full gap-6'):
             # Left column - Career map
@@ -698,7 +698,7 @@ async def show_career_pathways():
                                 <div class="text-sm text-pink-600 mt-1">Skills gap: Leadership Training, Process Management</div>
                             </div>
                         </div>
-                    ''', sanitize=False)
+                    ''')
             
             # Right column - Skills development
             with ui.column().classes('flex-1'):
@@ -730,7 +730,7 @@ async def show_career_pathways():
                                 <div class="bg-pink-500 h-2 rounded-full" style="width: 92%"></div>
                             </div>
                         </div>
-                    ''', sanitize=False)
+                    ''')
         
         ui.button('Close', on_click=dialog.close).props('flat color=indigo').classes('mt-6')
     dialog.open()

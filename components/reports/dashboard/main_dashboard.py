@@ -479,16 +479,16 @@ def create_dashboard_header(manager: HRDashboardManager, user_role: UserRole):
         with ui.row().classes('w-full justify-between items-center'):
             # Left - Logo & Title
             with ui.row().classes('items-center gap-4'):
-                ui.html('<div class="text-4xl">🏢</div>', sanitize=False)
+                ui.html('<div class="text-4xl">🏢</div>')
                 with ui.column().classes('gap-1'):
-                    ui.html('<h1 class="text-2xl font-bold">Enterprise HR Dashboard</h1>', sanitize=False)
-                    ui.html(f'<div class="text-sm opacity-90">Welcome, {user_role.value.replace("_", " ").title()}</div>', sanitize=False)
+                    ui.html('<h1 class="text-2xl font-bold">Enterprise HR Dashboard</h1>')
+                    ui.html(f'<div class="text-sm opacity-90">Welcome, {user_role.value.replace("_", " ").title()}</div>')
             
             # Center - Real-time Clock & Date
             with ui.column().classes('items-center gap-1'):
                 current_time = datetime.now()
-                ui.html(f'<div class="text-lg font-mono">{current_time.strftime("%H:%M:%S")}</div>', sanitize=False)
-                ui.html(f'<div class="text-sm opacity-90">{current_time.strftime("%A, %B %d, %Y")}</div>', sanitize=False)
+                ui.html(f'<div class="text-lg font-mono">{current_time.strftime("%H:%M:%S")}</div>')
+                ui.html(f'<div class="text-sm opacity-90">{current_time.strftime("%A, %B %d, %Y")}</div>')
             
             # Right - Quick Actions & Settings
             with ui.row().classes('items-center gap-3'):
@@ -524,7 +524,7 @@ def create_dashboard_sidebar(manager: HRDashboardManager, user_role: UserRole):
     # Quick Stats Card
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-3">📊 Quick Overview</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-3">📊 Quick Overview</h3>')
             
             metrics = manager.current_metrics
             quick_stats = [
@@ -537,14 +537,14 @@ def create_dashboard_sidebar(manager: HRDashboardManager, user_role: UserRole):
             for stat in quick_stats:
                 with ui.row().classes('w-full items-center justify-between py-2 border-b border-gray-100 last:border-0'):
                     with ui.row().classes('items-center gap-2'):
-                        ui.html(f'<span class="text-lg">{stat["icon"]}</span>', sanitize=False)
-                        ui.html(f'<span class="text-sm text-gray-600">{stat["label"]}</span>', sanitize=False)
-                    ui.html(f'<span class="font-semibold text-{stat["color"]}-600">{stat["value"]}</span>', sanitize=False)
+                        ui.html(f'<span class="text-lg">{stat["icon"]}</span>')
+                        ui.html(f'<span class="text-sm text-gray-600">{stat["label"]}</span>')
+                    ui.html(f'<span class="font-semibold text-{stat["color"]}-600">{stat["value"]}</span>')
     
     # Quick Actions Card
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-3">⚡ Quick Actions</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-3">⚡ Quick Actions</h3>')
             
             quick_actions = [
                 {'label': 'Clock In/Out', 'icon': '🕐', 'action': lambda: ui.notify('Opening clock interface...'), 'color': 'blue'},
@@ -564,7 +564,7 @@ def create_dashboard_sidebar(manager: HRDashboardManager, user_role: UserRole):
     # Hardware Status Mini Panel
     with ui.card().classes('w-full'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-3">🔧 Hardware Status</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-3">🔧 Hardware Status</h3>')
             
             for device_id, device in manager.hardware_devices.items():
                 status_color = 'green' if device.status == 'online' else 'red' if device.status == 'offline' else 'yellow'
@@ -572,9 +572,9 @@ def create_dashboard_sidebar(manager: HRDashboardManager, user_role: UserRole):
                 
                 with ui.row().classes('w-full items-center justify-between py-1'):
                     with ui.column().classes('flex-1'):
-                        ui.html(f'<div class="text-sm font-medium">{device.device_type.title()}</div>', sanitize=False)
-                        ui.html(f'<div class="text-xs text-gray-500">{device.location}</div>', sanitize=False)
-                    ui.html(f'<span class="text-sm">{status_icon}</span>', sanitize=False)
+                        ui.html(f'<div class="text-sm font-medium">{device.device_type.title()}</div>')
+                        ui.html(f'<div class="text-xs text-gray-500">{device.location}</div>')
+                    ui.html(f'<span class="text-sm">{status_icon}</span>')
 
 def create_dashboard_widgets(manager: HRDashboardManager, user_role: UserRole):
     """Create main dashboard widget grid"""
@@ -599,38 +599,38 @@ def create_attendance_overview_widget(manager: HRDashboardManager):
     """Attendance overview with AI predictions"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">📊</span>Attendance Overview</h3>', sanitize=False)
+            ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">📊</span>Attendance Overview</h3>')
             
             metrics = manager.current_metrics
             
             # Main attendance stats
             with ui.row().classes('w-full gap-4 mb-4'):
                 with ui.column().classes('flex-1 text-center'):
-                    ui.html(f'<div class="text-3xl font-bold text-green-600">{metrics.present_today}</div>', sanitize=False)
-                    ui.html('<div class="text-sm text-gray-600">Present Today</div>', sanitize=False)
+                    ui.html(f'<div class="text-3xl font-bold text-green-600">{metrics.present_today}</div>')
+                    ui.html('<div class="text-sm text-gray-600">Present Today</div>')
                 
                 with ui.column().classes('flex-1 text-center'):
-                    ui.html(f'<div class="text-3xl font-bold text-red-600">{metrics.absent_today}</div>', sanitize=False)
-                    ui.html('<div class="text-sm text-gray-600">Absent</div>', sanitize=False)
+                    ui.html(f'<div class="text-3xl font-bold text-red-600">{metrics.absent_today}</div>')
+                    ui.html('<div class="text-sm text-gray-600">Absent</div>')
                 
                 with ui.column().classes('flex-1 text-center'):
-                    ui.html(f'<div class="text-3xl font-bold text-yellow-600">{metrics.late_arrivals}</div>', sanitize=False)
-                    ui.html('<div class="text-sm text-gray-600">Late Arrivals</div>', sanitize=False)
+                    ui.html(f'<div class="text-3xl font-bold text-yellow-600">{metrics.late_arrivals}</div>')
+                    ui.html('<div class="text-sm text-gray-600">Late Arrivals</div>')
             
             # Attendance rate progress bar
             attendance_rate = (metrics.present_today / metrics.total_employees) * 100
-            ui.html(f'<div class="w-full bg-gray-200 rounded-full h-3 mb-2"><div class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: {attendance_rate}%"></div></div>', sanitize=False)
-            ui.html(f'<div class="text-center text-sm text-gray-600">Attendance Rate: {attendance_rate:.1f}%</div>', sanitize=False)
+            ui.html(f'<div class="w-full bg-gray-200 rounded-full h-3 mb-2"><div class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: {attendance_rate}%"></div></div>')
+            ui.html(f'<div class="text-center text-sm text-gray-600">Attendance Rate: {attendance_rate:.1f}%</div>')
             
             # AI Prediction
             predicted_tomorrow = random.randint(50, 60)
-            ui.html(f'<div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200"><div class="text-sm text-blue-800"><strong>🤖 AI Prediction:</strong> Tomorrow\'s expected attendance: {predicted_tomorrow} employees</div></div>', sanitize=False)
+            ui.html(f'<div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200"><div class="text-sm text-blue-800"><strong>🤖 AI Prediction:</strong> Tomorrow\'s expected attendance: {predicted_tomorrow} employees</div></div>')
 
 def create_performance_metrics_widget(manager: HRDashboardManager):
     """Performance metrics with intelligent analysis"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🎯</span>Performance Metrics</h3>', sanitize=False)
+            ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🎯</span>Performance Metrics</h3>')
             
             metrics = manager.current_metrics
             
@@ -643,22 +643,22 @@ def create_performance_metrics_widget(manager: HRDashboardManager):
             
             for metric in performance_metrics:
                 with ui.row().classes('w-full items-center justify-between mb-3'):
-                    ui.html(f'<span class="text-sm text-gray-600">{metric["label"]}</span>', sanitize=False)
-                    ui.html(f'<span class="font-semibold text-{metric["color"]}-600">{metric["value"]}{metric["unit"]}</span>', sanitize=False)
+                    ui.html(f'<span class="text-sm text-gray-600">{metric["label"]}</span>')
+                    ui.html(f'<span class="font-semibold text-{metric["color"]}-600">{metric["value"]}{metric["unit"]}</span>')
                 
                 # Progress bar
                 progress = min((metric["value"] / metric["target"]) * 100, 100)
                 bar_color = metric["color"] if progress >= 80 else "red"
-                ui.html(f'<div class="w-full bg-gray-200 rounded-full h-2 mb-3"><div class="bg-{bar_color}-500 h-2 rounded-full transition-all duration-500" style="width: {progress}%"></div></div>', sanitize=False)
+                ui.html(f'<div class="w-full bg-gray-200 rounded-full h-2 mb-3"><div class="bg-{bar_color}-500 h-2 rounded-full transition-all duration-500" style="width: {progress}%"></div></div>')
             
             # Trend analysis
-            ui.html('<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200"><div class="text-sm text-purple-800"><strong>📈 Trend Analysis:</strong> Performance improving by 2.3% this week</div></div>', sanitize=False)
+            ui.html('<div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200"><div class="text-sm text-purple-800"><strong>📈 Trend Analysis:</strong> Performance improving by 2.3% this week</div></div>')
 
 def create_leave_requests_widget(manager: HRDashboardManager):
     """Leave requests management"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">📝</span>Leave Requests</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">📝</span>Leave Requests</h3>')
             
             # Sample leave requests
             leave_requests = [
@@ -673,9 +673,9 @@ def create_leave_requests_widget(manager: HRDashboardManager):
                 
                 with ui.row().classes('w-full items-center justify-between p-2 border-b border-gray-100 hover:bg-gray-50'):
                     with ui.column().classes('flex-1'):
-                        ui.html(f'<div class="text-sm font-medium">{urgent_indicator} {request["employee"]}</div>', sanitize=False)
-                        ui.html(f'<div class="text-xs text-gray-500">{request["type"]} - {request["days"]} days</div>', sanitize=False)
-                    ui.html(f'<span class="px-2 py-1 text-xs rounded bg-{status_color}-100 text-{status_color}-800">{request["status"].title()}</span>', sanitize=False)
+                        ui.html(f'<div class="text-sm font-medium">{urgent_indicator} {request["employee"]}</div>')
+                        ui.html(f'<div class="text-xs text-gray-500">{request["type"]} - {request["days"]} days</div>')
+                    ui.html(f'<span class="px-2 py-1 text-xs rounded bg-{status_color}-100 text-{status_color}-800">{request["status"].title()}</span>')
             
             ui.button('📋 Manage All Requests', on_click=lambda: ui.notify('Opening leave management...')).classes('w-full mt-3 bg-blue-500 text-white')
 
@@ -683,13 +683,13 @@ def create_hardware_monitoring_widget(manager: HRDashboardManager):
     """Hardware monitoring and control"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">🔧</span>Hardware Monitor</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">🔧</span>Hardware Monitor</h3>')
             
             # Hardware status summary
             online_devices = sum(1 for device in manager.hardware_devices.values() if device.status == 'online')
             total_devices = len(manager.hardware_devices)
             
-            ui.html(f'<div class="text-center mb-4"><span class="text-2xl font-bold text-green-600">{online_devices}/{total_devices}</span><div class="text-sm text-gray-600">Devices Online</div></div>', sanitize=False)
+            ui.html(f'<div class="text-center mb-4"><span class="text-2xl font-bold text-green-600">{online_devices}/{total_devices}</span><div class="text-sm text-gray-600">Devices Online</div></div>')
             
             # Device list
             for device_id, device in list(manager.hardware_devices.items())[:3]:  # Show first 3 devices
@@ -698,9 +698,9 @@ def create_hardware_monitoring_widget(manager: HRDashboardManager):
                 
                 with ui.row().classes('w-full items-center justify-between p-2 border-b border-gray-100'):
                     with ui.column().classes('flex-1'):
-                        ui.html(f'<div class="text-sm font-medium">{device.device_type.title()}</div>', sanitize=False)
-                        ui.html(f'<div class="text-xs text-gray-500">{device.location}{battery_info}</div>', sanitize=False)
-                    ui.html(f'<span class="text-lg">{status_icon}</span>', sanitize=False)
+                        ui.html(f'<div class="text-sm font-medium">{device.device_type.title()}</div>')
+                        ui.html(f'<div class="text-xs text-gray-500">{device.location}{battery_info}</div>')
+                    ui.html(f'<span class="text-lg">{status_icon}</span>')
             
             ui.button('🔧 Hardware Control Panel', on_click=lambda: create_hardware_management_modal(manager)).classes('w-full mt-3 bg-indigo-500 text-white')
 
@@ -708,34 +708,34 @@ def create_real_time_alerts_widget(manager: HRDashboardManager):
     """Real-time alerts and notifications"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">🔔</span>Real-Time Alerts</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">🔔</span>Real-Time Alerts</h3>')
             
             # Alert summary
             high_alerts = sum(1 for alert in manager.alerts if alert['severity'] == 'high')
             total_alerts = len(manager.alerts)
             
             if total_alerts > 0:
-                ui.html(f'<div class="mb-4 p-3 bg-red-50 rounded-lg border border-red-200"><span class="text-red-800 font-semibold">⚠️ {high_alerts} high priority alerts of {total_alerts} total</span></div>', sanitize=False)
+                ui.html(f'<div class="mb-4 p-3 bg-red-50 rounded-lg border border-red-200"><span class="text-red-800 font-semibold">⚠️ {high_alerts} high priority alerts of {total_alerts} total</span></div>')
                 
                 # Show recent alerts
                 for alert in manager.alerts[:3]:  # Show first 3 alerts
                     severity_color = 'red' if alert['severity'] == 'high' else 'yellow' if alert['severity'] == 'medium' else 'blue'
                     
                     with ui.row().classes('w-full p-2 border-b border-gray-100 hover:bg-gray-50'):
-                        ui.html(f'<span class="text-lg mr-2">{alert["icon"]}</span>', sanitize=False)
+                        ui.html(f'<span class="text-lg mr-2">{alert["icon"]}</span>')
                         with ui.column().classes('flex-1'):
-                            ui.html(f'<div class="text-sm font-medium text-{severity_color}-800">{alert["title"]}</div>', sanitize=False)
-                            ui.html(f'<div class="text-xs text-gray-500">{alert["message"]}</div>', sanitize=False)
+                            ui.html(f'<div class="text-sm font-medium text-{severity_color}-800">{alert["title"]}</div>')
+                            ui.html(f'<div class="text-xs text-gray-500">{alert["message"]}</div>')
                 
                 ui.button('🔔 View All Alerts', on_click=lambda: create_alerts_modal(manager)).classes('w-full mt-3 bg-red-500 text-white')
             else:
-                ui.html('<div class="text-center py-8 text-gray-500"><div class="text-4xl mb-2">✅</div><div>All systems normal</div></div>', sanitize=False)
+                ui.html('<div class="text-center py-8 text-gray-500"><div class="text-4xl mb-2">✅</div><div>All systems normal</div></div>')
 
 def create_analytics_widget(manager: HRDashboardManager):
     """Analytics and insights widget"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">📈</span>Analytics & Insights</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">📈</span>Analytics & Insights</h3>')
             
             # Key insights
             insights = [
@@ -746,11 +746,11 @@ def create_analytics_widget(manager: HRDashboardManager):
             
             for insight in insights:
                 with ui.row().classes('w-full items-center p-3 bg-gray-50 rounded-lg mb-2'):
-                    ui.html(f'<span class="text-2xl mr-3">{insight["icon"]}</span>', sanitize=False)
+                    ui.html(f'<span class="text-2xl mr-3">{insight["icon"]}</span>')
                     with ui.column().classes('flex-1'):
-                        ui.html(f'<div class="font-medium text-gray-800">{insight["title"]}</div>', sanitize=False)
-                        ui.html(f'<div class="text-sm text-gray-600">{insight["value"]}</div>', sanitize=False)
-                    ui.html(f'<span class="text-xs text-green-600 font-medium">{insight["trend"]}</span>', sanitize=False)
+                        ui.html(f'<div class="font-medium text-gray-800">{insight["title"]}</div>')
+                        ui.html(f'<div class="text-sm text-gray-600">{insight["value"]}</div>')
+                    ui.html(f'<span class="text-xs text-green-600 font-medium">{insight["trend"]}</span>')
             
             ui.button('📊 Full Analytics Dashboard', on_click=lambda: ui.notify('Opening analytics...')).classes('w-full mt-3 bg-purple-500 text-white')
 
@@ -758,12 +758,12 @@ def create_compliance_widget(manager: HRDashboardManager):
     """Compliance monitoring widget"""
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
-            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">✅</span>Compliance Status</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-xl">✅</span>Compliance Status</h3>')
             
             metrics = manager.current_metrics
             
             # Compliance score
-            ui.html(f'<div class="text-center mb-4"><span class="text-3xl font-bold text-green-600">{metrics.compliance_rate}%</span><div class="text-sm text-gray-600">Overall Compliance</div></div>', sanitize=False)
+            ui.html(f'<div class="text-center mb-4"><span class="text-3xl font-bold text-green-600">{metrics.compliance_rate}%</span><div class="text-sm text-gray-600">Overall Compliance</div></div>')
             
             # Compliance areas
             compliance_areas = [
@@ -778,9 +778,9 @@ def create_compliance_widget(manager: HRDashboardManager):
                 
                 with ui.row().classes('w-full items-center justify-between p-2 border-b border-gray-100'):
                     with ui.column().classes('flex-1'):
-                        ui.html(f'<div class="text-sm font-medium">{area["area"]}</div>', sanitize=False)
-                        ui.html(f'<div class="text-xs text-gray-500">{area["score"]}% compliant</div>', sanitize=False)
-                    ui.html(f'<span class="text-lg">{status_icon}</span>', sanitize=False)
+                        ui.html(f'<div class="text-sm font-medium">{area["area"]}</div>')
+                        ui.html(f'<div class="text-xs text-gray-500">{area["score"]}% compliant</div>')
+                    ui.html(f'<span class="text-lg">{status_icon}</span>')
             
             ui.button('📋 Compliance Reports', on_click=lambda: ui.notify('Opening compliance reports...')).classes('w-full mt-3 bg-green-500 text-white')
 
@@ -789,21 +789,21 @@ def create_dashboard_footer(manager: HRDashboardManager):
     with ui.row().classes('w-full p-4 bg-gray-100 border-t border-gray-200 mt-6'):
         with ui.row().classes('w-full justify-between items-center'):
             # System status
-            ui.html('<div class="text-sm text-gray-600">🟢 System Status: All services operational</div>', sanitize=False)
+            ui.html('<div class="text-sm text-gray-600">🟢 System Status: All services operational</div>')
             
             # Last sync info
             last_sync = datetime.now() - timedelta(seconds=30)
-            ui.html(f'<div class="text-sm text-gray-600">Last sync: {last_sync.strftime("%H:%M:%S")}</div>', sanitize=False)
+            ui.html(f'<div class="text-sm text-gray-600">Last sync: {last_sync.strftime("%H:%M:%S")}</div>')
             
             # Version info
-            ui.html('<div class="text-sm text-gray-600">HR-Kit v2.1.0 | Enterprise Edition</div>', sanitize=False)
+            ui.html('<div class="text-sm text-gray-600">HR-Kit v2.1.0 | Enterprise Edition</div>')
 
 def create_hardware_management_modal(manager: HRDashboardManager):
     """Create hardware management modal"""
     with ui.dialog().classes('w-full max-w-4xl') as dialog:
         with ui.card().classes('w-full'):
             with ui.card_section().classes('p-6'):
-                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">🔧</span>Hardware Management Console</h2>', sanitize=False)
+                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">🔧</span>Hardware Management Console</h2>')
                 
                 # Hardware overview
                 with ui.row().classes('w-full gap-4 mb-6'):
@@ -813,55 +813,55 @@ def create_hardware_management_modal(manager: HRDashboardManager):
                     
                     with ui.card().classes('flex-1 bg-green-50'):
                         with ui.card_section().classes('p-4 text-center'):
-                            ui.html(f'<div class="text-2xl font-bold text-green-600">{online_count}</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-green-800">Online</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl font-bold text-green-600">{online_count}</div>')
+                            ui.html('<div class="text-sm text-green-800">Online</div>')
                     
                     with ui.card().classes('flex-1 bg-red-50'):
                         with ui.card_section().classes('p-4 text-center'):
-                            ui.html(f'<div class="text-2xl font-bold text-red-600">{offline_count}</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-red-800">Offline</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl font-bold text-red-600">{offline_count}</div>')
+                            ui.html('<div class="text-sm text-red-800">Offline</div>')
                     
                     with ui.card().classes('flex-1 bg-yellow-50'):
                         with ui.card_section().classes('p-4 text-center'):
-                            ui.html(f'<div class="text-2xl font-bold text-yellow-600">{maintenance_count}</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-yellow-800">Maintenance</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl font-bold text-yellow-600">{maintenance_count}</div>')
+                            ui.html('<div class="text-sm text-yellow-800">Maintenance</div>')
                 
                 # Device management table
-                ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4">Device Management</h3>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4">Device Management</h3>')
                 
                 with ui.element('div').classes('overflow-x-auto'):
                     with ui.element('table').classes('w-full table-auto border-collapse'):
                         # Header
                         with ui.element('thead'):
                             with ui.element('tr').classes('bg-gray-100'):
-                                ui.html('<th class="border p-3 text-left font-semibold">Device ID</th>', sanitize=False)
-                                ui.html('<th class="border p-3 text-left font-semibold">Type</th>', sanitize=False)
-                                ui.html('<th class="border p-3 text-left font-semibold">Location</th>', sanitize=False)
-                                ui.html('<th class="border p-3 text-left font-semibold">Status</th>', sanitize=False)
-                                ui.html('<th class="border p-3 text-left font-semibold">Battery</th>', sanitize=False)
-                                ui.html('<th class="border p-3 text-left font-semibold">Last Sync</th>', sanitize=False)
-                                ui.html('<th class="border p-3 text-left font-semibold">Actions</th>', sanitize=False)
+                                ui.html('<th class="border p-3 text-left font-semibold">Device ID</th>')
+                                ui.html('<th class="border p-3 text-left font-semibold">Type</th>')
+                                ui.html('<th class="border p-3 text-left font-semibold">Location</th>')
+                                ui.html('<th class="border p-3 text-left font-semibold">Status</th>')
+                                ui.html('<th class="border p-3 text-left font-semibold">Battery</th>')
+                                ui.html('<th class="border p-3 text-left font-semibold">Last Sync</th>')
+                                ui.html('<th class="border p-3 text-left font-semibold">Actions</th>')
                         
                         # Body
                         with ui.element('tbody'):
                             for device_id, device in manager.hardware_devices.items():
                                 with ui.element('tr').classes('hover:bg-gray-50'):
-                                    ui.html(f'<td class="border p-3 font-mono">{device_id}</td>', sanitize=False)
-                                    ui.html(f'<td class="border p-3">{device.device_type.title()}</td>', sanitize=False)
-                                    ui.html(f'<td class="border p-3">{device.location}</td>', sanitize=False)
+                                    ui.html(f'<td class="border p-3 font-mono">{device_id}</td>')
+                                    ui.html(f'<td class="border p-3">{device.device_type.title()}</td>')
+                                    ui.html(f'<td class="border p-3">{device.location}</td>')
                                     
                                     # Status with color
                                     status_color = 'green' if device.status == 'online' else 'red' if device.status == 'offline' else 'yellow'
-                                    ui.html(f'<td class="border p-3"><span class="px-2 py-1 rounded text-xs bg-{status_color}-100 text-{status_color}-800">{device.status.title()}</span></td>', sanitize=False)
+                                    ui.html(f'<td class="border p-3"><span class="px-2 py-1 rounded text-xs bg-{status_color}-100 text-{status_color}-800">{device.status.title()}</span></td>')
                                     
                                     # Battery
                                     battery_display = f'{device.battery_level}%' if device.battery_level else 'N/A'
                                     battery_color = 'green' if device.battery_level and device.battery_level > 50 else 'yellow' if device.battery_level and device.battery_level > 20 else 'red'
-                                    ui.html(f'<td class="border p-3"><span class="text-{battery_color}-600">{battery_display}</span></td>', sanitize=False)
+                                    ui.html(f'<td class="border p-3"><span class="text-{battery_color}-600">{battery_display}</span></td>')
                                     
                                     # Last sync
                                     sync_time = device.last_sync.strftime('%H:%M:%S')
-                                    ui.html(f'<td class="border p-3 font-mono text-sm">{sync_time}</td>', sanitize=False)
+                                    ui.html(f'<td class="border p-3 font-mono text-sm">{sync_time}</td>')
                                     
                                     # Actions
                                     with ui.element('td').classes('border p-3'):
@@ -884,7 +884,7 @@ def create_alerts_modal(manager: HRDashboardManager):
     with ui.dialog().classes('w-full max-w-3xl') as dialog:
         with ui.card().classes('w-full'):
             with ui.card_section().classes('p-6'):
-                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">🔔</span>Alert Management Center</h2>', sanitize=False)
+                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">🔔</span>Alert Management Center</h2>')
                 
                 # Alert summary
                 high_alerts = sum(1 for alert in manager.alerts if alert['severity'] == 'high')
@@ -894,21 +894,21 @@ def create_alerts_modal(manager: HRDashboardManager):
                 with ui.row().classes('w-full gap-4 mb-6'):
                     with ui.card().classes('flex-1 bg-red-50'):
                         with ui.card_section().classes('p-4 text-center'):
-                            ui.html(f'<div class="text-2xl font-bold text-red-600">{high_alerts}</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-red-800">High Priority</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl font-bold text-red-600">{high_alerts}</div>')
+                            ui.html('<div class="text-sm text-red-800">High Priority</div>')
                     
                     with ui.card().classes('flex-1 bg-yellow-50'):
                         with ui.card_section().classes('p-4 text-center'):
-                            ui.html(f'<div class="text-2xl font-bold text-yellow-600">{medium_alerts}</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-yellow-800">Medium Priority</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl font-bold text-yellow-600">{medium_alerts}</div>')
+                            ui.html('<div class="text-sm text-yellow-800">Medium Priority</div>')
                     
                     with ui.card().classes('flex-1 bg-blue-50'):
                         with ui.card_section().classes('p-4 text-center'):
-                            ui.html(f'<div class="text-2xl font-bold text-blue-600">{low_alerts}</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-blue-800">Low Priority</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl font-bold text-blue-600">{low_alerts}</div>')
+                            ui.html('<div class="text-sm text-blue-800">Low Priority</div>')
                 
                 # Alert list
-                ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Alerts</h3>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Alerts</h3>')
                 
                 for alert in manager.alerts:
                     severity_color = 'red' if alert['severity'] == 'high' else 'yellow' if alert['severity'] == 'medium' else 'blue'
@@ -917,14 +917,14 @@ def create_alerts_modal(manager: HRDashboardManager):
                         with ui.card_section().classes('p-4'):
                             with ui.row().classes('w-full items-start justify-between'):
                                 with ui.row().classes('items-start gap-3'):
-                                    ui.html(f'<span class="text-2xl">{alert["icon"]}</span>', sanitize=False)
+                                    ui.html(f'<span class="text-2xl">{alert["icon"]}</span>')
                                     with ui.column().classes('flex-1'):
-                                        ui.html(f'<div class="font-semibold text-{severity_color}-800">{alert["title"]}</div>', sanitize=False)
-                                        ui.html(f'<div class="text-sm text-gray-600 mb-2">{alert["message"]}</div>', sanitize=False)
-                                        ui.html(f'<div class="text-xs text-gray-500">{alert["timestamp"].strftime("%H:%M:%S")} - {alert["type"].title()}</div>', sanitize=False)
+                                        ui.html(f'<div class="font-semibold text-{severity_color}-800">{alert["title"]}</div>')
+                                        ui.html(f'<div class="text-sm text-gray-600 mb-2">{alert["message"]}</div>')
+                                        ui.html(f'<div class="text-xs text-gray-500">{alert["timestamp"].strftime("%H:%M:%S")} - {alert["type"].title()}</div>')
                                 
                                 with ui.column().classes('gap-2'):
-                                    ui.html(f'<span class="px-2 py-1 text-xs rounded bg-{severity_color}-100 text-{severity_color}-800">{alert["severity"].title()}</span>', sanitize=False)
+                                    ui.html(f'<span class="px-2 py-1 text-xs rounded bg-{severity_color}-100 text-{severity_color}-800">{alert["severity"].title()}</span>')
                                     if alert['action_required']:
                                         ui.button('🔧 Take Action', on_click=lambda: ui.notify('Action initiated...')).classes('text-xs bg-blue-500 text-white')
                 
@@ -941,7 +941,7 @@ def create_settings_modal(manager: HRDashboardManager):
     with ui.dialog().classes('w-full max-w-2xl') as dialog:
         with ui.card().classes('w-full'):
             with ui.card_section().classes('p-6'):
-                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">⚙️</span>Dashboard Settings</h2>', sanitize=False)
+                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="text-3xl">⚙️</span>Dashboard Settings</h2>')
                 
                 # Settings sections
                 with ui.tabs().classes('w-full') as tabs:
@@ -952,7 +952,7 @@ def create_settings_modal(manager: HRDashboardManager):
                 
                 with ui.tab_panels(tabs, value='general').classes('w-full'):
                     with ui.tab_panel('general'):
-                        ui.html('<h3 class="text-lg font-semibold mb-4">General Settings</h3>', sanitize=False)
+                        ui.html('<h3 class="text-lg font-semibold mb-4">General Settings</h3>')
                         
                         with ui.row().classes('w-full gap-4 mb-4'):
                             ui.select(['Light', 'Dark', 'Auto'], label='Theme', value='Light').classes('flex-1')
@@ -964,7 +964,7 @@ def create_settings_modal(manager: HRDashboardManager):
                         ui.checkbox('Real-time synchronization', value=True)
                     
                     with ui.tab_panel('widgets'):
-                        ui.html('<h3 class="text-lg font-semibold mb-4">Widget Configuration</h3>', sanitize=False)
+                        ui.html('<h3 class="text-lg font-semibold mb-4">Widget Configuration</h3>')
                         
                         widgets = [
                             'Attendance Overview', 'Performance Metrics', 'Leave Requests',
@@ -977,7 +977,7 @@ def create_settings_modal(manager: HRDashboardManager):
                                 ui.checkbox('Enabled', value=True)
                     
                     with ui.tab_panel('hardware'):
-                        ui.html('<h3 class="text-lg font-semibold mb-4">Hardware Settings</h3>', sanitize=False)
+                        ui.html('<h3 class="text-lg font-semibold mb-4">Hardware Settings</h3>')
                         
                         ui.number('Sync interval (seconds)', value=60, min=30, max=600).classes('w-full mb-4')
                         ui.checkbox('Auto-reconnect offline devices', value=True).classes('mb-2')
@@ -985,7 +985,7 @@ def create_settings_modal(manager: HRDashboardManager):
                         ui.checkbox('Device maintenance reminders', value=True)
                     
                     with ui.tab_panel('notifications'):
-                        ui.html('<h3 class="text-lg font-semibold mb-4">Notification Settings</h3>', sanitize=False)
+                        ui.html('<h3 class="text-lg font-semibold mb-4">Notification Settings</h3>')
                         
                         ui.checkbox('Sound notifications', value=True).classes('mb-2')
                         ui.checkbox('Email alerts for high priority', value=True).classes('mb-2')

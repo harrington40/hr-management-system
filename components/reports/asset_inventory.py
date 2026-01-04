@@ -239,7 +239,7 @@ def create_asset_inventory_page():
             with ui.card().classes('w-full bg-gradient-to-r from-orange-600 to-red-600 text-white'):
                 with ui.card_section().classes('p-6'):
                     with ui.row().classes('w-full justify-between items-center'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📦</span>Asset Inventory</h1>', sanitize=False)
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📦</span>Asset Inventory</h1>')
                         with ui.row().classes('gap-4'):
                             ui.button('➕ Add Asset', on_click=lambda: add_new_asset()).classes('bg-white text-orange-600 hover:bg-orange-50 font-semibold')
                             ui.button('📊 Reports', on_click=lambda: show_asset_reports()).classes('bg-white text-orange-600 hover:bg-orange-50 font-semibold')
@@ -252,37 +252,37 @@ def create_asset_inventory_page():
             # Total Assets
             with ui.card().classes('flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">📦</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.statistics["total_assets"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Total Assets</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">📦</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.statistics["total_assets"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">Total Assets</div>')
 
             # Active Assets
             with ui.card().classes('flex-1 bg-gradient-to-br from-green-500 to-green-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">✅</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.statistics["active_assets"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Active Assets</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">✅</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.statistics["active_assets"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">Active Assets</div>')
 
             # In Maintenance
             with ui.card().classes('flex-1 bg-gradient-to-br from-orange-500 to-orange-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">🔧</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.statistics["in_maintenance"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">In Maintenance</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">🔧</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.statistics["in_maintenance"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">In Maintenance</div>')
 
             # Total Value
             with ui.card().classes('flex-1 bg-gradient-to-br from-purple-500 to-purple-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">💰</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">${manager.statistics["total_value"]:,.0f}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Total Value</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">💰</div>')
+                    ui.html(f'<div class="text-2xl font-bold">${manager.statistics["total_value"]:,.0f}</div>')
+                    ui.html('<div class="text-sm opacity-90">Total Value</div>')
 
         # Asset Inventory Section
         with ui.row().classes('w-full px-6'):
             with ui.card().classes('w-full'):
                 with ui.card_section().classes('p-6 border-b border-gray-200'):
                     with ui.row().classes('justify-between items-center'):
-                        ui.html('<h2 class="text-2xl font-bold text-gray-800">Asset Directory</h2>', sanitize=False)
+                        ui.html('<h2 class="text-2xl font-bold text-gray-800">Asset Directory</h2>')
                         with ui.row().classes('gap-2'):
                             search_input = ui.input(placeholder='Search assets...').classes('w-48')
                             category_select = ui.select(
@@ -307,19 +307,19 @@ def create_asset_inventory_page():
                                     with ui.row().classes('w-full justify-between items-start'):
                                         with ui.column().classes('flex-1 gap-2'):
                                             with ui.row().classes('gap-3 items-center'):
-                                                ui.html(f'<span class="text-2xl">{get_category_icon(asset.category)}</span>', sanitize=False)
+                                                ui.html(f'<span class="text-2xl">{get_category_icon(asset.category)}</span>')
                                                 with ui.column().classes('gap-1'):
-                                                    ui.html(f'<h3 class="text-lg font-bold text-gray-800">{asset.name}</h3>', sanitize=False)
-                                                    ui.html(f'<span class="text-sm text-gray-600">ID: {asset.asset_id} • SN: {asset.serial_number}</span>', sanitize=False)
+                                                    ui.html(f'<h3 class="text-lg font-bold text-gray-800">{asset.name}</h3>')
+                                                    ui.html(f'<span class="text-sm text-gray-600">ID: {asset.asset_id} • SN: {asset.serial_number}</span>')
                                             
-                                            ui.html(f'<span class="px-3 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{asset.status.value}</span>', sanitize=False)
+                                            ui.html(f'<span class="px-3 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{asset.status.value}</span>')
                                             
                                             with ui.row().classes('gap-6 text-sm text-gray-600 mt-2'):
-                                                ui.html(f'<span>📍 {asset.location}</span>', sanitize=False)
-                                                ui.html(f'<span>👤 {asset.assigned_to}</span>', sanitize=False)
-                                                ui.html(f'<span>💵 ${asset.purchase_cost:,.2f}</span>', sanitize=False)
-                                                ui.html(f'<span>📅 {asset.purchase_date}</span>', sanitize=False)
-                                                ui.html(f'<span>🎯 {asset.condition}</span>', sanitize=False)
+                                                ui.html(f'<span>📍 {asset.location}</span>')
+                                                ui.html(f'<span>👤 {asset.assigned_to}</span>')
+                                                ui.html(f'<span>💵 ${asset.purchase_cost:,.2f}</span>')
+                                                ui.html(f'<span>📅 {asset.purchase_date}</span>')
+                                                ui.html(f'<span>🎯 {asset.condition}</span>')
                                         
                                         with ui.column().classes('gap-2'):
                                             ui.button('👁️', on_click=lambda a=asset: view_asset_details(a)).classes('p-2 bg-blue-100 hover:bg-blue-200 text-blue-600')
@@ -358,16 +358,16 @@ def view_asset_details(asset: Asset):
             
             with ui.card_section().classes('p-6 space-y-4'):
                 with ui.grid(columns=2).classes('gap-4'):
-                    ui.html(f'<div><strong>Asset ID:</strong> {asset.asset_id}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Serial Number:</strong> {asset.serial_number}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Category:</strong> {asset.category.value}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Status:</strong> {asset.status.value}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Location:</strong> {asset.location}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Assigned To:</strong> {asset.assigned_to}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Purchase Cost:</strong> ${asset.purchase_cost:,.2f}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Purchase Date:</strong> {asset.purchase_date}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Condition:</strong> {asset.condition}</div>', sanitize=False)
-                    ui.html(f'<div><strong>Depreciation Rate:</strong> {asset.depreciation_rate*100}%</div>', sanitize=False)
+                    ui.html(f'<div><strong>Asset ID:</strong> {asset.asset_id}</div>')
+                    ui.html(f'<div><strong>Serial Number:</strong> {asset.serial_number}</div>')
+                    ui.html(f'<div><strong>Category:</strong> {asset.category.value}</div>')
+                    ui.html(f'<div><strong>Status:</strong> {asset.status.value}</div>')
+                    ui.html(f'<div><strong>Location:</strong> {asset.location}</div>')
+                    ui.html(f'<div><strong>Assigned To:</strong> {asset.assigned_to}</div>')
+                    ui.html(f'<div><strong>Purchase Cost:</strong> ${asset.purchase_cost:,.2f}</div>')
+                    ui.html(f'<div><strong>Purchase Date:</strong> {asset.purchase_date}</div>')
+                    ui.html(f'<div><strong>Condition:</strong> {asset.condition}</div>')
+                    ui.html(f'<div><strong>Depreciation Rate:</strong> {asset.depreciation_rate*100}%</div>')
                 
                 ui.button('Close', on_click=dialog.close).classes('bg-gray-600 text-white hover:bg-gray-700 mt-4')
     
@@ -474,7 +474,7 @@ def show_file_upload():
                     # File upload area
                     with ui.card().classes('w-full bg-blue-50 border-2 border-dashed border-blue-300 p-8'):
                         with ui.column().classes('items-center gap-3'):
-                            ui.html('<div class="text-4xl">📁</div>', sanitize=False)
+                            ui.html('<div class="text-4xl">📁</div>')
                             ui.label('Drag and drop files here or click to select').classes('font-semibold text-center')
                             ui.label('Supported formats: CSV, XLSX, XLS').classes('text-sm text-gray-600 text-center')
                             
@@ -527,7 +527,7 @@ def show_file_upload():
                                 <a href="#" class="text-blue-600 hover:underline">📥 Download Template</a>
                             </p>
                         </div>"""
-                        ui.html(template_info, sanitize=False)
+                        ui.html(template_info)
                     
                     # Upload summary
                     with ui.card().classes('w-full bg-gray-50'):

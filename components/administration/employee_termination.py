@@ -429,7 +429,7 @@ def EmployeeTermination():
                             <p class="text-red-100 text-lg">Secure termination processing with dual authorization and audit trails</p>
                         </div>
                     </div>
-                ''', sanitize=False)
+                ''')
                 
                 # Security breadcrumb
                 with ui.row().classes('items-center gap-2 text-sm text-red-200 mt-4'):
@@ -508,7 +508,7 @@ def create_termination_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">warning</i>
                         </div>
-                    ''', sanitize=False)
+                    ''')
                 
                 # High risk cases
                 with ui.card().classes('p-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white'):
@@ -520,7 +520,7 @@ def create_termination_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">error</i>
                         </div>
-                    ''', sanitize=False)
+                    ''')
                 
                 # Security score
                 with ui.card().classes('p-6 bg-gradient-to-br from-green-500 to-green-600 text-white'):
@@ -532,7 +532,7 @@ def create_termination_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">shield</i>
                         </div>
-                    ''', sanitize=False)
+                    ''')
                 
                 # Compliance rate
                 with ui.card().classes('p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white'):
@@ -544,7 +544,7 @@ def create_termination_overview_section():
                             </div>
                             <i class="material-icons text-4xl opacity-75">verified</i>
                         </div>
-                    ''', sanitize=False)
+                    ''')
             
             # Recent security events
             with ui.card().classes('p-6'):
@@ -590,7 +590,7 @@ def create_termination_overview_section():
                             </button>
                         </div>
                     </div>
-                ''', sanitize=False)
+                ''')
             
             # Risk factors analysis
             with ui.card().classes('p-6'):
@@ -629,7 +629,7 @@ def create_termination_overview_section():
                             <div class="bg-yellow-500 h-2 rounded-full" style="width: 70%"></div>
                         </div>
                     </div>
-                ''', sanitize=False)
+                ''')
 
 def create_security_dashboard():
     """Create security monitoring dashboard"""
@@ -1123,7 +1123,7 @@ async def show_security_audit():
                     <p class="text-red-600">Complete audit history and security monitoring</p>
                 </div>
             </div>
-        ''', sanitize=False)
+        ''')
         
         with ui.row().classes('w-full gap-6'):
             # Left column - Recent audits
@@ -1168,7 +1168,7 @@ async def show_security_audit():
                                 <span class="text-orange-600 font-bold">3</span>
                             </div>
                         </div>
-                    ''', sanitize=False)
+                    ''')
         
         ui.button('Close', on_click=dialog.close).props('flat color=red').classes('mt-6')
     dialog.open()
@@ -1186,7 +1186,7 @@ async def show_new_termination_dialog():
                     <p class="text-red-600">⚠️ High security process - requires dual authorization</p>
                 </div>
             </div>
-        ''', sanitize=False)
+        ''')
         
         # Security warning
         with ui.card().classes('p-4 bg-red-50 border-l-4 border-red-500 mb-6'):
@@ -1198,7 +1198,7 @@ async def show_new_termination_dialog():
                         <div class="text-sm text-red-700">This action requires additional authorization for high-risk employees</div>
                     </div>
                 </div>
-            ''', sanitize=False)
+            ''')
         
         # Quick termination form
         with ui.row().classes('w-full gap-4 mb-4'):

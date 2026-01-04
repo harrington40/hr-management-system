@@ -570,7 +570,7 @@ def create_staff_status_page():
             with ui.card().classes('w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white'):
                 with ui.card_section().classes('p-6'):
                     with ui.row().classes('w-full justify-between items-center'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">👥</span>Staff & On Duty Status</h1>', sanitize=False).classes('mb-2')
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">👥</span>Staff & On Duty Status</h1>').classes('mb-2')
                         with ui.row().classes('gap-4'):
                             ui.button('🔄 Refresh Status', on_click=lambda: ui.notify('Status refreshed!')).classes('bg-white text-blue-600 hover:bg-gray-100')
                             ui.button('📊 Generate Report', on_click=lambda: ui.notify('Report generated!')).classes('bg-white text-blue-600 hover:bg-gray-100')
@@ -582,7 +582,7 @@ def create_staff_status_page():
             with ui.column().classes('w-1/4'):
                 with ui.card().classes('w-full'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4">📋 View Options</h3>', sanitize=False)
+                        ui.html('<h3 class="text-lg font-semibold text-gray-800 mb-4">📋 View Options</h3>')
                         
                         view_options = [
                             {'id': 'dashboard', 'name': 'Status Dashboard', 'icon': '📊', 'color': 'blue'},
@@ -659,7 +659,7 @@ def create_staff_status_page():
 
 def create_status_dashboard_panel(manager: StaffStatusManager):
     """Create the main status dashboard panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Real-Time Status Dashboard</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Real-Time Status Dashboard</h2>')
     
     # Real-time stats cards
     with ui.row().classes('w-full gap-4 mb-6'):
@@ -668,33 +668,33 @@ def create_status_dashboard_panel(manager: StaffStatusManager):
         # Total Employees Card
         with ui.card().classes('flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-3xl font-bold">👥</div>', sanitize=False)
-                ui.html(f'<div class="text-2xl font-bold">{stats["total_employees"]}</div>', sanitize=False)
-                ui.html('<div class="text-sm opacity-90">Total Employees</div>', sanitize=False)
+                ui.html('<div class="text-3xl font-bold">👥</div>')
+                ui.html(f'<div class="text-2xl font-bold">{stats["total_employees"]}</div>')
+                ui.html('<div class="text-sm opacity-90">Total Employees</div>')
         
         # On Duty Card
         with ui.card().classes('flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-3xl font-bold">✅</div>', sanitize=False)
-                ui.html(f'<div class="text-2xl font-bold">{stats["currently_on_duty"]}</div>', sanitize=False)
-                ui.html('<div class="text-sm opacity-90">Currently On Duty</div>', sanitize=False)
+                ui.html('<div class="text-3xl font-bold">✅</div>')
+                ui.html(f'<div class="text-2xl font-bold">{stats["currently_on_duty"]}</div>')
+                ui.html('<div class="text-sm opacity-90">Currently On Duty</div>')
         
         # On Break Card
         with ui.card().classes('flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-3xl font-bold">☕</div>', sanitize=False)
-                ui.html(f'<div class="text-2xl font-bold">{stats["on_break"]}</div>', sanitize=False)
-                ui.html('<div class="text-sm opacity-90">On Break</div>', sanitize=False)
+                ui.html('<div class="text-3xl font-bold">☕</div>')
+                ui.html(f'<div class="text-2xl font-bold">{stats["on_break"]}</div>')
+                ui.html('<div class="text-sm opacity-90">On Break</div>')
         
         # Remote Workers Card
         with ui.card().classes('flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-3xl font-bold">🏠</div>', sanitize=False)
-                ui.html(f'<div class="text-2xl font-bold">{stats["remote_workers"]}</div>', sanitize=False)
-                ui.html('<div class="text-sm opacity-90">Remote Workers</div>', sanitize=False)
+                ui.html('<div class="text-3xl font-bold">🏠</div>')
+                ui.html(f'<div class="text-2xl font-bold">{stats["remote_workers"]}</div>')
+                ui.html('<div class="text-sm opacity-90">Remote Workers</div>')
     
     # Live Status Feed
-    ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4">🔴 Live Status Updates</h3>', sanitize=False)
+    ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4">🔴 Live Status Updates</h3>')
     
     with ui.card().classes('w-full'):
         with ui.card_section().classes('p-4'):
@@ -708,20 +708,20 @@ def create_status_dashboard_panel(manager: StaffStatusManager):
             
             for update in status_updates:
                 with ui.row().classes('w-full p-3 border-b border-gray-200 hover:bg-gray-50'):
-                    ui.html(f'<div class="text-sm text-gray-500 w-16">{update["time"]}</div>', sanitize=False)
-                    ui.html(f'<div class="flex-1 font-medium">{update["employee"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-sm text-gray-600">{update["action"]}</div>', sanitize=False)
+                    ui.html(f'<div class="text-sm text-gray-500 w-16">{update["time"]}</div>')
+                    ui.html(f'<div class="flex-1 font-medium">{update["employee"]}</div>')
+                    ui.html(f'<div class="text-sm text-gray-600">{update["action"]}</div>')
                     status_colors = {
                         'on_duty': 'bg-green-100 text-green-800',
                         'on_break': 'bg-yellow-100 text-yellow-800',
                         'remote_work': 'bg-purple-100 text-purple-800',
                         'on_leave': 'bg-blue-100 text-blue-800'
                     }
-                    ui.html(f'<div class="px-2 py-1 rounded text-xs {status_colors.get(update["status"], "bg-gray-100 text-gray-800")}">{update["status"].replace("_", " ").title()}</div>', sanitize=False)
+                    ui.html(f'<div class="px-2 py-1 rounded text-xs {status_colors.get(update["status"], "bg-gray-100 text-gray-800")}">{update["status"].replace("_", " ").title()}</div>')
 
 def create_staff_directory_panel(manager: StaffStatusManager):
     """Create staff directory panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">👥 Staff Directory</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">👥 Staff Directory</h2>')
     
     # Search and filters
     with ui.row().classes('w-full gap-4 mb-4'):
@@ -740,19 +740,19 @@ def create_staff_directory_panel(manager: StaffStatusManager):
                         with ui.element('div').classes('w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3'):
                             ui.label(employee['name'][:2].upper())
                         with ui.column().classes('flex-1'):
-                            ui.html(f'<div class="font-semibold">{employee["name"]}</div>', sanitize=False)
-                            ui.html(f'<div class="text-sm text-gray-600">{employee["position"]}</div>', sanitize=False)
+                            ui.html(f'<div class="font-semibold">{employee["name"]}</div>')
+                            ui.html(f'<div class="text-sm text-gray-600">{employee["position"]}</div>')
                     
                     # Status badge
                     status_info = manager.staff_status['status_types'].get(employee['current_status'], {})
                     status_color = status_info.get('color', 'gray')
                     status_icon = status_info.get('icon', '⚪')
-                    ui.html(f'<div class="mb-3"><span class="px-2 py-1 rounded text-xs bg-{status_color}-100 text-{status_color}-800">{status_icon} {status_info.get("name", employee["current_status"])}</span></div>', sanitize=False)
+                    ui.html(f'<div class="mb-3"><span class="px-2 py-1 rounded text-xs bg-{status_color}-100 text-{status_color}-800">{status_icon} {status_info.get("name", employee["current_status"])}</span></div>')
                     
                     # Employee details
-                    ui.html(f'<div class="text-sm text-gray-600 mb-1">📧 {employee["email"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-sm text-gray-600 mb-1">🏢 {employee["department"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-sm text-gray-600 mb-1">📍 {employee["location"]}</div>', sanitize=False)
+                    ui.html(f'<div class="text-sm text-gray-600 mb-1">📧 {employee["email"]}</div>')
+                    ui.html(f'<div class="text-sm text-gray-600 mb-1">🏢 {employee["department"]}</div>')
+                    ui.html(f'<div class="text-sm text-gray-600 mb-1">📍 {employee["location"]}</div>')
                     
                     # Action buttons
                     with ui.row().classes('w-full gap-2 mt-3'):
@@ -762,50 +762,50 @@ def create_staff_directory_panel(manager: StaffStatusManager):
 
 def create_on_duty_panel(manager: StaffStatusManager):
     """Create on-duty personnel panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">✅ On Duty Personnel</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">✅ On Duty Personnel</h2>')
     
     # On-duty summary
     on_duty_count = sum(1 for emp in manager.staff_data['employees'].values() if emp['current_status'] == 'on_duty')
-    ui.html(f'<div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg"><span class="text-green-800 font-semibold">🟢 {on_duty_count} employees currently on duty</span></div>', sanitize=False)
+    ui.html(f'<div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg"><span class="text-green-800 font-semibold">🟢 {on_duty_count} employees currently on duty</span></div>')
     
     # On-duty staff table
     with ui.card().classes('w-full'):
         with ui.card_section().classes('p-0'):
             # Table header
             with ui.row().classes('w-full p-4 bg-gray-50 border-b'):
-                ui.html('<div class="w-1/4 font-semibold">Employee</div>', sanitize=False)
-                ui.html('<div class="w-1/4 font-semibold">Department</div>', sanitize=False)
-                ui.html('<div class="w-1/4 font-semibold">Check-in Time</div>', sanitize=False)
-                ui.html('<div class="w-1/4 font-semibold">Hours Today</div>', sanitize=False)
+                ui.html('<div class="w-1/4 font-semibold">Employee</div>')
+                ui.html('<div class="w-1/4 font-semibold">Department</div>')
+                ui.html('<div class="w-1/4 font-semibold">Check-in Time</div>')
+                ui.html('<div class="w-1/4 font-semibold">Hours Today</div>')
             
             # Table rows
             for emp_id, employee in manager.staff_data['employees'].items():
                 if employee['current_status'] == 'on_duty':
                     with ui.row().classes('w-full p-4 border-b hover:bg-gray-50'):
-                        ui.html(f'<div class="w-1/4"><strong>{employee["name"]}</strong><br><small>{employee["position"]}</small></div>', sanitize=False)
-                        ui.html(f'<div class="w-1/4">{employee["department"]}</div>', sanitize=False)
-                        ui.html(f'<div class="w-1/4">{employee.get("check_in_time", "N/A")}</div>', sanitize=False)
-                        ui.html(f'<div class="w-1/4">{employee.get("total_hours_today", 0):.1f} hours</div>', sanitize=False)
+                        ui.html(f'<div class="w-1/4"><strong>{employee["name"]}</strong><br><small>{employee["position"]}</small></div>')
+                        ui.html(f'<div class="w-1/4">{employee["department"]}</div>')
+                        ui.html(f'<div class="w-1/4">{employee.get("check_in_time", "N/A")}</div>')
+                        ui.html(f'<div class="w-1/4">{employee.get("total_hours_today", 0):.1f} hours</div>')
 
 def create_break_management_panel(manager: StaffStatusManager):
     """Create break management panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">☕ Break Management</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">☕ Break Management</h2>')
     
     # Break summary
     on_break_count = sum(1 for emp in manager.staff_data['employees'].values() if emp['current_status'] == 'on_break')
-    ui.html(f'<div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"><span class="text-yellow-800 font-semibold">☕ {on_break_count} employees currently on break</span></div>', sanitize=False)
+    ui.html(f'<div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"><span class="text-yellow-800 font-semibold">☕ {on_break_count} employees currently on break</span></div>')
     
     # Break policy settings
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold mb-3">⚙️ Break Policy Settings</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold mb-3">⚙️ Break Policy Settings</h3>')
             with ui.row().classes('w-full gap-4'):
                 ui.number('Break Duration (minutes)', value=30).classes('flex-1')
                 ui.number('Maximum Daily Breaks', value=2).classes('flex-1')
                 ui.checkbox('Auto-return from break', value=True)
     
     # Current breaks
-    ui.html('<h3 class="text-lg font-semibold mb-3">🕐 Current Breaks</h3>', sanitize=False)
+    ui.html('<h3 class="text-lg font-semibold mb-3">🕐 Current Breaks</h3>')
     
     with ui.card().classes('w-full'):
         with ui.card_section().classes('p-0'):
@@ -816,13 +816,13 @@ def create_break_management_panel(manager: StaffStatusManager):
                         with ui.element('div').classes('w-10 h-10 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4'):
                             ui.label(employee['name'][:2].upper())
                         with ui.column().classes('flex-1'):
-                            ui.html(f'<div class="font-semibold">{employee["name"]}</div>', sanitize=False)
-                            ui.html(f'<div class="text-sm text-gray-600">Started break at {employee.get("break_start", "N/A")}</div>', sanitize=False)
+                            ui.html(f'<div class="font-semibold">{employee["name"]}</div>')
+                            ui.html(f'<div class="text-sm text-gray-600">Started break at {employee.get("break_start", "N/A")}</div>')
                         ui.button('Return from Break', on_click=lambda e=emp_id: manager.update_employee_status(e, 'on_duty')).classes('bg-green-500 text-white')
 
 def create_attendance_log_panel(manager: StaffStatusManager):
     """Create attendance log panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📅 Attendance Log</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📅 Attendance Log</h2>')
     
     # Date range selector
     with ui.row().classes('w-full gap-4 mb-4'):
@@ -839,56 +839,56 @@ def create_attendance_log_panel(manager: StaffStatusManager):
     with ui.row().classes('w-full gap-4 mb-4'):
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-2xl font-bold text-green-600">95%</div>', sanitize=False)
-                ui.html('<div class="text-sm text-gray-600">Attendance Rate</div>', sanitize=False)
+                ui.html('<div class="text-2xl font-bold text-green-600">95%</div>')
+                ui.html('<div class="text-sm text-gray-600">Attendance Rate</div>')
         
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-2xl font-bold text-blue-600">7.8</div>', sanitize=False)
-                ui.html('<div class="text-sm text-gray-600">Avg Hours/Day</div>', sanitize=False)
+                ui.html('<div class="text-2xl font-bold text-blue-600">7.8</div>')
+                ui.html('<div class="text-sm text-gray-600">Avg Hours/Day</div>')
         
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4 text-center'):
-                ui.html('<div class="text-2xl font-bold text-yellow-600">12</div>', sanitize=False)
-                ui.html('<div class="text-sm text-gray-600">Late Arrivals</div>', sanitize=False)
+                ui.html('<div class="text-2xl font-bold text-yellow-600">12</div>')
+                ui.html('<div class="text-sm text-gray-600">Late Arrivals</div>')
 
 def create_department_view_panel(manager: StaffStatusManager):
     """Create department view panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏢 Department Overview</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏢 Department Overview</h2>')
     
     # Department cards
     with ui.row().classes('w-full gap-4 flex-wrap'):
         for dept_name, dept_data in manager.staff_data['departments'].items():
             with ui.card().classes('w-64 hover:shadow-lg transition-shadow'):
                 with ui.card_section().classes('p-4'):
-                    ui.html(f'<h3 class="text-lg font-semibold mb-3">🏢 {dept_name}</h3>', sanitize=False)
+                    ui.html(f'<h3 class="text-lg font-semibold mb-3">🏢 {dept_name}</h3>')
                     
                     # Department stats
-                    ui.html(f'<div class="mb-2">👥 Total Staff: <strong>{dept_data["total_staff"]}</strong></div>', sanitize=False)
-                    ui.html(f'<div class="mb-2 text-green-600">✅ On Duty: <strong>{dept_data.get("on_duty", 0)}</strong></div>', sanitize=False)
-                    ui.html(f'<div class="mb-2 text-yellow-600">☕ On Break: <strong>{dept_data.get("on_break", 0)}</strong></div>', sanitize=False)
-                    ui.html(f'<div class="mb-2 text-gray-600">⭕ Off Duty: <strong>{dept_data.get("off_duty", 0)}</strong></div>', sanitize=False)
+                    ui.html(f'<div class="mb-2">👥 Total Staff: <strong>{dept_data["total_staff"]}</strong></div>')
+                    ui.html(f'<div class="mb-2 text-green-600">✅ On Duty: <strong>{dept_data.get("on_duty", 0)}</strong></div>')
+                    ui.html(f'<div class="mb-2 text-yellow-600">☕ On Break: <strong>{dept_data.get("on_break", 0)}</strong></div>')
+                    ui.html(f'<div class="mb-2 text-gray-600">⭕ Off Duty: <strong>{dept_data.get("off_duty", 0)}</strong></div>')
                     
                     # Progress bar
                     on_duty_percentage = (dept_data.get("on_duty", 0) / dept_data["total_staff"]) * 100
-                    ui.html(f'<div class="w-full bg-gray-200 rounded-full h-2 mt-3"><div class="bg-green-500 h-2 rounded-full" style="width: {on_duty_percentage}%"></div></div>', sanitize=False)
-                    ui.html(f'<div class="text-xs text-gray-600 mt-1">{on_duty_percentage:.0f}% Active</div>', sanitize=False)
+                    ui.html(f'<div class="w-full bg-gray-200 rounded-full h-2 mt-3"><div class="bg-green-500 h-2 rounded-full" style="width: {on_duty_percentage}%"></div></div>')
+                    ui.html(f'<div class="text-xs text-gray-600 mt-1">{on_duty_percentage:.0f}% Active</div>')
 
 def create_analytics_panel(manager: StaffStatusManager):
     """Create analytics panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📈 Staff Analytics</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📈 Staff Analytics</h2>')
     
     # Analytics cards
     with ui.row().classes('w-full gap-4 mb-6'):
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold mb-3">📊 Weekly Trends</h3>', sanitize=False)
-                ui.html('<div class="h-48 bg-gray-100 rounded flex items-center justify-center text-gray-500">Weekly attendance chart placeholder</div>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold mb-3">📊 Weekly Trends</h3>')
+                ui.html('<div class="h-48 bg-gray-100 rounded flex items-center justify-center text-gray-500">Weekly attendance chart placeholder</div>')
         
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold mb-3">🕐 Peak Hours</h3>', sanitize=False)
-                ui.html('<div class="h-48 bg-gray-100 rounded flex items-center justify-center text-gray-500">Peak hours chart placeholder</div>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold mb-3">🕐 Peak Hours</h3>')
+                ui.html('<div class="h-48 bg-gray-100 rounded flex items-center justify-center text-gray-500">Peak hours chart placeholder</div>')
     
     # Analytics metrics
     with ui.row().classes('w-full gap-4'):
@@ -902,6 +902,6 @@ def create_analytics_panel(manager: StaffStatusManager):
         for metric in metrics:
             with ui.card().classes('flex-1'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html(f'<div class="text-2xl font-bold text-{metric["color"]}-600">{metric["value"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-sm text-gray-600 mb-1">{metric["title"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-xs text-{metric["color"]}-600">{metric["trend"]}</div>', sanitize=False)
+                    ui.html(f'<div class="text-2xl font-bold text-{metric["color"]}-600">{metric["value"]}</div>')
+                    ui.html(f'<div class="text-sm text-gray-600 mb-1">{metric["title"]}</div>')
+                    ui.html(f'<div class="text-xs text-{metric["color"]}-600">{metric["trend"]}</div>')

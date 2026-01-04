@@ -117,17 +117,17 @@ def InstitutionProfile():
     with ui.element('div').classes('relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl mb-8 shadow-2xl'):
         with ui.element('div').classes('absolute inset-0 bg-black bg-opacity-20'):
             # Background pattern
-            ui.html('<div class="absolute inset-0 opacity-10"><svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg></div>', sanitize=False)
+            ui.html('<div class="absolute inset-0 opacity-10"><svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg></div>')
 
         with ui.element('div').classes('relative z-10 p-8 text-white'):
             with ui.row().classes('justify-between items-start'):
                 # Company Info Section
                 with ui.column().classes('flex-1'):
                     with ui.row().classes('items-center gap-4 mb-4'):
-                        ui.html('<div class="text-6xl">🏢</div>', sanitize=False)
+                        ui.html('<div class="text-6xl">🏢</div>')
                         with ui.column():
-                            ui.html('<h1 class="text-4xl font-bold mb-2">Institution Profile</h1>', sanitize=False)
-                            ui.html('<p class="text-blue-100 text-lg">Manage your organization\'s core information and settings</p>', sanitize=False)
+                            ui.html('<h1 class="text-4xl font-bold mb-2">Institution Profile</h1>')
+                            ui.html('<p class="text-blue-100 text-lg">Manage your organization\'s core information and settings</p>')
 
                     # Key Metrics Row
                     with ui.row().classes('gap-6 mt-6'):
@@ -139,9 +139,9 @@ def InstitutionProfile():
                         ]
                         for metric in metrics:
                             with ui.element('div').classes('text-center'):
-                                ui.html(f'<div class="text-2xl mb-1">{metric["icon"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm text-blue-100">{metric["label"]}</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl mb-1">{metric["icon"]}</div>')
+                                ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>')
+                                ui.html(f'<div class="text-sm text-blue-100">{metric["label"]}</div>')
 
                 # Action Buttons
                 with ui.column().classes('gap-3'):
@@ -178,10 +178,10 @@ def create_modern_stats_overview():
                 pass
             with ui.element('div').classes('relative z-10'):
                 with ui.row().classes('justify-between items-start mb-4'):
-                    ui.html('<div class="text-3xl">👥</div>', sanitize=False)
-                    ui.html('<div class="text-blue-200 text-sm font-medium">Employees</div>', sanitize=False)
-                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["total_employees"]}</div>', sanitize=False)
-                ui.html('<div class="text-blue-100 text-sm">↗️ +12% this quarter</div>', sanitize=False)
+                    ui.html('<div class="text-3xl">👥</div>')
+                    ui.html('<div class="text-blue-200 text-sm font-medium">Employees</div>')
+                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["total_employees"]}</div>')
+                ui.html('<div class="text-blue-100 text-sm">↗️ +12% this quarter</div>')
 
         # Departments Card
         with ui.element('div').classes('group relative overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer'):
@@ -189,10 +189,10 @@ def create_modern_stats_overview():
                 pass
             with ui.element('div').classes('relative z-10'):
                 with ui.row().classes('justify-between items-start mb-4'):
-                    ui.html('<div class="text-3xl">🏗️</div>', sanitize=False)
-                    ui.html('<div class="text-emerald-200 text-sm font-medium">Departments</div>', sanitize=False)
-                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["departments"]}</div>', sanitize=False)
-                ui.html('<div class="text-emerald-100 text-sm">All active</div>', sanitize=False)
+                    ui.html('<div class="text-3xl">🏗️</div>')
+                    ui.html('<div class="text-emerald-200 text-sm font-medium">Departments</div>')
+                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["departments"]}</div>')
+                ui.html('<div class="text-emerald-100 text-sm">All active</div>')
 
         # Locations Card
         with ui.element('div').classes('group relative overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer'):
@@ -200,10 +200,10 @@ def create_modern_stats_overview():
                 pass
             with ui.element('div').classes('relative z-10'):
                 with ui.row().classes('justify-between items-start mb-4'):
-                    ui.html('<div class="text-3xl">📍</div>', sanitize=False)
-                    ui.html('<div class="text-purple-200 text-sm font-medium">Locations</div>', sanitize=False)
-                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["locations"]}</div>', sanitize=False)
-                ui.html('<div class="text-purple-100 text-sm">Multi-site</div>', sanitize=False)
+                    ui.html('<div class="text-3xl">📍</div>')
+                    ui.html('<div class="text-purple-200 text-sm font-medium">Locations</div>')
+                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["locations"]}</div>')
+                ui.html('<div class="text-purple-100 text-sm">Multi-site</div>')
 
         # Active Projects Card
         with ui.element('div').classes('group relative overflow-hidden bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer'):
@@ -211,10 +211,10 @@ def create_modern_stats_overview():
                 pass
             with ui.element('div').classes('relative z-10'):
                 with ui.row().classes('justify-between items-start mb-4'):
-                    ui.html('<div class="text-3xl">🚀</div>', sanitize=False)
-                    ui.html('<div class="text-orange-200 text-sm font-medium">Projects</div>', sanitize=False)
-                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["active_projects"]}</div>', sanitize=False)
-                ui.html('<div class="text-orange-100 text-sm">In progress</div>', sanitize=False)
+                    ui.html('<div class="text-3xl">🚀</div>')
+                    ui.html('<div class="text-orange-200 text-sm font-medium">Projects</div>')
+                ui.html(f'<div class="text-4xl font-bold mb-2">{stats["active_projects"]}</div>')
+                ui.html('<div class="text-orange-100 text-sm">In progress</div>')
 
 def create_modern_basic_info_card():
     """Create modern basic information card with professional styling"""
@@ -224,10 +224,10 @@ def create_modern_basic_info_card():
         # Card Header
         with ui.element('div').classes('bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white'):
             with ui.row().classes('items-center gap-4'):
-                ui.html('<div class="text-3xl">🏢</div>', sanitize=False)
+                ui.html('<div class="text-3xl">🏢</div>')
                 with ui.column():
-                    ui.html('<h3 class="text-xl font-bold">Basic Information</h3>', sanitize=False)
-                    ui.html('<p class="text-blue-100 text-sm">Core company details and registration</p>', sanitize=False)
+                    ui.html('<h3 class="text-xl font-bold">Basic Information</h3>')
+                    ui.html('<p class="text-blue-100 text-sm">Core company details and registration</p>')
 
         # Card Content
         with ui.element('div').classes('p-6'):
@@ -237,42 +237,42 @@ def create_modern_basic_info_card():
                 with ui.element('div').classes('space-y-4'):
                     # Institution Name
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Institution Name</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Institution Name</label>')
                         ui.input(value=data["name"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense')
 
                     # Legal Name
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Legal Name</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Legal Name</label>')
                         ui.input(value=data["legal_name"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense')
 
                     # Registration Number
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Registration Number</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Registration Number</label>')
                         ui.input(value=data["registration_number"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense')
 
                 # Right Column
                 with ui.element('div').classes('space-y-4'):
                     # Founded Date
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Founded Date</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Founded Date</label>')
                         with ui.input().classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense'):
                             ui.date(value=data["founded_date"])
 
                     # Industry
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Industry</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Industry</label>')
                         ui.select(['Technology Services', 'Healthcare', 'Finance', 'Education', 'Manufacturing', 'Retail', 'Consulting'],
                                  value=data["industry"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense')
 
                     # Company Size & Status Row
                     with ui.element('div').classes('grid grid-cols-2 gap-4'):
                         with ui.element('div').classes('group'):
-                            ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Company Size</label>', sanitize=False)
+                            ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Company Size</label>')
                             ui.select(['1-10', '11-50', '51-200', '201-500', '500+'],
                                      value=data["company_size"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense')
 
                         with ui.element('div').classes('group'):
-                            ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>', sanitize=False)
+                            ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>')
                             ui.select(['Active', 'Inactive', 'Suspended'],
                                      value=data["status"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400').props('outlined dense')
 
@@ -289,17 +289,17 @@ def create_modern_contact_card():
         # Card Header
         with ui.element('div').classes('bg-gradient-to-r from-emerald-600 to-green-600 p-6 text-white'):
             with ui.row().classes('items-center gap-4'):
-                ui.html('<div class="text-3xl">📞</div>', sanitize=False)
+                ui.html('<div class="text-3xl">📞</div>')
                 with ui.column():
-                    ui.html('<h3 class="text-xl font-bold">Contact Information</h3>', sanitize=False)
-                    ui.html('<p class="text-emerald-100 text-sm">Communication details and location</p>', sanitize=False)
+                    ui.html('<h3 class="text-xl font-bold">Contact Information</h3>')
+                    ui.html('<p class="text-emerald-100 text-sm">Communication details and location</p>')
 
         # Card Content
         with ui.element('div').classes('p-6 space-y-6'):
 
             # Headquarters Address
             with ui.element('div').classes('group'):
-                ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Headquarters Address</label>', sanitize=False)
+                ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Headquarters Address</label>')
                 ui.textarea(value=data["headquarters"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 hover:border-emerald-400 min-h-24').props('outlined dense rows=3')
 
             # Contact Details Grid
@@ -308,21 +308,21 @@ def create_modern_contact_card():
                 # Phone & Fax
                 with ui.element('div').classes('space-y-4'):
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>')
                         ui.input(value=data["phone"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 hover:border-emerald-400').props('outlined dense type=tel')
 
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Fax Number</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Fax Number</label>')
                         ui.input(value=data["fax"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 hover:border-emerald-400').props('outlined dense type=tel')
 
                 # Email & Website
                 with ui.element('div').classes('space-y-4'):
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>')
                         ui.input(value=data["email"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 hover:border-emerald-400').props('outlined dense type=email')
 
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Website</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Website</label>')
                         ui.input(value=data["website"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 hover:border-emerald-400').props('outlined dense type=url')
 
             # Quick Contact Actions
@@ -340,10 +340,10 @@ def create_modern_business_settings_card():
         # Card Header
         with ui.element('div').classes('bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white'):
             with ui.row().classes('items-center gap-4'):
-                ui.html('<div class="text-3xl">⚙️</div>', sanitize=False)
+                ui.html('<div class="text-3xl">⚙️</div>')
                 with ui.column():
-                    ui.html('<h3 class="text-xl font-bold">Business Settings</h3>', sanitize=False)
-                    ui.html('<p class="text-purple-100 text-sm">Operational configuration</p>', sanitize=False)
+                    ui.html('<h3 class="text-xl font-bold">Business Settings</h3>')
+                    ui.html('<p class="text-purple-100 text-sm">Operational configuration</p>')
 
         # Card Content
         with ui.element('div').classes('p-6 space-y-6'):
@@ -354,41 +354,41 @@ def create_modern_business_settings_card():
                 # Fiscal Year & Currency
                 with ui.element('div').classes('grid grid-cols-2 gap-4'):
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Fiscal Year Start</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Fiscal Year Start</label>')
                         ui.select(['January', 'February', 'March', 'April', 'May', 'June',
                                   'July', 'August', 'September', 'October', 'November', 'December'],
                                  value=data["fiscal_year_start"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-400').props('outlined dense')
 
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Currency</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Currency</label>')
                         ui.select(['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'],
                                  value=data["currency"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-400').props('outlined dense')
 
                 # Timezone & Business Hours
                 with ui.element('div').classes('grid grid-cols-2 gap-4'):
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Timezone</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Timezone</label>')
                         ui.select(['America/New_York', 'America/Los_Angeles', 'Europe/London', 'Europe/Berlin', 'Asia/Tokyo', 'Asia/Shanghai', 'Australia/Sydney'],
                                  value=data["timezone"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-400').props('outlined dense')
 
                     with ui.element('div').classes('group'):
-                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Business Hours</label>', sanitize=False)
+                        ui.html('<label class="block text-sm font-semibold text-gray-700 mb-2">Business Hours</label>')
                         ui.input(value=data["business_hours"]).classes('w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-400').props('outlined dense')
 
             # Working Days Section
             with ui.element('div').classes('group'):
-                ui.html('<label class="block text-sm font-semibold text-gray-700 mb-4">Working Days</label>', sanitize=False)
+                ui.html('<label class="block text-sm font-semibold text-gray-700 mb-4">Working Days</label>')
                 with ui.element('div').classes('grid grid-cols-2 md:grid-cols-4 gap-3'):
                     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
                     for day in days:
                         is_checked = day in data["working_days"]
                         with ui.element('div').classes(f'flex items-center p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer hover:shadow-md {"border-purple-500 bg-purple-50" if is_checked else "border-gray-200 hover:border-purple-300"}'):
                             ui.checkbox(day, value=is_checked).classes('mr-3')
-                            ui.html(f'<span class="text-sm font-medium {"text-purple-700" if is_checked else "text-gray-600"}">{day[:3]}</span>', sanitize=False)
+                            ui.html(f'<span class="text-sm font-medium {"text-purple-700" if is_checked else "text-gray-600"}">{day[:3]}</span>')
 
             # Business Rules Section
             with ui.element('div').classes('bg-gray-50 rounded-xl p-4 border border-gray-200'):
-                ui.html('<h4 class="text-lg font-semibold text-gray-800 mb-3">Business Rules</h4>', sanitize=False)
+                ui.html('<h4 class="text-lg font-semibold text-gray-800 mb-3">Business Rules</h4>')
                 with ui.element('div').classes('space-y-3'):
                     rules = [
                         {'label': 'Overtime Policy', 'value': '1.5x after 40 hours'},
@@ -397,8 +397,8 @@ def create_modern_business_settings_card():
                     ]
                     for rule in rules:
                         with ui.element('div').classes('flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0'):
-                            ui.html(f'<span class="text-sm font-medium text-gray-700">{rule["label"]}</span>', sanitize=False)
-                            ui.html(f'<span class="text-sm text-gray-600">{rule["value"]}</span>', sanitize=False)
+                            ui.html(f'<span class="text-sm font-medium text-gray-700">{rule["label"]}</span>')
+                            ui.html(f'<span class="text-sm text-gray-600">{rule["value"]}</span>')
 
             # Action Buttons
             with ui.element('div').classes('flex justify-end gap-3 mt-6 pt-6 border-t border-gray-100'):
@@ -412,16 +412,16 @@ def create_modern_integration_card():
         # Card Header
         with ui.element('div').classes('bg-gradient-to-r from-orange-600 to-red-600 p-6 text-white'):
             with ui.row().classes('items-center gap-4'):
-                ui.html('<div class="text-3xl">🔗</div>', sanitize=False)
+                ui.html('<div class="text-3xl">🔗</div>')
                 with ui.column():
-                    ui.html('<h3 class="text-xl font-bold">System Integration</h3>', sanitize=False)
-                    ui.html('<p class="text-orange-100 text-sm">Connected HR modules</p>', sanitize=False)
+                    ui.html('<h3 class="text-xl font-bold">System Integration</h3>')
+                    ui.html('<p class="text-orange-100 text-sm">Connected HR modules</p>')
 
         # Card Content
         with ui.element('div').classes('p-6'):
 
             # Connected Modules
-            ui.html('<h4 class="text-lg font-semibold text-gray-800 mb-4">HR Module Connections</h4>', sanitize=False)
+            ui.html('<h4 class="text-lg font-semibold text-gray-800 mb-4">HR Module Connections</h4>')
 
             modules = [
                 {'name': 'Employee Management', 'status': 'Connected', 'icon': '👥', 'color': 'emerald', 'description': 'Staff directory & profiles'},
@@ -437,21 +437,21 @@ def create_modern_integration_card():
                     status_class = f"border-{module['color']}-200 bg-{module['color']}-50" if module["status"] == "Connected" else "border-gray-200"
                     with ui.element('div').classes(f'flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-md {status_class}'):
                         with ui.row().classes('items-center gap-4 flex-1'):
-                            ui.html(f'<div class="text-2xl">{module["icon"]}</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl">{module["icon"]}</div>')
                             with ui.column().classes('flex-1'):
-                                ui.html(f'<div class="font-semibold text-gray-800">{module["name"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm text-gray-600">{module["description"]}</div>', sanitize=False)
+                                ui.html(f'<div class="font-semibold text-gray-800">{module["name"]}</div>')
+                                ui.html(f'<div class="text-sm text-gray-600">{module["description"]}</div>')
 
                         with ui.element('div').classes('text-right'):
                             if module["status"] == "Connected":
-                                ui.html(f'<div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-{module["color"]}-100 text-{module["color"]}-800"><div class="w-2 h-2 bg-{module["color"]}-500 rounded-full mr-2"></div>Connected</div>', sanitize=False)
+                                ui.html(f'<div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-{module["color"]}-100 text-{module["color"]}-800"><div class="w-2 h-2 bg-{module["color"]}-500 rounded-full mr-2"></div>Connected</div>')
                             elif module["status"] == "Pending":
-                                ui.html('<div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800"><div class="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></div>Pending</div>', sanitize=False)
+                                ui.html('<div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800"><div class="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></div>Pending</div>')
                             else:
                                 ui.button('Connect', on_click=lambda m=module: connect_module(m)).classes(f'bg-{module["color"]}-600 text-white px-4 py-2 rounded-lg hover:bg-{module["color"]}-700 text-sm font-medium transition-all duration-300')
 
             # Quick Actions
-            ui.html('<h4 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h4>', sanitize=False)
+            ui.html('<h4 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h4>')
 
             with ui.element('div').classes('grid grid-cols-1 gap-3'):
                 actions = [
@@ -469,12 +469,12 @@ def create_modern_integration_card():
             with ui.element('div').classes('mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200'):
                 with ui.row().classes('items-center justify-between'):
                     with ui.row().classes('items-center gap-3'):
-                        ui.html('<div class="text-2xl">💚</div>', sanitize=False)
+                        ui.html('<div class="text-2xl">💚</div>')
                         with ui.column():
-                            ui.html('<div class="font-semibold text-green-800">System Health</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-green-600">All systems operational</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-green-800">System Health</div>')
+                            ui.html('<div class="text-sm text-green-600">All systems operational</div>')
 
-                    ui.html('<div class="text-right"><div class="text-2xl font-bold text-green-600">98%</div><div class="text-xs text-green-500">Uptime</div></div>', sanitize=False)
+                    ui.html('<div class="text-right"><div class="text-2xl font-bold text-green-600">98%</div><div class="text-xs text-green-500">Uptime</div></div>')
 
 def connect_module(module):
     """Handle module connection logic"""

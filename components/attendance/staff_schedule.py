@@ -277,8 +277,8 @@ def create_modern_staff_schedule_page():
         with ui.row().classes('w-full justify-between items-start mb-6'):
             # Title and description
             with ui.column().classes('gap-2'):
-                ui.html('<div class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">📅 Staff Schedule</div>', sanitize=False)
-                ui.html('<div class="text-lg text-slate-600 font-medium">Intelligent workforce planning and optimization</div>', sanitize=False)
+                ui.html('<div class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">📅 Staff Schedule</div>')
+                ui.html('<div class="text-lg text-slate-600 font-medium">Intelligent workforce planning and optimization</div>')
 
             # Quick Stats Cards
             with ui.row().classes('gap-4'):
@@ -286,28 +286,28 @@ def create_modern_staff_schedule_page():
                 with ui.card().classes('bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">📊</div>', sanitize=False)
+                            ui.html('<div class="text-2xl">📊</div>')
                             with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.coverage_percentage:.1f}%</div>', sanitize=False)
-                                ui.html('<div class="text-sm opacity-90">Coverage Rate</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.coverage_percentage:.1f}%</div>')
+                                ui.html('<div class="text-sm opacity-90">Coverage Rate</div>')
 
                 # Pending Requests Card
                 with ui.card().classes('bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">⏳</div>', sanitize=False)
+                            ui.html('<div class="text-2xl">⏳</div>')
                             with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.pending_requests}</div>', sanitize=False)
-                                ui.html('<div class="text-sm opacity-90">Pending Requests</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.pending_requests}</div>')
+                                ui.html('<div class="text-sm opacity-90">Pending Requests</div>')
 
                 # Total Shifts Card
                 with ui.card().classes('bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">👥</div>', sanitize=False)
+                            ui.html('<div class="text-2xl">👥</div>')
                             with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.total_shifts}</div>', sanitize=False)
-                                ui.html('<div class="text-sm opacity-90">Active Shifts</div>', sanitize=False)
+                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.total_shifts}</div>')
+                                ui.html('<div class="text-sm opacity-90">Active Shifts</div>')
 
         # AI Optimization Banner
         optimization_data = manager.optimize_schedule()
@@ -315,10 +315,10 @@ def create_modern_staff_schedule_page():
             with ui.card().classes('w-full bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 shadow-md'):
                 with ui.card_section().classes('p-4'):
                     with ui.row().classes('items-center gap-4 w-full'):
-                        ui.html('<div class="text-2xl">🤖</div>', sanitize=False)
+                        ui.html('<div class="text-2xl">🤖</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="text-lg font-semibold text-purple-800">AI Schedule Optimization Available</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-purple-600">Intelligent recommendations to improve coverage and fairness</div>', sanitize=False)
+                            ui.html('<div class="text-lg font-semibold text-purple-800">AI Schedule Optimization Available</div>')
+                            ui.html('<div class="text-sm text-purple-600">Intelligent recommendations to improve coverage and fairness</div>')
 
                         with ui.row().classes('gap-2'):
                             for rec in optimization_data['recommendations'][:2]:  # Show top 2 recommendations
@@ -369,7 +369,7 @@ def create_modern_staff_schedule_page():
                 # Quick Actions Card
                 with ui.card().classes('bg-white shadow-lg border-0'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">⚡ Quick Actions</div>', sanitize=False)
+                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">⚡ Quick Actions</div>')
 
                         with ui.column().classes('gap-3'):
                             ui.button('➕ Add New Shift',
@@ -391,7 +391,7 @@ def create_modern_staff_schedule_page():
                 # Schedule Health Card
                 with ui.card().classes('bg-white shadow-lg border-0'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏥 Schedule Health</div>', sanitize=False)
+                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏥 Schedule Health</div>')
 
                         # Health indicators
                         health_items = [
@@ -408,13 +408,13 @@ def create_modern_staff_schedule_page():
                             }[item['status']]
 
                             with ui.row().classes('justify-between items-center p-2 rounded-lg mb-2'):
-                                ui.html(f'<div class="text-sm font-medium text-slate-700">{item["label"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm font-bold px-2 py-1 rounded {status_color}">{item["value"]}</div>', sanitize=False)
+                                ui.html(f'<div class="text-sm font-medium text-slate-700">{item["label"]}</div>')
+                                ui.html(f'<div class="text-sm font-bold px-2 py-1 rounded {status_color}">{item["value"]}</div>')
 
                 # Recent Activity Card
                 with ui.card().classes('bg-white shadow-lg border-0'):
                     with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">📝 Recent Activity</div>', sanitize=False)
+                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">📝 Recent Activity</div>')
 
                         activities = [
                             {'time': '2 hours ago', 'action': 'Schedule optimized', 'user': 'AI System'},
@@ -425,8 +425,8 @@ def create_modern_staff_schedule_page():
                         for activity in activities:
                             with ui.row().classes('items-start gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer'):
                                 with ui.column().classes('flex-1'):
-                                    ui.html(f'<div class="text-sm font-medium text-slate-800">{activity["action"]}</div>', sanitize=False)
-                                    ui.html(f'<div class="text-xs text-slate-500">{activity["user"]} • {activity["time"]}</div>', sanitize=False)
+                                    ui.html(f'<div class="text-sm font-medium text-slate-800">{activity["action"]}</div>')
+                                    ui.html(f'<div class="text-xs text-slate-500">{activity["user"]} • {activity["time"]}</div>')
 
 def create_modern_weekly_schedule(manager):
     """Create modern weekly schedule view with interactive calendar"""
@@ -438,7 +438,7 @@ def create_modern_weekly_schedule(manager):
                  ).classes('bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg')
 
         current_week = manager.schedule_data.get('weekly_schedule', {}).get('week_of', 'Current Week')
-        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>', sanitize=False)
+        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>')
 
         ui.button('Next Week ➡️',
                  on_click=lambda: ui.notify('Next week navigation', type='info')
@@ -450,10 +450,10 @@ def create_modern_weekly_schedule(manager):
 
     # Header row
     with ui.grid(columns='200px repeat(7, 1fr)').classes('gap-2 mb-4'):
-        ui.html('<div class="font-bold text-slate-700 p-3"></div>', sanitize=False)  # Empty corner
+        ui.html('<div class="font-bold text-slate-700 p-3"></div>')  # Empty corner
         for day in days:
             day_short = day[:3]
-            ui.html(f'<div class="font-bold text-slate-700 p-3 text-center bg-slate-100 rounded-lg">{day_short}</div>', sanitize=False)
+            ui.html(f'<div class="font-bold text-slate-700 p-3 text-center bg-slate-100 rounded-lg">{day_short}</div>')
 
         # Employee rows
         for emp_id, emp_data in assignments.items():
@@ -462,8 +462,8 @@ def create_modern_weekly_schedule(manager):
 
             # Employee info cell
             with ui.column().classes('p-3 bg-blue-50 rounded-lg border border-blue-200'):
-                ui.html(f'<div class="font-semibold text-blue-800">{emp_name}</div>', sanitize=False)
-                ui.html(f'<div class="text-xs text-blue-600">{emp_dept}</div>', sanitize=False)
+                ui.html(f'<div class="font-semibold text-blue-800">{emp_name}</div>')
+                ui.html(f'<div class="text-xs text-blue-600">{emp_dept}</div>')
 
             # Day cells
             for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
@@ -482,29 +482,29 @@ def create_modern_weekly_schedule(manager):
                     bg_color = f'bg-[{color}] text-white'
                     shift_text = shift_name.split()[0]  # First word only
 
-                ui.html(f'<div class="p-2 text-center text-xs font-medium rounded-lg {bg_color} border cursor-pointer hover:opacity-80 transition-opacity" onclick="console.log(\'{emp_id} {day}\')">{shift_text}</div>', sanitize=False)
+                ui.html(f'<div class="p-2 text-center text-xs font-medium rounded-lg {bg_color} border cursor-pointer hover:opacity-80 transition-opacity" onclick="console.log(\'{emp_id} {day}\')">{shift_text}</div>')
 
 def create_modern_monthly_overview(manager):
     """Create modern monthly overview with calendar visualization"""
     with ui.card().classes('w-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200'):
         with ui.card_section().classes('p-6'):
-            ui.html('<div class="text-2xl font-bold text-indigo-800 mb-4">📊 Monthly Schedule Overview</div>', sanitize=False)
-            ui.html('<div class="text-indigo-600 mb-6">Comprehensive monthly view with coverage analysis</div>', sanitize=False)
+            ui.html('<div class="text-2xl font-bold text-indigo-800 mb-4">📊 Monthly Schedule Overview</div>')
+            ui.html('<div class="text-indigo-600 mb-6">Comprehensive monthly view with coverage analysis</div>')
 
             # Month selector
             with ui.row().classes('items-center gap-4 mb-6'):
                 ui.button('⬅️', on_click=lambda: ui.notify('Previous month', type='info')).classes('bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-2 rounded-lg')
-                ui.html('<div class="text-xl font-bold text-indigo-800">October 2025</div>', sanitize=False)
+                ui.html('<div class="text-xl font-bold text-indigo-800">October 2025</div>')
                 ui.button('➡️', on_click=lambda: ui.notify('Next month', type='info')).classes('bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-2 rounded-lg')
 
-            ui.html('<div class="text-center text-slate-500 py-8">Monthly calendar view would be implemented here with interactive date selection and coverage visualization.</div>', sanitize=False)
+            ui.html('<div class="text-center text-slate-500 py-8">Monthly calendar view would be implemented here with interactive date selection and coverage visualization.</div>')
 
 def create_modern_shift_templates(manager):
     """Create modern shift templates management"""
     shift_templates = manager.schedule_data.get('shift_templates', {})
 
     with ui.column().classes('gap-4'):
-        ui.html('<div class="text-xl font-bold text-slate-800 mb-4">⚙️ Shift Templates</div>', sanitize=False)
+        ui.html('<div class="text-xl font-bold text-slate-800 mb-4">⚙️ Shift Templates</div>')
 
         for shift_id, shift_data in shift_templates.items():
             with ui.card().classes('bg-white border border-slate-200 hover:shadow-md transition-shadow'):
@@ -513,11 +513,11 @@ def create_modern_shift_templates(manager):
                         with ui.row().classes('items-center gap-3'):
                             # Color indicator
                             color = shift_data.get('color', '#6B7280')
-                            ui.html(f'<div class="w-4 h-4 rounded-full" style="background-color: {color}"></div>', sanitize=False)
+                            ui.html(f'<div class="w-4 h-4 rounded-full" style="background-color: {color}"></div>')
 
                             with ui.column():
-                                ui.html(f'<div class="font-semibold text-slate-800">{shift_data.get("name", shift_id.title())}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm text-slate-600">{shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>', sanitize=False)
+                                ui.html(f'<div class="font-semibold text-slate-800">{shift_data.get("name", shift_id.title())}</div>')
+                                ui.html(f'<div class="text-sm text-slate-600">{shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>')
 
                         ui.button('Edit',
                                  on_click=lambda s=shift_id: ui.notify(f'Edit {s} shift', type='info')
@@ -540,9 +540,9 @@ def create_modern_analytics_dashboard(manager, optimization_data):
                 with ui.card().classes(f'bg-gradient-to-r {metric["color"]} text-white shadow-lg'):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('items-center justify-between'):
-                            ui.html(f'<div class="text-2xl">{metric["icon"]}</div>', sanitize=False)
-                            ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>', sanitize=False)
-                        ui.html(f'<div class="text-sm opacity-90">{metric["title"]}</div>', sanitize=False)
+                            ui.html(f'<div class="text-2xl">{metric["icon"]}</div>')
+                            ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>')
+                        ui.html(f'<div class="text-sm opacity-90">{metric["title"]}</div>')
 
         # Charts and Visualizations
         with ui.grid(columns='1fr 1fr').classes('gap-6'):
@@ -550,31 +550,31 @@ def create_modern_analytics_dashboard(manager, optimization_data):
             # Coverage Chart
             with ui.card().classes('bg-white shadow-lg border-0'):
                 with ui.card_section().classes('p-4'):
-                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">📊 Weekly Coverage</div>', sanitize=False)
-                    ui.html('<div class="text-center text-slate-500 py-8">Interactive coverage chart would be displayed here showing optimal/adequate/understaffed days.</div>', sanitize=False)
+                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">📊 Weekly Coverage</div>')
+                    ui.html('<div class="text-center text-slate-500 py-8">Interactive coverage chart would be displayed here showing optimal/adequate/understaffed days.</div>')
 
             # Shift Distribution
             with ui.card().classes('bg-white shadow-lg border-0'):
                 with ui.card_section().classes('p-4'):
-                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Shift Distribution</div>', sanitize=False)
-                    ui.html('<div class="text-center text-slate-500 py-8">Pie chart showing distribution of morning/afternoon/evening/night shifts.</div>', sanitize=False)
+                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Shift Distribution</div>')
+                    ui.html('<div class="text-center text-slate-500 py-8">Pie chart showing distribution of morning/afternoon/evening/night shifts.</div>')
 
         # AI Recommendations
         with ui.card().classes('bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 shadow-md'):
             with ui.card_section().classes('p-4'):
-                ui.html('<div class="text-lg font-semibold text-purple-800 mb-4">🤖 AI Recommendations</div>', sanitize=False)
+                ui.html('<div class="text-lg font-semibold text-purple-800 mb-4">🤖 AI Recommendations</div>')
 
                 recommendations = optimization_data.get('recommendations', [])
                 if recommendations:
                     for rec in recommendations:
                         with ui.row().classes('items-start gap-3 p-3 bg-white/50 rounded-lg mb-3'):
                             priority_icon = '🔴' if rec['priority'] == 'high' else '🟡'
-                            ui.html(f'<div class="text-lg">{priority_icon}</div>', sanitize=False)
+                            ui.html(f'<div class="text-lg">{priority_icon}</div>')
                             with ui.column().classes('flex-1'):
-                                ui.html(f'<div class="font-medium text-purple-800">{rec["message"]}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm text-purple-600">{rec.get("action", "").replace("_", " ").title()}</div>', sanitize=False)
+                                ui.html(f'<div class="font-medium text-purple-800">{rec["message"]}</div>')
+                                ui.html(f'<div class="text-sm text-purple-600">{rec.get("action", "").replace("_", " ").title()}</div>')
                 else:
-                    ui.html('<div class="text-purple-600">✅ All schedules are optimally configured!</div>', sanitize=False)
+                    ui.html('<div class="text-purple-600">✅ All schedules are optimally configured!</div>')
 
 def create_modern_weekly_schedule(manager):
     """Create modern weekly schedule view with interactive calendar"""
@@ -586,7 +586,7 @@ def create_modern_weekly_schedule(manager):
                  ).classes('bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg')
 
         current_week = manager.schedule_data.get('weekly_schedule', {}).get('week_of', 'Current Week')
-        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>', sanitize=False)
+        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>')
 
         ui.button('Next Week ➡️',
                  on_click=lambda: ui.notify('Next week navigation', type='info')
@@ -613,13 +613,13 @@ def create_staff_schedule_page():
 
 def create_weekly_schedule_panel(manager: ModernStaffScheduleManager):
     """Create weekly schedule view panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📅 Weekly Schedule</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📅 Weekly Schedule</h2>')
     
     # Week navigation
     current_week = manager.schedule_data['weekly_schedule']['week_of']
     with ui.row().classes('w-full gap-4 mb-4 items-center'):
         ui.button('◀ Previous Week', on_click=lambda: ui.notify('Loading previous week...')).classes('bg-blue-500 text-white')
-        ui.html(f'<h3 class="text-lg font-semibold">Week of {current_week}</h3>', sanitize=False)
+        ui.html(f'<h3 class="text-lg font-semibold">Week of {current_week}</h3>')
         ui.button('Next Week ▶', on_click=lambda: ui.notify('Loading next week...')).classes('bg-blue-500 text-white')
         ui.button('📅 Today', on_click=lambda: ui.notify('Jumping to current week...')).classes('bg-green-500 text-white')
     
@@ -631,16 +631,16 @@ def create_weekly_schedule_panel(manager: ModernStaffScheduleManager):
         with ui.card_section().classes('p-0'):
             # Header row
             with ui.row().classes('w-full bg-gray-50 border-b'):
-                ui.html('<div class="w-32 p-3 font-semibold">Employee</div>', sanitize=False)
+                ui.html('<div class="w-32 p-3 font-semibold">Employee</div>')
                 for day in days:
-                    ui.html(f'<div class="flex-1 p-3 text-center font-semibold">{day}</div>', sanitize=False)
+                    ui.html(f'<div class="flex-1 p-3 text-center font-semibold">{day}</div>')
             
             # Schedule rows
             for emp_id, schedule in assignments.items():
                 with ui.row().classes('w-full border-b hover:bg-gray-50'):
                     # Employee name
                     emp_names = {'EMP001': 'John Smith', 'EMP002': 'Sarah Johnson', 'EMP003': 'Mike Davis'}
-                    ui.html(f'<div class="w-32 p-3"><strong>{emp_names.get(emp_id, emp_id)}</strong></div>', sanitize=False)
+                    ui.html(f'<div class="w-32 p-3"><strong>{emp_names.get(emp_id, emp_id)}</strong></div>')
                     
                     # Daily assignments
                     for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
@@ -661,17 +661,17 @@ def create_weekly_schedule_panel(manager: ModernStaffScheduleManager):
                             color_class = 'bg-green-100 text-green-800'
                         
                         with ui.column().classes('flex-1 p-2'):
-                            ui.html(f'<div class="text-center p-2 rounded {color_class}"><div class="text-xs font-medium">{shift_name.title()}</div><div class="text-xs">{status}</div></div>', sanitize=False)
+                            ui.html(f'<div class="text-center p-2 rounded {color_class}"><div class="text-xs font-medium">{shift_name.title()}</div><div class="text-xs">{status}</div></div>')
 
 def create_monthly_overview_panel(manager: ModernStaffScheduleManager):
     """Create monthly overview panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🗓️ Monthly Overview</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🗓️ Monthly Overview</h2>')
     
     # Month navigation
     current_date = datetime.now()
     with ui.row().classes('w-full gap-4 mb-4 items-center'):
         ui.button('◀ Previous Month', on_click=lambda: ui.notify('Loading previous month...')).classes('bg-blue-500 text-white')
-        ui.html(f'<h3 class="text-lg font-semibold">{current_date.strftime("%B %Y")}</h3>', sanitize=False)
+        ui.html(f'<h3 class="text-lg font-semibold">{current_date.strftime("%B %Y")}</h3>')
         ui.button('Next Month ▶', on_click=lambda: ui.notify('Loading next month...')).classes('bg-blue-500 text-white')
     
     # Monthly stats
@@ -686,19 +686,19 @@ def create_monthly_overview_panel(manager: ModernStaffScheduleManager):
         for stat in stats:
             with ui.card().classes('flex-1'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html(f'<div class="text-2xl">{stat["icon"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-xl font-bold text-{stat["color"]}-600">{stat["value"]}</div>', sanitize=False)
-                    ui.html(f'<div class="text-sm text-gray-600">{stat["title"]}</div>', sanitize=False)
+                    ui.html(f'<div class="text-2xl">{stat["icon"]}</div>')
+                    ui.html(f'<div class="text-xl font-bold text-{stat["color"]}-600">{stat["value"]}</div>')
+                    ui.html(f'<div class="text-sm text-gray-600">{stat["title"]}</div>')
     
     # Calendar view placeholder
     with ui.card().classes('w-full'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold mb-3">📅 Calendar View</h3>', sanitize=False)
-            ui.html('<div class="h-64 bg-gray-100 rounded flex items-center justify-center text-gray-500">Monthly calendar grid will be implemented here</div>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold mb-3">📅 Calendar View</h3>')
+            ui.html('<div class="h-64 bg-gray-100 rounded flex items-center justify-center text-gray-500">Monthly calendar grid will be implemented here</div>')
 
 def create_shift_templates_panel(manager: ModernStaffScheduleManager):
     """Create shift templates panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Shift Templates</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Shift Templates</h2>')
     
     # Add new shift button
     ui.button('➕ Add New Shift Template', on_click=lambda: ui.notify('Opening new shift dialog...')).classes('bg-green-500 text-white mb-4')
@@ -711,13 +711,13 @@ def create_shift_templates_panel(manager: ModernStaffScheduleManager):
             with ui.card().classes('w-64 hover:shadow-lg transition-shadow'):
                 with ui.card_section().classes('p-4'):
                     # Shift header with color
-                    ui.html(f'<div class="w-full h-3 rounded-t" style="background-color: {shift_info["color"]}"></div>', sanitize=False)
-                    ui.html(f'<h3 class="text-lg font-semibold mt-3 mb-2">{shift_info["name"]}</h3>', sanitize=False)
+                    ui.html(f'<div class="w-full h-3 rounded-t" style="background-color: {shift_info["color"]}"></div>')
+                    ui.html(f'<h3 class="text-lg font-semibold mt-3 mb-2">{shift_info["name"]}</h3>')
                     
                     # Shift details
-                    ui.html(f'<div class="mb-2">🕐 <strong>Start:</strong> {shift_info["start_time"]}</div>', sanitize=False)
-                    ui.html(f'<div class="mb-2">🕐 <strong>End:</strong> {shift_info["end_time"]}</div>', sanitize=False)
-                    ui.html(f'<div class="mb-3">☕ <strong>Break:</strong> {shift_info["break_duration"]} min</div>', sanitize=False)
+                    ui.html(f'<div class="mb-2">🕐 <strong>Start:</strong> {shift_info["start_time"]}</div>')
+                    ui.html(f'<div class="mb-2">🕐 <strong>End:</strong> {shift_info["end_time"]}</div>')
+                    ui.html(f'<div class="mb-3">☕ <strong>Break:</strong> {shift_info["break_duration"]} min</div>')
                     
                     # Action buttons
                     with ui.row().classes('w-full gap-2'):
@@ -727,7 +727,7 @@ def create_shift_templates_panel(manager: ModernStaffScheduleManager):
 
 def create_staff_assignments_panel(manager: ModernStaffScheduleManager):
     """Create staff assignments panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">👥 Staff Assignments</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">👥 Staff Assignments</h2>')
     
     # Assignment controls
     with ui.row().classes('w-full gap-4 mb-4'):
@@ -739,7 +739,7 @@ def create_staff_assignments_panel(manager: ModernStaffScheduleManager):
     # Assignment summary
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold mb-3">📊 Assignment Summary</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold mb-3">📊 Assignment Summary</h3>')
             with ui.row().classes('w-full gap-4'):
                 summary_stats = [
                     {'label': 'Total Assignments', 'value': '25', 'color': 'blue'},
@@ -749,11 +749,11 @@ def create_staff_assignments_panel(manager: ModernStaffScheduleManager):
                 ]
                 
                 for stat in summary_stats:
-                    ui.html(f'<div class="flex-1 text-center"><div class="text-lg font-bold text-{stat["color"]}-600">{stat["value"]}</div><div class="text-sm text-gray-600">{stat["label"]}</div></div>', sanitize=False)
+                    ui.html(f'<div class="flex-1 text-center"><div class="text-lg font-bold text-{stat["color"]}-600">{stat["value"]}</div><div class="text-sm text-gray-600">{stat["label"]}</div></div>')
 
 def create_schedule_requests_panel(manager: ModernStaffScheduleManager):
     """Create schedule requests panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📝 Schedule Requests</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📝 Schedule Requests</h2>')
     
     # Request filters
     with ui.row().classes('w-full gap-4 mb-4'):
@@ -768,20 +768,20 @@ def create_schedule_requests_panel(manager: ModernStaffScheduleManager):
         with ui.card_section().classes('p-0'):
             # Table header
             with ui.row().classes('w-full p-4 bg-gray-50 border-b'):
-                ui.html('<div class="w-32 font-semibold">Employee</div>', sanitize=False)
-                ui.html('<div class="w-32 font-semibold">Type</div>', sanitize=False)
-                ui.html('<div class="w-32 font-semibold">Date</div>', sanitize=False)
-                ui.html('<div class="flex-1 font-semibold">Details</div>', sanitize=False)
-                ui.html('<div class="w-24 font-semibold">Status</div>', sanitize=False)
-                ui.html('<div class="w-32 font-semibold">Actions</div>', sanitize=False)
+                ui.html('<div class="w-32 font-semibold">Employee</div>')
+                ui.html('<div class="w-32 font-semibold">Type</div>')
+                ui.html('<div class="w-32 font-semibold">Date</div>')
+                ui.html('<div class="flex-1 font-semibold">Details</div>')
+                ui.html('<div class="w-24 font-semibold">Status</div>')
+                ui.html('<div class="w-32 font-semibold">Actions</div>')
             
             # Request rows
             for request in requests:
                 with ui.row().classes('w-full p-4 border-b hover:bg-gray-50'):
-                    ui.html(f'<div class="w-32">{request["employee_name"]}</div>', sanitize=False)
-                    ui.html(f'<div class="w-32">{request["request_type"].replace("_", " ").title()}</div>', sanitize=False)
-                    ui.html(f'<div class="w-32">{request["requested_date"]}</div>', sanitize=False)
-                    ui.html(f'<div class="flex-1 text-sm">{request["reason"]}</div>', sanitize=False)
+                    ui.html(f'<div class="w-32">{request["employee_name"]}</div>')
+                    ui.html(f'<div class="w-32">{request["request_type"].replace("_", " ").title()}</div>')
+                    ui.html(f'<div class="w-32">{request["requested_date"]}</div>')
+                    ui.html(f'<div class="flex-1 text-sm">{request["reason"]}</div>')
                     
                     # Status badge
                     status_colors = {
@@ -789,7 +789,7 @@ def create_schedule_requests_panel(manager: ModernStaffScheduleManager):
                         'approved': 'bg-green-100 text-green-800',
                         'denied': 'bg-red-100 text-red-800'
                     }
-                    ui.html(f'<div class="w-24"><span class="px-2 py-1 rounded text-xs {status_colors.get(request["status"], "bg-gray-100 text-gray-800")}">{request["status"].title()}</span></div>', sanitize=False)
+                    ui.html(f'<div class="w-24"><span class="px-2 py-1 rounded text-xs {status_colors.get(request["status"], "bg-gray-100 text-gray-800")}">{request["status"].title()}</span></div>')
                     
                     # Action buttons
                     with ui.row().classes('w-32 gap-1'):
@@ -800,14 +800,14 @@ def create_schedule_requests_panel(manager: ModernStaffScheduleManager):
 
 def create_coverage_analysis_panel(manager: ModernStaffScheduleManager):
     """Create coverage analysis panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Coverage Analysis</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Coverage Analysis</h2>')
     
     # Coverage overview
     coverage = manager.schedule_data['coverage_analysis']
     
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold mb-3">📈 Weekly Coverage Status</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold mb-3">📈 Weekly Coverage Status</h3>')
             
             # Coverage grid
             with ui.row().classes('w-full gap-2'):
@@ -824,30 +824,30 @@ def create_coverage_analysis_panel(manager: ModernStaffScheduleManager):
                     
                     with ui.card().classes(f'flex-1 {color_class} border-2'):
                         with ui.card_section().classes('p-3 text-center'):
-                            ui.html(f'<div class="font-semibold text-sm">{day.title()}</div>', sanitize=False)
-                            ui.html(f'<div class="text-xs">{data["scheduled"]}/{data["required"]}</div>', sanitize=False)
-                            ui.html(f'<div class="text-xs">{coverage_percent:.0f}%</div>', sanitize=False)
+                            ui.html(f'<div class="font-semibold text-sm">{day.title()}</div>')
+                            ui.html(f'<div class="text-xs">{data["scheduled"]}/{data["required"]}</div>')
+                            ui.html(f'<div class="text-xs">{coverage_percent:.0f}%</div>')
     
     # Detailed analysis
     with ui.row().classes('w-full gap-4'):
         # Understaffed alerts
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold mb-3 text-red-600">🚨 Understaffed Days</h3>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold mb-3 text-red-600">🚨 Understaffed Days</h3>')
                 understaffed_days = [day for day, data in coverage.items() if data['status'] == 'understaffed']
                 
                 if understaffed_days:
                     for day in understaffed_days:
                         data = coverage[day]
                         shortfall = data['required'] - data['scheduled']
-                        ui.html(f'<div class="p-2 bg-red-50 rounded mb-2"><strong>{day.title()}:</strong> {shortfall} staff short</div>', sanitize=False)
+                        ui.html(f'<div class="p-2 bg-red-50 rounded mb-2"><strong>{day.title()}:</strong> {shortfall} staff short</div>')
                 else:
-                    ui.html('<div class="text-gray-500 text-center">No understaffed days</div>', sanitize=False)
+                    ui.html('<div class="text-gray-500 text-center">No understaffed days</div>')
         
         # Optimization suggestions
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold mb-3 text-blue-600">💡 Suggestions</h3>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold mb-3 text-blue-600">💡 Suggestions</h3>')
                 suggestions = [
                     'Consider hiring 2 additional part-time staff',
                     'Review Friday scheduling - consistently understaffed',
@@ -856,18 +856,18 @@ def create_coverage_analysis_panel(manager: ModernStaffScheduleManager):
                 ]
                 
                 for suggestion in suggestions:
-                    ui.html(f'<div class="p-2 bg-blue-50 rounded mb-2 text-sm">• {suggestion}</div>', sanitize=False)
+                    ui.html(f'<div class="p-2 bg-blue-50 rounded mb-2 text-sm">• {suggestion}</div>')
 
 def create_schedule_settings_panel(manager: ModernStaffScheduleManager):
     """Create schedule settings panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Schedule Settings</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Schedule Settings</h2>')
     
     settings = manager.schedule_data['schedule_settings']
     
     # General settings
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold mb-3">🔧 General Settings</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold mb-3">🔧 General Settings</h3>')
             
             with ui.row().classes('w-full gap-4'):
                 with ui.column().classes('flex-1'):
@@ -883,7 +883,7 @@ def create_schedule_settings_panel(manager: ModernStaffScheduleManager):
     # Notification settings
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
-            ui.html('<h3 class="text-lg font-semibold mb-3">🔔 Notification Settings</h3>', sanitize=False)
+            ui.html('<h3 class="text-lg font-semibold mb-3">🔔 Notification Settings</h3>')
             
             with ui.column().classes('w-full gap-2'):
                 ui.checkbox('Email notifications for schedule changes', value=True)

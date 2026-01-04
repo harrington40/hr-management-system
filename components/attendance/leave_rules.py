@@ -52,7 +52,7 @@ def LeaveRules():
             with ui.card_section().classes('p-6'):
                 with ui.row().classes('items-center justify-between w-full'):
                     with ui.column().classes('gap-2'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">🏖️</span>Leave Rules Management</h1>', sanitize=False).classes('mb-2')
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">🏖️</span>Leave Rules Management</h1>').classes('mb-2')
                         ui.label('Design and customize comprehensive leave policies with visual policy builder').classes('text-green-100 text-lg')
                         ui.label(f'Last updated: {datetime.now().strftime("%B %d, %Y at %I:%M %p")}').classes('text-green-200 text-sm')
                     
@@ -169,7 +169,7 @@ def LeaveRules():
 
 def create_general_settings_panel(manager: LeaveRulesManager):
     """Create general settings configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ General Leave Settings</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ General Leave Settings</h2>')
     ui.label('Configure fundamental leave management parameters').classes('text-gray-600 mb-6')
     
     general_settings = manager.rules_data.get('leave_rules', {}).get('general_settings', {})
@@ -298,7 +298,7 @@ def create_general_settings_panel(manager: LeaveRulesManager):
 
 def create_leave_types_panel(manager: LeaveRulesManager):
     """Create leave types configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📝 Leave Types & Allocations</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📝 Leave Types & Allocations</h2>')
     ui.label('Configure different types of leave and their allocation rules').classes('text-gray-600 mb-6')
     
     leave_types = manager.rules_data.get('leave_rules', {}).get('leave_types', {})
@@ -504,7 +504,7 @@ def create_leave_types_panel(manager: LeaveRulesManager):
 
 def create_approval_workflow_panel(manager: LeaveRulesManager):
     """Create approval workflow configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">✅ Approval Workflow Configuration</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">✅ Approval Workflow Configuration</h2>')
     ui.label('Design multi-level approval workflows for leave requests').classes('text-gray-600 mb-6')
     
     # Add simplified approval workflow content
@@ -514,7 +514,7 @@ def create_approval_workflow_panel(manager: LeaveRulesManager):
 
 def create_calculation_rules_panel(manager: LeaveRulesManager):
     """Create calculation rules configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🧮 Leave Calculation Rules</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🧮 Leave Calculation Rules</h2>')
     ui.label('Configure how leave balances and accruals are calculated').classes('text-gray-600 mb-6')
     
     calculation_rules = manager.rules_data.get('leave_rules', {}).get('calculation_rules', {})
@@ -570,7 +570,7 @@ def create_calculation_rules_panel(manager: LeaveRulesManager):
 
 def create_blackout_periods_panel(manager: LeaveRulesManager):
     """Create blackout periods configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🚫 Blackout Periods</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🚫 Blackout Periods</h2>')
     ui.label('Configure periods when certain types of leave are restricted').classes('text-gray-600 mb-6')
     
     # Add simplified blackout periods content
@@ -580,7 +580,7 @@ def create_blackout_periods_panel(manager: LeaveRulesManager):
 
 def create_integration_panel(manager: LeaveRulesManager):
     """Create integration configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🔗 System Integrations</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🔗 System Integrations</h2>')
     ui.label('Configure integrations with other HR and business systems').classes('text-gray-600 mb-6')
     
     integrations = manager.rules_data.get('leave_rules', {}).get('integrations', {})
@@ -634,7 +634,7 @@ def create_integration_panel(manager: LeaveRulesManager):
 
 def create_custom_rules_panel(manager: LeaveRulesManager):
     """Create custom rules configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🎯 Custom Business Rules</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🎯 Custom Business Rules</h2>')
     ui.label('Create custom rules and conditions for specific business requirements').classes('text-gray-600 mb-6')
     
     custom_rules = manager.rules_data.get('leave_rules', {}).get('custom_business_rules', [])

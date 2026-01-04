@@ -120,7 +120,7 @@ def AttendanceRules():
             with ui.card_section().classes('p-6'):
                 with ui.row().classes('items-center justify-between w-full'):
                     with ui.column().classes('gap-2'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">⚙️</span>Attendance Rules Management</h1>', sanitize=False).classes('mb-2')
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">⚙️</span>Attendance Rules Management</h1>').classes('mb-2')
                         ui.label('Configure and customize attendance policies with modern visual controls').classes('text-blue-100 text-lg')
                         ui.label(f'Last updated: {datetime.now().strftime("%B %d, %Y at %I:%M %p")}').classes('text-blue-200 text-sm')
                     
@@ -285,7 +285,7 @@ def AttendanceRules():
 
 def create_core_settings_panel(manager: AttendanceRulesManager):
     """Create core settings configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Core Attendance Settings</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Core Attendance Settings</h2>')
     ui.label('Configure fundamental attendance parameters for your organization').classes('text-gray-600 mb-6')
     
     core_settings = manager.rules_data.get('attendance_rules', {}).get('core_settings', {})
@@ -341,7 +341,7 @@ def create_core_settings_panel(manager: AttendanceRulesManager):
 
 def create_checkin_rules_panel(manager: AttendanceRulesManager):
     """Create check-in rules configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📅 Check-in & Check-out Rules</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📅 Check-in & Check-out Rules</h2>')
     ui.label('Configure policies for employee check-in and check-out procedures').classes('text-gray-600 mb-6')
     
     checkin_rules = manager.rules_data.get('attendance_rules', {}).get('checkin_rules', {})
@@ -399,7 +399,7 @@ def create_checkin_rules_panel(manager: AttendanceRulesManager):
 
 def create_absence_policies_panel(manager: AttendanceRulesManager):
     """Create absence policies configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🚫 Absence & Tardiness Policies</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🚫 Absence & Tardiness Policies</h2>')
     ui.label('Configure policies for handling employee absences and tardiness').classes('text-gray-600 mb-6')
     
     absence_policies = manager.rules_data.get('attendance_rules', {}).get('absence_policies', {})
@@ -464,7 +464,7 @@ def create_absence_policies_panel(manager: AttendanceRulesManager):
 def create_overtime_rules_panel(manager: AttendanceRulesManager):
     """Create overtime rules configuration panel"""
     with ui.card().classes('w-full p-6') as panel:
-        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Overtime Calculation Rules</h2>', sanitize=False)
+        ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⏰ Overtime Calculation Rules</h2>')
         ui.label('Configure overtime policies and compensation rates').classes('text-gray-600 mb-6')
 
         overtime_rules = manager.rules_data.get('attendance_rules', {}).get('overtime_rules', {})
@@ -598,7 +598,7 @@ def create_overtime_rules_panel(manager: AttendanceRulesManager):
 
 def create_break_policies_panel(manager: AttendanceRulesManager):
     """Create break policies configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">☕ Break Time Policies</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">☕ Break Time Policies</h2>')
     ui.label('Configure break time rules and meal period policies').classes('text-gray-600 mb-6')
     
     break_policies = manager.rules_data.get('attendance_rules', {}).get('break_policies', {})
@@ -649,7 +649,7 @@ def create_break_policies_panel(manager: AttendanceRulesManager):
 
 def create_remote_work_panel(manager: AttendanceRulesManager):
     """Create remote work configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏠 Remote Work Policies</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">🏠 Remote Work Policies</h2>')
     ui.label('Configure policies for remote work and telecommuting').classes('text-gray-600 mb-6')
     
     remote_work = manager.rules_data.get('attendance_rules', {}).get('remote_work', {})
@@ -693,7 +693,7 @@ def create_remote_work_panel(manager: AttendanceRulesManager):
 
 def create_flexible_arrangements_panel(manager: AttendanceRulesManager):
     """Create flexible arrangements configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚡ Flexible Arrangements</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">⚡ Flexible Arrangements</h2>')
     ui.label('Configure flexible time and working arrangement policies').classes('text-gray-600 mb-6')
     
     flexible_arrangements = manager.rules_data.get('attendance_rules', {}).get('flexible_arrangements', {})
@@ -747,7 +747,7 @@ def create_flexible_arrangements_panel(manager: AttendanceRulesManager):
 
 def create_tracking_methods_panel(manager: AttendanceRulesManager):
     """Create tracking methods configuration panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📱 Attendance Tracking Methods</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📱 Attendance Tracking Methods</h2>')
     ui.label('Configure available methods for tracking employee attendance').classes('text-gray-600 mb-6')
     
     tracking_methods = manager.rules_data.get('attendance_rules', {}).get('tracking_methods', [])

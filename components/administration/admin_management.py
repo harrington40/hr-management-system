@@ -750,7 +750,7 @@ def create_administration_page():
             with ui.card().classes('w-full bg-gradient-to-r from-slate-800 to-gray-900 text-white'):
                 with ui.card_section().classes('p-6'):
                     with ui.row().classes('w-full justify-between items-center'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">⚙️</span>System Administration</h1>', sanitize=False)
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">⚙️</span>System Administration</h1>')
                         with ui.row().classes('gap-4'):
                             ui.button('👥 User Management', on_click=lambda: switch_admin_tab('users')).classes('bg-white text-slate-800 hover:bg-gray-100')
                             ui.button('🔒 Security', on_click=lambda: switch_admin_tab('security')).classes('bg-white text-slate-800 hover:bg-gray-100')
@@ -763,31 +763,31 @@ def create_administration_page():
             # Users Stats
             with ui.card().classes('flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">👥</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{stats["users"]["total"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Total Users</div>', sanitize=False)
-                    ui.html(f'<div class="text-xs opacity-75">{stats["users"]["active"]} Active</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">👥</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{stats["users"]["total"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">Total Users</div>')
+                    ui.html(f'<div class="text-xs opacity-75">{stats["users"]["active"]} Active</div>')
             
             # Sessions Stats
             with ui.card().classes('flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">🔓</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{stats["sessions"]["active"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Active Sessions</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">🔓</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{stats["sessions"]["active"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">Active Sessions</div>')
             
             # Security Stats
             with ui.card().classes('flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">⚠️</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{stats["security"]["high_risk_activities"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">High Risk Activities</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">⚠️</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{stats["security"]["high_risk_activities"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">High Risk Activities</div>')
             
             # System Health
             with ui.card().classes('flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">💾</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{stats["system"]["disk_usage"]:.1f}%</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Disk Usage</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">💾</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{stats["system"]["disk_usage"]:.1f}%</div>')
+                    ui.html('<div class="text-sm opacity-90">Disk Usage</div>')
 
         # Main Content Area with Tabs
         with ui.row().classes('w-full px-6'):
@@ -858,7 +858,7 @@ def create_administration_page():
 
 def create_user_management_panel(admin_manager: AdministrationManager):
     """Create user management panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">👥 User Management</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">👥 User Management</h2>')
     
     # User Actions
     with ui.row().classes('w-full gap-4 mb-6'):
@@ -888,7 +888,7 @@ def create_users_table(admin_manager: AdministrationManager):
                     'MFA', 'Login Attempts', 'Actions'
                 ]
                 for header in headers:
-                    ui.html(f'<th class="border p-3 text-left font-semibold">{header}</th>', sanitize=False)
+                    ui.html(f'<th class="border p-3 text-left font-semibold">{header}</th>')
         
         # Body
         with ui.element('tbody'):
@@ -900,11 +900,11 @@ def create_users_table(admin_manager: AdministrationManager):
                             # Avatar
                             initials = f"{user.first_name[0]}{user.last_name[0]}".upper()
                             with ui.element('div').classes('w-8 h-8 bg-slate-600 text-white rounded-full flex items-center justify-center text-sm font-semibold'):
-                                ui.html(initials, sanitize=False)
+                                ui.html(initials)
                             with ui.column().classes('gap-1'):
-                                ui.html(f'<div class="font-medium">{user.first_name} {user.last_name}</div>', sanitize=False)
-                                ui.html(f'<div class="text-sm text-gray-500">{user.username}</div>', sanitize=False)
-                                ui.html(f'<div class="text-xs text-gray-400">{user.email}</div>', sanitize=False)
+                                ui.html(f'<div class="font-medium">{user.first_name} {user.last_name}</div>')
+                                ui.html(f'<div class="text-sm text-gray-500">{user.username}</div>')
+                                ui.html(f'<div class="text-xs text-gray-400">{user.email}</div>')
                     
                     # Role
                     role_colors = {
@@ -915,7 +915,7 @@ def create_users_table(admin_manager: AdministrationManager):
                         'employee': 'bg-gray-100 text-gray-800'
                     }
                     role_color = role_colors.get(user.role.value, 'bg-gray-100 text-gray-800')
-                    ui.html(f'<td class="border p-3"><span class="px-2 py-1 rounded-full text-xs font-medium {role_color}">{user.role.value.replace("_", " ").title()}</span></td>', sanitize=False)
+                    ui.html(f'<td class="border p-3"><span class="px-2 py-1 rounded-full text-xs font-medium {role_color}">{user.role.value.replace("_", " ").title()}</span></td>')
                     
                     # Status
                     status_colors = {
@@ -925,23 +925,23 @@ def create_users_table(admin_manager: AdministrationManager):
                         'locked': 'bg-red-100 text-red-800'
                     }
                     status_color = status_colors.get(user.status.value, 'bg-gray-100 text-gray-800')
-                    ui.html(f'<td class="border p-3"><span class="px-2 py-1 rounded-full text-xs font-medium {status_color}">{user.status.value.title()}</span></td>', sanitize=False)
+                    ui.html(f'<td class="border p-3"><span class="px-2 py-1 rounded-full text-xs font-medium {status_color}">{user.status.value.title()}</span></td>')
                     
                     # Last Login
                     last_login = "Never" if not user.last_login else datetime.fromisoformat(user.last_login).strftime('%Y-%m-%d %H:%M')
-                    ui.html(f'<td class="border p-3 text-sm">{last_login}</td>', sanitize=False)
+                    ui.html(f'<td class="border p-3 text-sm">{last_login}</td>')
                     
                     # Employee ID
-                    ui.html(f'<td class="border p-3 text-sm">{user.employee_id or "N/A"}</td>', sanitize=False)
+                    ui.html(f'<td class="border p-3 text-sm">{user.employee_id or "N/A"}</td>')
                     
                     # MFA Status
                     mfa_icon = "🔒" if user.mfa_enabled else "🔓"
                     mfa_color = "text-green-600" if user.mfa_enabled else "text-red-600"
-                    ui.html(f'<td class="border p-3 text-center"><span class="{mfa_color}">{mfa_icon}</span></td>', sanitize=False)
+                    ui.html(f'<td class="border p-3 text-center"><span class="{mfa_color}">{mfa_icon}</span></td>')
                     
                     # Login Attempts
                     attempts_color = "text-red-600 font-semibold" if user.login_attempts >= 3 else "text-gray-600"
-                    ui.html(f'<td class="border p-3 text-center"><span class="{attempts_color}">{user.login_attempts}</span></td>', sanitize=False)
+                    ui.html(f'<td class="border p-3 text-center"><span class="{attempts_color}">{user.login_attempts}</span></td>')
                     
                     # Actions
                     with ui.element('td').classes('border p-3'):
@@ -957,14 +957,14 @@ def create_users_table(admin_manager: AdministrationManager):
 
 def create_permissions_panel(admin_manager: AdministrationManager):
     """Create permissions management panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">🔐 Permissions Management</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">🔐 Permissions Management</h2>')
     
     # Role-based permissions matrix would go here
-    ui.html('<div class="text-gray-600">Permissions management interface - To be implemented</div>', sanitize=False)
+    ui.html('<div class="text-gray-600">Permissions management interface - To be implemented</div>')
 
 def create_audit_log_panel(admin_manager: AdministrationManager):
     """Create audit log panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Audit Log</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Audit Log</h2>')
     
     # Audit log filters
     with ui.row().classes('w-full gap-4 mb-4'):
@@ -986,7 +986,7 @@ def create_audit_log_panel(admin_manager: AdministrationManager):
                 with ui.element('tr').classes('bg-gray-100'):
                     headers = ['Timestamp', 'User', 'Action', 'Resource', 'Risk', 'Status', 'Details']
                     for header in headers:
-                        ui.html(f'<th class="border p-3 text-left font-semibold">{header}</th>', sanitize=False)
+                        ui.html(f'<th class="border p-3 text-left font-semibold">{header}</th>')
             
             # Body
             with ui.element('tbody'):
@@ -994,12 +994,12 @@ def create_audit_log_panel(admin_manager: AdministrationManager):
                     with ui.element('tr').classes('hover:bg-gray-50'):
                         # Timestamp
                         timestamp = datetime.fromisoformat(entry.timestamp).strftime('%m/%d %H:%M')
-                        ui.html(f'<td class="border p-2 text-sm">{timestamp}</td>', sanitize=False)
+                        ui.html(f'<td class="border p-2 text-sm">{timestamp}</td>')
                         
                         # User
                         user = admin_manager.users.get(entry.user_id)
                         user_name = f"{user.first_name} {user.last_name}" if user else entry.user_id
-                        ui.html(f'<td class="border p-2 text-sm">{user_name}</td>', sanitize=False)
+                        ui.html(f'<td class="border p-2 text-sm">{user_name}</td>')
                         
                         # Action
                         action_colors = {
@@ -1009,18 +1009,18 @@ def create_audit_log_panel(admin_manager: AdministrationManager):
                             'login': 'bg-gray-100 text-gray-800'
                         }
                         action_color = action_colors.get(entry.action.value, 'bg-gray-100 text-gray-800')
-                        ui.html(f'<td class="border p-2"><span class="px-2 py-1 rounded text-xs {action_color}">{entry.action.value.title()}</span></td>', sanitize=False)
+                        ui.html(f'<td class="border p-2"><span class="px-2 py-1 rounded text-xs {action_color}">{entry.action.value.title()}</span></td>')
                         
                         # Resource
-                        ui.html(f'<td class="border p-2 text-sm">{entry.resource_type}</td>', sanitize=False)
+                        ui.html(f'<td class="border p-2 text-sm">{entry.resource_type}</td>')
                         
                         # Risk Score
                         risk_color = 'text-red-600' if entry.risk_score >= 7 else 'text-yellow-600' if entry.risk_score >= 4 else 'text-green-600'
-                        ui.html(f'<td class="border p-2 text-center"><span class="{risk_color} font-semibold">{entry.risk_score}</span></td>', sanitize=False)
+                        ui.html(f'<td class="border p-2 text-center"><span class="{risk_color} font-semibold">{entry.risk_score}</span></td>')
                         
                         # Status
                         status_icon = "✅" if entry.success else "❌"
-                        ui.html(f'<td class="border p-2 text-center">{status_icon}</td>', sanitize=False)
+                        ui.html(f'<td class="border p-2 text-center">{status_icon}</td>')
                         
                         # Details button
                         with ui.element('td').classes('border p-2'):
@@ -1028,19 +1028,19 @@ def create_audit_log_panel(admin_manager: AdministrationManager):
 
 def create_system_settings_panel(admin_manager: AdministrationManager):
     """Create system settings panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">⚙️ System Settings</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">⚙️ System Settings</h2>')
     
     # Settings categories
     with ui.row().classes('w-full gap-6'):
         # Security Settings
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold mb-4">🔒 Security Settings</h3>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold mb-4">🔒 Security Settings</h3>')
                 
                 for setting_id, setting in admin_manager.settings.items():
                     if setting.category == 'security':
                         with ui.row().classes('w-full items-center justify-between mb-3'):
-                            ui.html(f'<div><strong>{setting.name}</strong><br><small class="text-gray-600">{setting.description}</small></div>', sanitize=False)
+                            ui.html(f'<div><strong>{setting.name}</strong><br><small class="text-gray-600">{setting.description}</small></div>')
                             
                             if setting.data_type == 'boolean':
                                 ui.checkbox('', value=setting.value)
@@ -1052,12 +1052,12 @@ def create_system_settings_panel(admin_manager: AdministrationManager):
         # System Settings
         with ui.card().classes('flex-1'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold mb-4">⚙️ System Settings</h3>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold mb-4">⚙️ System Settings</h3>')
                 
                 for setting_id, setting in admin_manager.settings.items():
                     if setting.category == 'system':
                         with ui.row().classes('w-full items-center justify-between mb-3'):
-                            ui.html(f'<div><strong>{setting.name}</strong><br><small class="text-gray-600">{setting.description}</small></div>', sanitize=False)
+                            ui.html(f'<div><strong>{setting.name}</strong><br><small class="text-gray-600">{setting.description}</small></div>')
                             
                             if setting.data_type == 'boolean':
                                 ui.checkbox('', value=setting.value)
@@ -1071,21 +1071,21 @@ def create_system_settings_panel(admin_manager: AdministrationManager):
 
 def create_backup_panel(admin_manager: AdministrationManager):
     """Create backup and recovery panel"""
-    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">💾 Backup & Recovery</h2>', sanitize=False)
+    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6">💾 Backup & Recovery</h2>')
     
     # Backup status
     with ui.row().classes('w-full gap-4 mb-6'):
         with ui.card().classes('flex-1 bg-green-50 border border-green-200'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold text-green-800 mb-2">✅ Last Backup</h3>', sanitize=False)
-                ui.html('<div class="text-sm text-green-700">Today at 02:00 AM</div>', sanitize=False)
-                ui.html('<div class="text-xs text-green-600">Size: 45.2 MB</div>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold text-green-800 mb-2">✅ Last Backup</h3>')
+                ui.html('<div class="text-sm text-green-700">Today at 02:00 AM</div>')
+                ui.html('<div class="text-xs text-green-600">Size: 45.2 MB</div>')
         
         with ui.card().classes('flex-1 bg-blue-50 border border-blue-200'):
             with ui.card_section().classes('p-4'):
-                ui.html('<h3 class="text-lg font-semibold text-blue-800 mb-2">📅 Next Backup</h3>', sanitize=False)
-                ui.html('<div class="text-sm text-blue-700">Tomorrow at 02:00 AM</div>', sanitize=False)
-                ui.html('<div class="text-xs text-blue-600">Automatic Daily Backup</div>', sanitize=False)
+                ui.html('<h3 class="text-lg font-semibold text-blue-800 mb-2">📅 Next Backup</h3>')
+                ui.html('<div class="text-sm text-blue-700">Tomorrow at 02:00 AM</div>')
+                ui.html('<div class="text-xs text-blue-600">Automatic Daily Backup</div>')
     
     # Backup actions
     with ui.row().classes('w-full gap-4 mb-6'):

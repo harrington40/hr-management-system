@@ -207,7 +207,7 @@ def create_hr_administration_page():
             with ui.card().classes('w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white'):
                 with ui.card_section().classes('p-6'):
                     with ui.row().classes('w-full justify-between items-center'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📋</span>HR Administration</h1>', sanitize=False)
+                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📋</span>HR Administration</h1>')
                         with ui.row().classes('gap-4'):
                             ui.button('📝 Create Policy', on_click=lambda: create_policy_dialog()).classes('bg-white text-blue-600 hover:bg-blue-50 font-semibold')
                             ui.button('✅ Compliance Check', on_click=lambda: show_compliance_dialog()).classes('bg-white text-blue-600 hover:bg-blue-50 font-semibold')
@@ -218,43 +218,43 @@ def create_hr_administration_page():
             # Total Employees
             with ui.card().classes('flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">👥</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["total_employees"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Total Employees</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">👥</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["total_employees"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">Total Employees</div>')
 
             # Active Policies
             with ui.card().classes('flex-1 bg-gradient-to-br from-green-500 to-green-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">📄</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["active_policies"]}</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Active Policies</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">📄</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["active_policies"]}</div>')
+                    ui.html('<div class="text-sm opacity-90">Active Policies</div>')
 
             # Compliance Rate
             with ui.card().classes('flex-1 bg-gradient-to-br from-orange-500 to-orange-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">✅</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["compliance_rate"]}%</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Compliance Rate</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">✅</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["compliance_rate"]}%</div>')
+                    ui.html('<div class="text-sm opacity-90">Compliance Rate</div>')
 
             # Employee Satisfaction
             with ui.card().classes('flex-1 bg-gradient-to-br from-purple-500 to-purple-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">😊</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["employee_satisfaction"]}/10</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Employee Satisfaction</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">😊</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["employee_satisfaction"]}/10</div>')
+                    ui.html('<div class="text-sm opacity-90">Employee Satisfaction</div>')
 
             # Retention Rate
             with ui.card().classes('flex-1 bg-gradient-to-br from-red-500 to-red-600 text-white'):
                 with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">📈</div>', sanitize=False)
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["retention_rate"]}%</div>', sanitize=False)
-                    ui.html('<div class="text-sm opacity-90">Retention Rate</div>', sanitize=False)
+                    ui.html('<div class="text-3xl font-bold">📈</div>')
+                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["retention_rate"]}%</div>')
+                    ui.html('<div class="text-sm opacity-90">Retention Rate</div>')
 
         # Policies Section
         with ui.row().classes('w-full px-6 mb-6'):
             with ui.card().classes('w-full'):
                 with ui.card_section().classes('p-6 border-b border-gray-200'):
-                    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📚 HR Policies</h2>', sanitize=False)
+                    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📚 HR Policies</h2>')
                 
                 with ui.card_section().classes('p-6'):
                     # Policies Table
@@ -265,7 +265,7 @@ def create_hr_administration_page():
                                     with ui.row().classes('w-full justify-between items-start'):
                                         with ui.column().classes('flex-1 gap-2'):
                                             with ui.row().classes('gap-2 items-center'):
-                                                ui.html(f'<h3 class="text-lg font-bold text-gray-800">{policy.title}</h3>', sanitize=False)
+                                                ui.html(f'<h3 class="text-lg font-bold text-gray-800">{policy.title}</h3>')
                                                 status_color = get_status_badge_color(policy.status)
                                                 badge_colors = {
                                                     'green': 'bg-green-100 text-green-800',
@@ -273,14 +273,14 @@ def create_hr_administration_page():
                                                     'orange': 'bg-orange-100 text-orange-800',
                                                     'gray': 'bg-gray-100 text-gray-800'
                                                 }
-                                                ui.html(f'<span class="px-3 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{policy.status.value}</span>', sanitize=False)
+                                                ui.html(f'<span class="px-3 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{policy.status.value}</span>')
                                             
-                                            ui.html(f'<p class="text-sm text-gray-600">{policy.description}</p>', sanitize=False)
+                                            ui.html(f'<p class="text-sm text-gray-600">{policy.description}</p>')
                                             
                                             with ui.row().classes('gap-4 text-sm text-gray-500 mt-2'):
-                                                ui.html(f'<span>📁 Category: {policy.category}</span>', sanitize=False)
-                                                ui.html(f'<span>👥 Affects: {policy.affected_employees} employees</span>', sanitize=False)
-                                                ui.html(f'<span>📅 v{policy.version} • Updated: {policy.last_updated}</span>', sanitize=False)
+                                                ui.html(f'<span>📁 Category: {policy.category}</span>')
+                                                ui.html(f'<span>👥 Affects: {policy.affected_employees} employees</span>')
+                                                ui.html(f'<span>📅 v{policy.version} • Updated: {policy.last_updated}</span>')
                                         
                                         with ui.column().classes('gap-2'):
                                             ui.button('👁️', on_click=lambda p=policy: view_policy(p)).classes('p-2 bg-blue-100 hover:bg-blue-200 text-blue-600')
@@ -292,7 +292,7 @@ def create_hr_administration_page():
             with ui.card().classes('w-full'):
                 with ui.card_section().classes('p-6 border-b border-gray-200'):
                     with ui.row().classes('justify-between items-center'):
-                        ui.html('<h2 class="text-2xl font-bold text-gray-800">✅ Compliance Checklist</h2>', sanitize=False)
+                        ui.html('<h2 class="text-2xl font-bold text-gray-800">✅ Compliance Checklist</h2>')
                         ui.button('+ Add Item', on_click=lambda: add_compliance_item()).classes('bg-green-600 text-white hover:bg-green-700')
                 
                 with ui.card_section().classes('p-6'):
@@ -312,20 +312,20 @@ def create_hr_administration_page():
                                     with ui.row().classes('w-full items-center gap-4'):
                                         # Progress bar
                                         with ui.column().classes('w-20'):
-                                            ui.html(f'<div class="text-center text-sm font-bold text-gray-700">{item.progress}%</div>', sanitize=False)
+                                            ui.html(f'<div class="text-center text-sm font-bold text-gray-700">{item.progress}%</div>')
                                             with ui.linear_progress(value=item.progress / 100).classes('w-full'):
                                                 pass
                                         
                                         # Item details
                                         with ui.column().classes('flex-1 gap-1'):
                                             with ui.row().classes('gap-2 items-center'):
-                                                ui.html(f'<strong class="text-gray-800">{item.title}</strong>', sanitize=False)
-                                                ui.html(f'<span class="px-2 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{item.status.value}</span>', sanitize=False)
+                                                ui.html(f'<strong class="text-gray-800">{item.title}</strong>')
+                                                ui.html(f'<span class="px-2 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{item.status.value}</span>')
                                             
                                             with ui.row().classes('gap-4 text-xs text-gray-600'):
-                                                ui.html(f'<span>📂 {item.category}</span>', sanitize=False)
-                                                ui.html(f'<span>👤 {item.responsible_person}</span>', sanitize=False)
-                                                ui.html(f'<span>📅 Due: {item.due_date}</span>', sanitize=False)
+                                                ui.html(f'<span>📂 {item.category}</span>')
+                                                ui.html(f'<span>👤 {item.responsible_person}</span>')
+                                                ui.html(f'<span>📅 Due: {item.due_date}</span>')
                                         
                                         # Actions
                                         with ui.row().classes('gap-2'):
@@ -364,12 +364,12 @@ def view_policy(policy: HRPolicy):
                 ui.label(policy.title).classes('text-2xl font-bold')
             
             with ui.card_section().classes('p-6 space-y-4'):
-                ui.html(f'<p><strong>Policy ID:</strong> {policy.policy_id}</p>', sanitize=False)
-                ui.html(f'<p><strong>Category:</strong> {policy.category}</p>', sanitize=False)
-                ui.html(f'<p><strong>Description:</strong> {policy.description}</p>', sanitize=False)
-                ui.html(f'<p><strong>Version:</strong> {policy.version}</p>', sanitize=False)
-                ui.html(f'<p><strong>Last Updated:</strong> {policy.last_updated}</p>', sanitize=False)
-                ui.html(f'<p><strong>Affected Employees:</strong> {policy.affected_employees}</p>', sanitize=False)
+                ui.html(f'<p><strong>Policy ID:</strong> {policy.policy_id}</p>')
+                ui.html(f'<p><strong>Category:</strong> {policy.category}</p>')
+                ui.html(f'<p><strong>Description:</strong> {policy.description}</p>')
+                ui.html(f'<p><strong>Version:</strong> {policy.version}</p>')
+                ui.html(f'<p><strong>Last Updated:</strong> {policy.last_updated}</p>')
+                ui.html(f'<p><strong>Affected Employees:</strong> {policy.affected_employees}</p>')
                 
                 ui.button('Close', on_click=dialog.close).classes('bg-gray-600 text-white hover:bg-gray-700 mt-4')
     

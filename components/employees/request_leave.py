@@ -461,7 +461,7 @@ def RequestLeave():
                             <p class="text-emerald-100 text-lg">AI-powered leave planning and intelligent work-life balance optimization</p>
                         </div>
                     </div>
-                ''', sanitize=False)
+                ''')
                 
                 # Breadcrumb navigation
                 with ui.row().classes('items-center gap-2 text-sm text-emerald-200 mt-4'):
@@ -925,7 +925,7 @@ def create_smart_leave_dashboard():
                         <div class="text-2xl font-bold text-emerald-800">18</div>
                         <div class="text-emerald-700">Available Days</div>
                     </div>
-                ''', sanitize=False)
+                ''')
             
             with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-blue-50 to-blue-100'):
                 ui.html('''
@@ -934,7 +934,7 @@ def create_smart_leave_dashboard():
                         <div class="text-2xl font-bold text-blue-800">3</div>
                         <div class="text-blue-700">Pending Requests</div>
                     </div>
-                ''', sanitize=False)
+                ''')
             
             with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-purple-50 to-purple-100'):
                 ui.html('''
@@ -943,7 +943,7 @@ def create_smart_leave_dashboard():
                         <div class="text-2xl font-bold text-purple-800">94%</div>
                         <div class="text-purple-700">AI Accuracy</div>
                     </div>
-                ''', sanitize=False)
+                ''')
 
 async def show_ai_leave_planner():
     """Show AI-powered leave planner dialog"""
@@ -958,7 +958,7 @@ async def show_ai_leave_planner():
                     <p class="text-emerald-600">Intelligent leave optimization based on work patterns and team requirements</p>
                 </div>
             </div>
-        ''', sanitize=False)
+        ''')
         
         with ui.row().classes('w-full gap-6'):
             # Left column - AI recommendations
@@ -980,7 +980,7 @@ async def show_ai_leave_planner():
                                 <div class="text-purple-700">Perfect weather for vacation activities</div>
                             </div>
                         </div>
-                    ''', sanitize=False)
+                    ''')
             
             # Right column - Smart calendar
             with ui.column().classes('flex-1'):

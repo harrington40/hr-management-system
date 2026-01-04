@@ -65,8 +65,8 @@ def dashboard_page():
     #     # Add quick access to modern dashboard
     #     with ui.card().classes('w-full max-w-md mt-6'):
     #         with ui.card_section().classes('p-6'):
-    #             ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>', sanitize=False)
-    #             ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>', sanitize=False)
+    #             ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>')
+    #             ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>')
     #             ui.button('🏢 Open Modern Dashboard', on_click=lambda: ui.navigate.to('/hrmkit/reporting/dashboard')).classes('w-full bg-blue-600 text-white')
     # else:
         # Modern comprehensive dashboard
@@ -371,10 +371,10 @@ def create_modern_hr_dashboard():
             # Sidebar Header
             with ui.element('div').classes('p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white'):
                 with ui.row().classes('items-center gap-3'):
-                    ui.html('<div class="text-3xl">🏢</div>', sanitize=False)
+                    ui.html('<div class="text-3xl">🏢</div>')
                     with ui.column():
-                        ui.html('<div class="text-xl font-bold">HR Analytics</div>', sanitize=False)
-                        ui.html('<div class="text-sm opacity-90">Smart Dashboard</div>', sanitize=False)
+                        ui.html('<div class="text-xl font-bold">HR Analytics</div>')
+                        ui.html('<div class="text-sm opacity-90">Smart Dashboard</div>')
             
             # Navigation Menu
             with ui.element('div').classes('p-4 space-y-2'):
@@ -382,62 +382,62 @@ def create_modern_hr_dashboard():
                 # Dashboard Overview
                 with ui.element('div').classes('group'):
                     with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">📊</div>', sanitize=False)
+                        ui.html('<div class="text-xl">📊</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Dashboard</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-gray-500">Overview & Analytics</div>', sanitize=False)
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-gray-800">Dashboard</div>')
+                            ui.html('<div class="text-sm text-gray-500">Overview & Analytics</div>')
+                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
                 
                 # Employee Management
                 with ui.element('div').classes('group'):
                     with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">👥</div>', sanitize=False)
+                        ui.html('<div class="text-xl">👥</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Employees</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-gray-500">Staff Directory</div>', sanitize=False)
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-gray-800">Employees</div>')
+                            ui.html('<div class="text-sm text-gray-500">Staff Directory</div>')
+                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
                 
                 # Attendance Tracking
                 with ui.element('div').classes('group'):
                     with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">🕐</div>', sanitize=False)
+                        ui.html('<div class="text-xl">🕐</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Attendance</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-gray-500">Time Tracking</div>', sanitize=False)
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-gray-800">Attendance</div>')
+                            ui.html('<div class="text-sm text-gray-500">Time Tracking</div>')
+                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
                 
                 # Performance
                 with ui.element('div').classes('group'):
                     with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">🎯</div>', sanitize=False)
+                        ui.html('<div class="text-xl">🎯</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Performance</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-gray-500">Reviews & Goals</div>', sanitize=False)
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-gray-800">Performance</div>')
+                            ui.html('<div class="text-sm text-gray-500">Reviews & Goals</div>')
+                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
                 
                 # Leave Management
                 with ui.element('div').classes('group'):
                     with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">🏖️</div>', sanitize=False)
+                        ui.html('<div class="text-xl">🏖️</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Leave</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-gray-500">Requests & Planning</div>', sanitize=False)
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-gray-800">Leave</div>')
+                            ui.html('<div class="text-sm text-gray-500">Requests & Planning</div>')
+                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
                 
                 # Reports & Analytics
                 with ui.element('div').classes('group'):
                     with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">📈</div>', sanitize=False)
+                        ui.html('<div class="text-xl">📈</div>')
                         with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Reports</div>', sanitize=False)
-                            ui.html('<div class="text-sm text-gray-500">Analytics & Insights</div>', sanitize=False)
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>', sanitize=False)
+                            ui.html('<div class="font-semibold text-gray-800">Reports</div>')
+                            ui.html('<div class="text-sm text-gray-500">Analytics & Insights</div>')
+                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
             
             # AI Insights Panel
             with ui.element('div').classes('absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-gray-200'):
-                ui.html('<div class="text-sm font-semibold text-gray-800 mb-2">🤖 AI Insights</div>', sanitize=False)
+                ui.html('<div class="text-sm font-semibold text-gray-800 mb-2">🤖 AI Insights</div>')
                 ai_insight = analytics.optimize_leave_scheduling()
-                ui.html(f'<div class="text-xs text-gray-600 leading-relaxed">{ai_insight}</div>', sanitize=False)
+                ui.html(f'<div class="text-xs text-gray-600 leading-relaxed">{ai_insight}</div>')
         
         # Main Content Area - Adjusted for collapsible sidebar
         with ui.element('div').classes('ml-16 p-8 transition-all duration-300'):
@@ -445,14 +445,14 @@ def create_modern_hr_dashboard():
             # Header
             with ui.row().classes('justify-between items-center mb-8'):
                 with ui.column():
-                    ui.html('<h1 class="text-3xl font-bold text-gray-800">Welcome to Smart HR Dashboard</h1>', sanitize=False)
-                    ui.html('<p class="text-gray-600 mt-2">AI-powered workforce management and analytics</p>', sanitize=False)
+                    ui.html('<h1 class="text-3xl font-bold text-gray-800">Welcome to Smart HR Dashboard</h1>')
+                    ui.html('<p class="text-gray-600 mt-2">AI-powered workforce management and analytics</p>')
                 
                 with ui.row().classes('items-center gap-4'):
                     # Real-time indicator
                     with ui.row().classes('items-center gap-2 bg-green-100 px-3 py-1 rounded-full'):
-                        ui.html('<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>', sanitize=False)
-                        ui.html('<span class="text-sm text-green-700 font-medium">Live Data</span>', sanitize=False)
+                        ui.html('<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>')
+                        ui.html('<span class="text-sm text-green-700 font-medium">Live Data</span>')
                     
                     # Quick actions
                     ui.button('⚡ Quick Actions', icon='bolt').classes('bg-blue-600 text-white hover:bg-blue-700')
@@ -460,55 +460,55 @@ def create_modern_hr_dashboard():
             
             # Key Metrics Row
             with ui.element('div').classes('bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100'):
-                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Key Performance Indicators</h2>', sanitize=False)
+                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Key Performance Indicators</h2>')
                 with ui.row().classes('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'):
                     
                     # Total Employees
                     with ui.card().classes('p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-blue-400 hover:border-blue-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html('<div class="text-3xl font-bold mb-1">63</div>', sanitize=False)
-                                ui.html('<div class="text-blue-100 text-sm">Total Employees</div>', sanitize=False)
-                            ui.html('<div class="text-4xl opacity-80">👥</div>', sanitize=False)
-                        ui.html('<div class="mt-4 text-xs text-blue-200">↗️ +2.1% from last month</div>', sanitize=False)
+                                ui.html('<div class="text-3xl font-bold mb-1">63</div>')
+                                ui.html('<div class="text-blue-100 text-sm">Total Employees</div>')
+                            ui.html('<div class="text-4xl opacity-80">👥</div>')
+                        ui.html('<div class="mt-4 text-xs text-blue-200">↗️ +2.1% from last month</div>')
                     
                     # Attendance Rate
                     attendance_pred = analytics.predict_attendance()
                     with ui.card().classes('p-6 bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-green-400 hover:border-green-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html(f'<div class="text-3xl font-bold mb-1">{attendance_pred}%</div>', sanitize=False)
-                                ui.html('<div class="text-green-100 text-sm">Attendance Rate</div>', sanitize=False)
-                            ui.html('<div class="text-4xl opacity-80">✅</div>', sanitize=False)
-                        ui.html('<div class="mt-4 text-xs text-green-200">AI Prediction: Tomorrow</div>', sanitize=False)
+                                ui.html(f'<div class="text-3xl font-bold mb-1">{attendance_pred}%</div>')
+                                ui.html('<div class="text-green-100 text-sm">Attendance Rate</div>')
+                            ui.html('<div class="text-4xl opacity-80">✅</div>')
+                        ui.html('<div class="mt-4 text-xs text-green-200">AI Prediction: Tomorrow</div>')
                     
                     # Productivity Score
                     trend_icon, trend_change = analytics.calculate_productivity_trend()
                     with ui.card().classes('p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-purple-400 hover:border-purple-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html('<div class="text-3xl font-bold mb-1">92.5%</div>', sanitize=False)
-                                ui.html('<div class="text-purple-100 text-sm">Productivity</div>', sanitize=False)
-                            ui.html('<div class="text-4xl opacity-80">📈</div>', sanitize=False)
-                        ui.html(f'<div class="mt-4 text-xs text-purple-200">{trend_icon} {trend_change}% this week</div>', sanitize=False)
+                                ui.html('<div class="text-3xl font-bold mb-1">92.5%</div>')
+                                ui.html('<div class="text-purple-100 text-sm">Productivity</div>')
+                            ui.html('<div class="text-4xl opacity-80">📈</div>')
+                        ui.html(f'<div class="mt-4 text-xs text-purple-200">{trend_icon} {trend_change}% this week</div>')
                     
                     # Turnover Rate
                     with ui.card().classes('p-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-orange-400 hover:border-orange-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html('<div class="text-3xl font-bold mb-1">4.2%</div>', sanitize=False)
-                                ui.html('<div class="text-orange-100 text-sm">Turnover Rate</div>', sanitize=False)
-                            ui.html('<div class="text-4xl opacity-80">📉</div>', sanitize=False)
-                        ui.html('<div class="mt-4 text-xs text-orange-200">↘️ -0.8% from last quarter</div>', sanitize=False)
+                                ui.html('<div class="text-3xl font-bold mb-1">4.2%</div>')
+                                ui.html('<div class="text-orange-100 text-sm">Turnover Rate</div>')
+                            ui.html('<div class="text-4xl opacity-80">📉</div>')
+                        ui.html('<div class="mt-4 text-xs text-orange-200">↘️ -0.8% from last quarter</div>')
             
             # Charts and Analytics Row
             with ui.element('div').classes('bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100'):
-                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Analytics & Trends</h2>', sanitize=False)
+                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Analytics & Trends</h2>')
                 with ui.row().classes('grid grid-cols-1 lg:grid-cols-2 gap-8 h-96'):
                     
                     # Attendance Trend Chart
                     with ui.card().classes('p-6 hover:shadow-xl transition-all duration-300 border-2 border-blue-200 hover:border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50 h-full flex flex-col'):
-                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">📊</span>Attendance Trends</h3>', sanitize=False)
+                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">📊</span>Attendance Trends</h3>')
                         
                         # Mock chart data
                         chart_data = [85, 87, 89, 88, 91, 89, 92]
@@ -517,16 +517,16 @@ def create_modern_hr_dashboard():
                         with ui.element('div').classes('space-y-3 flex-1'):
                             for i, (day, value) in enumerate(zip(days, chart_data)):
                                 with ui.row().classes('items-center gap-3'):
-                                    ui.html(f'<div class="w-12 text-sm font-medium text-gray-600">{day}</div>', sanitize=False)
+                                    ui.html(f'<div class="w-12 text-sm font-medium text-gray-600">{day}</div>')
                                     with ui.element('div').classes('flex-1 bg-gray-200 rounded-full h-3'):
                                         ui.element('div').classes(f'bg-blue-500 h-3 rounded-full transition-all duration-500').style(f'width: {value}%')
-                                    ui.html(f'<div class="w-12 text-sm text-gray-600 text-right">{value}%</div>', sanitize=False)
+                                    ui.html(f'<div class="w-12 text-sm text-gray-600 text-right">{value}%</div>')
                         
-                        ui.html('<div class="mt-4 text-sm text-gray-500">Weekly attendance pattern analysis</div>', sanitize=False)
+                        ui.html('<div class="mt-4 text-sm text-gray-500">Weekly attendance pattern analysis</div>')
                     
                     # Department Performance
                     with ui.card().classes('p-6 hover:shadow-xl transition-all duration-300 border-2 border-green-200 hover:border-green-300 bg-gradient-to-br from-green-50 to-emerald-50 h-full flex flex-col'):
-                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🏆</span>Department Performance</h3>', sanitize=False)
+                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🏆</span>Department Performance</h3>')
                         
                         departments = [
                             {'name': 'Engineering', 'score': 95, 'change': '+2.1%', 'color': 'green'},
@@ -540,21 +540,21 @@ def create_modern_hr_dashboard():
                             for dept in departments:
                                 with ui.row().classes('items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors'):
                                     with ui.row().classes('items-center gap-3'):
-                                        ui.html(f'<div class="w-3 h-3 bg-{dept["color"]}-500 rounded-full"></div>', sanitize=False)
-                                        ui.html(f'<div class="font-medium text-gray-800">{dept["name"]}</div>', sanitize=False)
+                                        ui.html(f'<div class="w-3 h-3 bg-{dept["color"]}-500 rounded-full"></div>')
+                                        ui.html(f'<div class="font-medium text-gray-800">{dept["name"]}</div>')
                                     
                                     with ui.row().classes('items-center gap-3'):
-                                        ui.html(f'<div class="text-sm text-gray-600">{dept["score"]}%</div>', sanitize=False)
-                                        ui.html(f'<div class="text-sm text-{dept["color"]}-600 font-medium">{dept["change"]}</div>', sanitize=False)
+                                        ui.html(f'<div class="text-sm text-gray-600">{dept["score"]}%</div>')
+                                        ui.html(f'<div class="text-sm text-{dept["color"]}-600 font-medium">{dept["change"]}</div>')
             
             # Bottom Row - Recent Activity and AI Insights
             with ui.element('div').classes('bg-white rounded-xl shadow-lg p-8 border border-gray-100'):
-                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Activity & Insights</h2>', sanitize=False)
+                ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Activity & Insights</h2>')
                 with ui.row().classes('grid grid-cols-1 lg:grid-cols-3 gap-8 h-96'):
                     
                     # Recent Activity
                     with ui.card().classes('p-6 hover:shadow-xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-300 bg-gradient-to-br from-purple-50 to-violet-50 h-full flex flex-col'):
-                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🕐</span>Recent Activity</h3>', sanitize=False)
+                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🕐</span>Recent Activity</h3>')
                         
                         activities = [
                             {'action': 'New employee onboarded', 'user': 'John Smith', 'time': '2 hours ago', 'icon': '👋'},
@@ -566,14 +566,14 @@ def create_modern_hr_dashboard():
                         with ui.element('div').classes('space-y-3 flex-1'):
                             for activity in activities:
                                 with ui.row().classes('items-start gap-3 p-3 hover:bg-white rounded-lg transition-colors border border-gray-100'):
-                                    ui.html(f'<div class="text-xl">{activity["icon"]}</div>', sanitize=False)
+                                    ui.html(f'<div class="text-xl">{activity["icon"]}</div>')
                                     with ui.column().classes('flex-1'):
-                                        ui.html(f'<div class="text-sm font-medium text-gray-800">{activity["action"]}</div>', sanitize=False)
-                                        ui.html(f'<div class="text-xs text-gray-500">{activity["user"]} • {activity["time"]}</div>', sanitize=False)
+                                        ui.html(f'<div class="text-sm font-medium text-gray-800">{activity["action"]}</div>')
+                                        ui.html(f'<div class="text-xs text-gray-500">{activity["user"]} • {activity["time"]}</div>')
                     
                     # AI Insights
                     with ui.card().classes('p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 hover:shadow-xl transition-all duration-300 border-2 border-indigo-300 hover:border-indigo-400 h-full flex flex-col'):
-                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🤖</span>AI Insights</h3>', sanitize=False)
+                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🤖</span>AI Insights</h3>')
                         
                         insights = [
                             'Consider scheduling team-building activities to boost morale',
@@ -585,14 +585,14 @@ def create_modern_hr_dashboard():
                         with ui.element('div').classes('space-y-3 flex-1'):
                             for insight in insights[:3]:
                                 with ui.row().classes('items-start gap-3'):
-                                    ui.html('<div class="text-blue-500 mt-1">💡</div>', sanitize=False)
-                                    ui.html(f'<div class="text-sm text-gray-700">{insight}</div>', sanitize=False)
+                                    ui.html('<div class="text-blue-500 mt-1">💡</div>')
+                                    ui.html(f'<div class="text-sm text-gray-700">{insight}</div>')
                         
                         ui.button('🔍 View All Insights', on_click=lambda: ui.notify('Opening detailed AI analytics...')).classes('w-full mt-4 bg-indigo-600 text-white hover:bg-indigo-700')
                     
                     # Quick Actions
                     with ui.card().classes('p-6 hover:shadow-xl transition-all duration-300 border-2 border-orange-200 hover:border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 h-full flex flex-col'):
-                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">⚡</span>Quick Actions</h3>', sanitize=False)
+                        ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">⚡</span>Quick Actions</h3>')
                         
                         actions = [
                             {'label': 'Add New Employee', 'icon': '➕', 'color': 'green', 'action': lambda: ui.notify('Opening employee registration...')},
@@ -612,8 +612,8 @@ def create_modern_hr_dashboard():
                         anomalies = analytics.detect_anomalies()
                         if anomalies and anomalies[0] != "All metrics within normal ranges":
                             with ui.element('div').classes('mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'):
-                                ui.html('<div class="text-sm font-semibold text-red-800 mb-1">⚠️ Anomaly Detected</div>', sanitize=False)
-                                ui.html(f'<div class="text-xs text-red-700">{anomalies[0]}</div>', sanitize=False)
+                                ui.html('<div class="text-sm font-semibold text-red-800 mb-1">⚠️ Anomaly Detected</div>')
+                                ui.html(f'<div class="text-xs text-red-700">{anomalies[0]}</div>')
 
 def create_page_layout():
     """Create a proper page layout container that works with the modern fixed sidebar"""
