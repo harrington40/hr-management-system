@@ -206,6 +206,17 @@ pipeline {
             post {
                 always {
                     junit allowEmptyResults: true, testResults: 'prod-test-results/*.xml'
+                    
+                    // Publish HTML Coverage Report for production validation
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Production Validation Coverage',
+                        reportTitles: 'Pre-deployment Coverage'
+                    ])
                 }
             }
         }

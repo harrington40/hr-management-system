@@ -190,29 +190,30 @@ echo "Ensuring python3-venv and build tools are installed..."
                     // Publish test results
                     junit allowEmptyResults: true, testResults: 'test-results/*.xml'
                     
-                    // Publish HTML reports
+                    // Publish HTML Coverage Report
                     publishHTML([
-                        allowMissing: true,
+                        allowMissing: false,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'htmlcov',
                         reportFiles: 'index.html',
-                        reportName: 'Coverage Report',
-                        reportTitles: 'Code Coverage'
+                        reportName: 'HTML Coverage Report',
+                        reportTitles: 'Test Coverage'
                     ])
                     
+                    // Publish HTML Test Report
                     publishHTML([
-                        allowMissing: true,
+                        allowMissing: false,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'test-results',
                         reportFiles: 'report.html',
-                        reportName: 'Test Report',
+                        reportName: 'HTML Test Report',
                         reportTitles: 'Test Results'
                     ])
                     
                     // Archive all reports
-                    archiveArtifacts artifacts: 'coverage.xml,coverage.json,coverage-summary.md,htmlcov/**,test-results/**', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'coverage.xml,coverage.json,coverage-summary.md,htmlcov/**/*,test-results/**/*', allowEmptyArchive: true
                 }
             }
         }

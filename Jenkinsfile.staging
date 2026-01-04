@@ -157,15 +157,17 @@ echo "Ensuring python3-venv and build tools are installed..."
             post {
                 always {
                     junit allowEmptyResults: true, testResults: 'test-results/*.xml'
-                    // TODO: Install HTML Publisher Plugin to enable this
-                    // publishHTML([
-                    //     allowMissing: true,
-                    //     alwaysLinkToLastBuild: true,
-                    //     keepAll: true,
-                    //     reportDir: 'htmlcov',
-                    //     reportFiles: 'index.html',
-                    //     reportName: 'Staging Coverage Report'
-                    // ])
+                    
+                    // Publish HTML Coverage Report
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Staging Coverage Report',
+                        reportTitles: 'Staging Test Coverage'
+                    ])
                 }
             }
         }
