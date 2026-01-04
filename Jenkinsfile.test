@@ -20,6 +20,10 @@ pipeline {
         ENVIRONMENT = 'test'
         PYTHON_VERSION = '3.11'
         
+        // Version Management
+        VERSION = readFile('VERSION').trim()
+        BUILD_VERSION = "${VERSION}-test.${env.BUILD_NUMBER}"
+        
         // Application Configuration
         APP_NAME = 'hrms-app'
         APP_HOST = '0.0.0.0'
@@ -28,7 +32,7 @@ pipeline {
         // Docker Configuration
         DOCKER_REGISTRY = 'harrington40'
         DOCKER_IMAGE = "${DOCKER_REGISTRY}/${APP_NAME}"
-        DOCKER_TAG = "test-${env.BUILD_NUMBER}"
+        DOCKER_TAG = "${BUILD_VERSION}"
         
         // Test Environment URLs
         TEST_URL = 'http://test.transtechologies.com:8081'
@@ -141,23 +145,44 @@ echo "Ensuring python3-venv and build tools are installed..."
             }
         }
 
-        stage('🧪 Run Unit Tests') {
+        stage('🧪 Run Tests with Coverage') {
             steps {
-                echo "Running unit tests..."
+                echo "Running comprehensive tests with coverage..."
                 sh '''
                     . venv/bin/activate
                     
-                    # Run pytest with coverage
+                    # Install coverage tools
+                    pip install pytest-cov coverage pytest-html pytest-json-report
+                    
+                    # Create test results directory
+                    mkdir -p test-results
+                    
+                    # Run pytest with comprehensive coverage
                     pytest tests/ \
                         --verbose \
                         --junit-xml=test-results/junit.xml \
+                        --html=test-results/report.html --self-contained-html \
+                        --json-report --json-report-file=test-results/report.json \
                         --cov=. \
+                        --cov-config=.coveragerc \
                         --cov-report=xml:coverage.xml \
                         --cov-report=html:htmlcov \
-                        --cov-report=term \
+                        --cov-report=term-missing \
+                        --cov-report=json:coverage.json \
+                        --cov-fail-under=60 \
                         || true
                     
-                    echo "✅ Unit tests completed"
+                    # Generate coverage badge
+                    coverage report --precision=2
+                    
+                    # Coverage summary
+                    echo "═══════════════════════════════════════"
+                    echo "📊 Test Coverage Summary"
+                    echo "═══════════════════════════════════════"
+                    coverage report --format=markdown > coverage-summary.md || true
+                    cat coverage-summary.md || true
+                    
+                    echo "✅ Tests and coverage analysis completed"
                 '''
             }
             post {
@@ -165,16 +190,29 @@ echo "Ensuring python3-venv and build tools are installed..."
                     // Publish test results
                     junit allowEmptyResults: true, testResults: 'test-results/*.xml'
                     
-                    // Archive coverage reports
-                    // TODO: Install HTML Publisher Plugin to enable this
-                    // publishHTML([
-                    //     allowMissing: true,
-                    //     alwaysLinkToLastBuild: true,
-                    //     keepAll: true,
-                    //     reportDir: 'htmlcov',
-                    //     reportFiles: 'index.html',
-                    //     reportName: 'Coverage Report'
-                    // ])
+                    // Publish HTML reports
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Coverage Report',
+                        reportTitles: 'Code Coverage'
+                    ])
+                    
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'test-results',
+                        reportFiles: 'report.html',
+                        reportName: 'Test Report',
+                        reportTitles: 'Test Results'
+                    ])
+                    
+                    // Archive all reports
+                    archiveArtifacts artifacts: 'coverage.xml,coverage.json,coverage-summary.md,htmlcov/**,test-results/**', allowEmptyArchive: true
                 }
             }
         }
@@ -202,15 +240,23 @@ echo "Ensuring python3-venv and build tools are installed..."
             }
         }
 
-        stage('🏗️ Build Application') {
+        stage('🏗️ Build and Package Application') {
             steps {
-                echo "Building application..."
+                echo "Building and packaging application..."
                 sh '''
                     . venv/bin/activate
+                    
+                    # Update version in version.py
+                    export BUILD_NUMBER=${BUILD_NUMBER}
+                    export GIT_COMMIT=${GIT_COMMIT}
+                    export BRANCH_NAME=${BRANCH_NAME}
+                    export ENVIRONMENT=${ENVIRONMENT}
                     
                     # Create build info file
                     cat > build-info.json <<EOF
 {
+    "version": "${BUILD_VERSION}",
+    "base_version": "${VERSION}",
     "environment": "${ENVIRONMENT}",
     "build_number": "${BUILD_NUMBER}",
     "git_commit": "${GIT_COMMIT}",
@@ -220,9 +266,42 @@ echo "Ensuring python3-venv and build tools are installed..."
 }
 EOF
                     
-                    echo "✅ Build completed"
-                    cat build-info.json
+                    # Create package directory
+                    mkdir -p packages/test
+                    
+                    # Create versioned package
+                    PACKAGE_NAME="hrms-${BUILD_VERSION}.tar.gz"
+                    
+                    echo "📦 Creating package: ${PACKAGE_NAME}"
+                    tar -czf packages/test/${PACKAGE_NAME} \
+                        --exclude='venv' \
+                        --exclude='.git' \
+                        --exclude='__pycache__' \
+                        --exclude='*.pyc' \
+                        --exclude='htmlcov' \
+                        --exclude='test-results' \
+                        --exclude='packages' \
+                        --exclude='.pytest_cache' \
+                        --exclude='.nicegui' \
+                        .
+                    
+                    # Create latest symlink
+                    cd packages/test
+                    ln -sf ${PACKAGE_NAME} hrms-test-latest.tar.gz
+                    
+                    # Generate checksums
+                    sha256sum ${PACKAGE_NAME} > ${PACKAGE_NAME}.sha256
+                    
+                    ls -lh
+                    
+                    echo "✅ Build and packaging completed"
+                    cat ../../build-info.json
                 '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'packages/test/*,build-info.json', fingerprint: true
+                }
             }
         }
 

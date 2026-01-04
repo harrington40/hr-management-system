@@ -43,6 +43,11 @@ pipeline {
         ENVIRONMENT = 'production'
         PYTHON_VERSION = '3.11'
         
+        // Version Management
+        VERSION = readFile('VERSION').trim()
+        BUILD_VERSION = "${VERSION}-prod.${env.BUILD_NUMBER}"
+        RELEASE_VERSION = "${VERSION}"
+        
         // Application Configuration
         APP_NAME = 'hrms-app'
         APP_HOST = '0.0.0.0'
@@ -51,7 +56,7 @@ pipeline {
         // Docker Configuration
         DOCKER_REGISTRY = 'harrington40'
         DOCKER_IMAGE = "${DOCKER_REGISTRY}/${APP_NAME}"
-        DOCKER_TAG = "prod-${env.BUILD_NUMBER}"
+        DOCKER_TAG = "${RELEASE_VERSION}"
         
         // Production Environment URLs
         PRODUCTION_URL = 'http://prod.transtechologies.com:8080'
@@ -258,18 +263,26 @@ pipeline {
             }
         }
 
-        stage('🏗️ Build Production Release') {
+        stage('🏗️ Build Production Release Package') {
             when {
                 expression { !params.ROLLBACK_VERSION }
             }
             steps {
-                echo "Building production release..."
+                echo "Building production release package..."
                 sh '''
                     . venv/bin/activate
+                    
+                    # Set environment variables
+                    export BUILD_NUMBER=${BUILD_NUMBER}
+                    export GIT_COMMIT=${GIT_COMMIT}
+                    export BRANCH_NAME=${BRANCH_NAME}
+                    export ENVIRONMENT=${ENVIRONMENT}
                     
                     # Create production build metadata
                     cat > build-info.json <<EOF
 {
+    "version": "${RELEASE_VERSION}",
+    "build_version": "${BUILD_VERSION}",
     "environment": "production",
     "build_number": "${BUILD_NUMBER}",
     "git_commit": "${GIT_COMMIT}",
@@ -281,12 +294,152 @@ pipeline {
 }
 EOF
                     
-                    # Create release notes
-                    git log --pretty=format:"- %h %s (%an)" -10 > RELEASE_NOTES.txt || true
+                    # Create package directory
+                    mkdir -p packages/production
                     
-                    echo "✅ Production build completed"
-                    cat build-info.json
+                    # Create production release package with semantic version
+                    PACKAGE_NAME="hrms-${RELEASE_VERSION}.tar.gz"
+                    BUILD_PACKAGE="hrms-${BUILD_VERSION}.tar.gz"
+                    
+                    echo "📦 Creating production release: ${PACKAGE_NAME}"
+                    tar -czf packages/production/${BUILD_PACKAGE} \
+                        --exclude='venv' \
+                        --exclude='.git' \
+                        --exclude='__pycache__' \
+                        --exclude='*.pyc' \
+                        --exclude='htmlcov' \
+                        --exclude='test-results' \
+                        --exclude='packages' \
+                        --exclude='.pytest_cache' \
+                        --exclude='.nicegui' \
+                        --exclude='*.log' \
+                        .
+                    
+                    # Create release version symlink
+                    cd packages/production
+                    ln -sf ${BUILD_PACKAGE} ${PACKAGE_NAME}
+                    ln -sf ${PACKAGE_NAME} hrms-production-latest.tar.gz
+                    
+                    # Generate checksums
+                    sha256sum ${PACKAGE_NAME} > ${PACKAGE_NAME}.sha256
+                    sha256sum ${BUILD_PACKAGE} > ${BUILD_PACKAGE}.sha256
+                    md5sum ${PACKAGE_NAME} > ${PACKAGE_NAME}.md5
+                    
+                    # Create comprehensive release notes
+                    cat > ${PACKAGE_NAME}.RELEASE_NOTES.md <<NOTES
+# HRMS Production Release ${RELEASE_VERSION}
+
+## Release Information
+- **Version**: ${RELEASE_VERSION}
+- **Build**: #${BUILD_NUMBER} (${BUILD_VERSION})
+- **Environment**: PRODUCTION
+- **Release Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+- **Git Commit**: ${GIT_COMMIT}
+- **Git Branch**: ${BRANCH_NAME}
+- **Deployment Type**: ${DEPLOYMENT_TYPE}
+
+## Package Contents
+- ✅ Application source code
+- ✅ Configuration templates
+- ✅ Database migrations
+- ✅ Static assets
+- ✅ Dependencies specification
+- ✅ Build metadata
+
+## Recent Changes
+$(cd ../.. && git log --pretty=format:"- %h %s (%an, %ar)" -15 || echo "Git history not available")
+
+## Installation Instructions
+
+### Prerequisites
+- Python 3.11 or higher
+- 4GB RAM minimum
+- OrientDB database server
+
+### Quick Start
+\`\`\`bash
+# 1. Extract package
+tar -xzf ${PACKAGE_NAME}
+
+# 2. Setup Python environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 3. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 4. Configure application
+cp config/production.env.example config/production.env
+# Edit config/production.env with your settings
+
+# 5. Run database migrations
+python database/init_database.py
+
+# 6. Start application
+uvicorn main:app --host 0.0.0.0 --port 8080 --workers 4
+\`\`\`
+
+## Deployment Checklist
+- [ ] Database backup created
+- [ ] Environment variables configured
+- [ ] SSL certificates updated
+- [ ] Firewall rules verified
+- [ ] Monitoring alerts configured
+- [ ] Load balancer health checks enabled
+- [ ] Rollback plan prepared
+
+## Rollback Procedure
+If issues arise, rollback using:
+\`\`\`bash
+# Stop current version
+systemctl stop hrms-app
+
+# Restore previous version
+tar -xzf hrms-<previous-version>.tar.gz
+
+# Restart service
+systemctl start hrms-app
+\`\`\`
+
+## Support
+- **Documentation**: https://docs.company.com/hrms
+- **Support Email**: support@transtechologies.com
+- **Emergency Hotline**: +1-XXX-XXX-XXXX
+
+---
+**Generated by Jenkins Build #${BUILD_NUMBER}**
+NOTES
+                    
+                    # Create deployment manifest
+                    cat > ${PACKAGE_NAME}.manifest.json <<MANIFEST
+{
+  "package": "${PACKAGE_NAME}",
+  "version": "${RELEASE_VERSION}",
+  "build_version": "${BUILD_VERSION}",
+  "build_number": "${BUILD_NUMBER}",
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "git_commit": "${GIT_COMMIT}",
+  "git_branch": "${BRANCH_NAME}",
+  "checksums": {
+    "sha256": "$(sha256sum ${PACKAGE_NAME} | awk '{print $1}')",
+    "md5": "$(md5sum ${PACKAGE_NAME} | awk '{print $1}')"
+  },
+  "size_bytes": $(stat -f%z ${PACKAGE_NAME} 2>/dev/null || stat -c%s ${PACKAGE_NAME}),
+  "deployment_type": "${DEPLOYMENT_TYPE}",
+  "environment": "production"
+}
+MANIFEST
+                    
+                    ls -lh
+                    echo "✅ Production release package created successfully"
+                    cat ../../build-info.json
                 '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'packages/production/*,build-info.json', fingerprint: true
+                }
             }
         }
 

@@ -1,6 +1,16 @@
 # my_package/__init__.py
 
-__version__ = "1.0.0"
+# Read version from VERSION file
+import os
+from pathlib import Path
+
+def _get_version():
+    version_file = Path(__file__).parent / 'VERSION'
+    if version_file.exists():
+        return version_file.read_text().strip()
+    return "1.0.0"
+
+__version__ = _get_version()
 __author__ = "KWARECOM Inc."
 
 # from .helperFuns import *

@@ -20,6 +20,10 @@ pipeline {
         ENVIRONMENT = 'staging'
         PYTHON_VERSION = '3.11'
         
+        // Version Management
+        VERSION = readFile('VERSION').trim()
+        BUILD_VERSION = "${VERSION}-staging.${env.BUILD_NUMBER}"
+        
         // Application Configuration
         APP_NAME = 'hrms-app'
         APP_HOST = '0.0.0.0'
@@ -28,7 +32,7 @@ pipeline {
         // Docker Configuration
         DOCKER_REGISTRY = 'harrington40'
         DOCKER_IMAGE = "${DOCKER_REGISTRY}/${APP_NAME}"
-        DOCKER_TAG = "staging-${env.BUILD_NUMBER}"
+        DOCKER_TAG = "${BUILD_VERSION}"
         
         // Staging Environment URLs
         STAGING_URL = 'http://staging.transtechologies.com:8082'
@@ -193,15 +197,23 @@ echo "Ensuring python3-venv and build tools are installed..."
             }
         }
 
-        stage('🏗️ Build Application') {
+        stage('🏗️ Build and Package Application') {
             steps {
-                echo "Building application for staging..."
+                echo "Building and packaging application for staging..."
                 sh '''
                     . venv/bin/activate
+                    
+                    # Set environment variables for version tracking
+                    export BUILD_NUMBER=${BUILD_NUMBER}
+                    export GIT_COMMIT=${GIT_COMMIT}
+                    export BRANCH_NAME=${BRANCH_NAME}
+                    export ENVIRONMENT=${ENVIRONMENT}
                     
                     # Generate build metadata
                     cat > build-info.json <<EOF
 {
+    "version": "${BUILD_VERSION}",
+    "base_version": "${VERSION}",
     "environment": "${ENVIRONMENT}",
     "build_number": "${BUILD_NUMBER}",
     "git_commit": "${GIT_COMMIT}",
@@ -212,9 +224,70 @@ echo "Ensuring python3-venv and build tools are installed..."
 }
 EOF
                     
-                    echo "✅ Build completed"
-                    cat build-info.json
+                    # Create package directory
+                    mkdir -p packages/staging
+                    
+                    # Create versioned package for staging
+                    PACKAGE_NAME="hrms-${BUILD_VERSION}.tar.gz"
+                    
+                    echo "📦 Creating staging package: ${PACKAGE_NAME}"
+                    tar -czf packages/staging/${PACKAGE_NAME} \
+                        --exclude='venv' \
+                        --exclude='.git' \
+                        --exclude='__pycache__' \
+                        --exclude='*.pyc' \
+                        --exclude='htmlcov' \
+                        --exclude='test-results' \
+                        --exclude='packages' \
+                        --exclude='.pytest_cache' \
+                        --exclude='.nicegui' \
+                        .
+                    
+                    # Create latest and stable links
+                    cd packages/staging
+                    ln -sf ${PACKAGE_NAME} hrms-staging-latest.tar.gz
+                    ln -sf ${PACKAGE_NAME} hrms-staging-stable.tar.gz
+                    
+                    # Generate checksums
+                    sha256sum ${PACKAGE_NAME} > ${PACKAGE_NAME}.sha256
+                    md5sum ${PACKAGE_NAME} > ${PACKAGE_NAME}.md5
+                    
+                    # Create release notes
+                    cat > ${PACKAGE_NAME}.release-notes.txt <<NOTES
+═══════════════════════════════════════
+HRMS Staging Release ${BUILD_VERSION}
+═══════════════════════════════════════
+Build: #${BUILD_NUMBER}
+Environment: STAGING
+Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+Git Commit: ${GIT_COMMIT}
+Git Branch: ${BRANCH_NAME}
+
+Package Contents:
+- Application code
+- Configuration files
+- Dependencies list
+- Build metadata
+
+Deployment Instructions:
+1. Extract package: tar -xzf ${PACKAGE_NAME}
+2. Setup environment: python3 -m venv venv && source venv/bin/activate
+3. Install dependencies: pip install -r requirements.txt
+4. Configure: cp config/staging.env.example config/staging.env
+5. Run: uvicorn main:app --host 0.0.0.0 --port 8082
+═══════════════════════════════════════
+NOTES
+                    
+                    ls -lh
+                    
+                    echo "✅ Build and packaging completed"
+                    cat ../../build-info.json
                 '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'packages/staging/*,build-info.json', fingerprint: true
+                }
             }
         }
 
