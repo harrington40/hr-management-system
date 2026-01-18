@@ -9,7 +9,7 @@ import logging
 from .mqtt_service import mqtt_service
 from .backblaze_service import backblaze_service
 from .grpc_service import grpc_service
-from .database_service import database_service
+from .rethinkdb_service import rethinkdb_service
 from .auth_service import AuthService
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class ServiceManager:
             'mqtt': mqtt_service,
             'backblaze': backblaze_service,
             'grpc': grpc_service,
-            'database': database_service
+            'database': rethinkdb_service
         }
         self.auth_service = None
         self.hrms_grpc_service = None
@@ -33,15 +33,14 @@ class ServiceManager:
         try:
             logger.info("Initializing services...")
             
-            # Initialize database service (optional for now)
-            if not database_service.connect():
-                logger.warning("OrientDB database service initialization failed - continuing without database")
-                # return False  # Commented out to allow testing without database
+            # Initialize RethinkDB service
+            if not rethinkdb_service.connect():
+                logger.warning("RethinkDB service initialization failed - continuing without database")
             else:
-                logger.info("OrientDB database service initialized successfully")
+                logger.info("RethinkDB service initialized successfully")
             
             # Initialize auth service
-            self.auth_service = AuthService(database_service)
+            self.auth_service = AuthService(rethinkdb_service)
             logger.info("Auth service initialized successfully")
             
             # Initialize Backblaze B2
@@ -49,19 +48,17 @@ class ServiceManager:
                 logger.warning("Backblaze B2 service initialization failed - continuing without file storage")
             
             # Initialize MQTT service
-            # Temporarily disable MQTT service for testing
-            # if not mqtt_service.connect():
-            #     logger.warning("MQTT service initialization failed - continuing without MQTT")
-            # else:
-            #     logger.info("MQTT service connected successfully")
-            logger.info("MQTT service temporarily disabled for testing")
+            if not mqtt_service.connect():
+                logger.warning("MQTT service initialization failed - continuing without MQTT")
+            else:
+                logger.info("MQTT service connected successfully")
             
             # Initialize HRMS gRPC service
             try:
                 from grpc_services.services.hrms_service import HRMSService
                 from grpc_services.proto import hrms_pb2_grpc
                 
-                self.hrms_grpc_service = HRMSService(database_service, self.auth_service)
+                self.hrms_grpc_service = HRMSService(rethinkdb_service, self.auth_service)
                 grpc_service.register_service(
                     'hrms',
                     hrms_pb2_grpc.add_HRMSServiceServicer_to_server,

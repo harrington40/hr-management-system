@@ -18,7 +18,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from grpc_services.proto import hrms_pb2, hrms_pb2_grpc
 from services.database_service import DatabaseService
 from services.auth_service import AuthService
-from web.hr.helperFuns.utils import HelperFunctions
+from helperFuns.utils import HelperFunctions
 
 logger = logging.getLogger(__name__)
 

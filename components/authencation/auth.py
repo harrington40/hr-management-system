@@ -1,5 +1,6 @@
 import asyncio
-from nicegui import ui, html, app
+import time
+from nicegui import ui, html, app, context
 from datetime import datetime
 
 from helperFuns import imagePath
@@ -7,6 +8,14 @@ from assets import RemoveOverPadding, SildeFromTop, SlideFromBottom, Wave_Animat
 from .authHelper import create_dev_auth_token, generate_magic_link
 
 def Login_Page():
+    # Check if user is already authenticated, redirect to dashboard
+    try:
+        if context.client.storage.user.get('authenticated', False):
+            ui.navigate.to('/hrmkit/reporting/dashboard')
+            return
+    except:
+        pass
+    
     ZoomIn()
     RemoveOverPadding()
     with ui.grid(columns=12).style('height: 100dvh; width: 100dvw').classes('gap-0 overflow-hidden'):
@@ -38,7 +47,7 @@ def Login_Page():
                 html.span('HR MANAGEMENT Kit').classes('fadeIn-top text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-blue-900')
                 html.span('Seamlessly handle all HR related functions and actionable insights from time and attendance management to employee performance, turnover and relevant data trends for facilitating effective decision-makings, all from one place').classes('fadeIn-bottom w-3/5 text-lg bg-clip-text text-transparent bg-gradient-to-l from-blue-500 to-blue-600 my-2')
                 with html.span(f' © 2011 - {datetime.now().year} Copyright:').classes('flex text-sm font-medium absolute bottom-20 left-6 text-blue-100'):
-                    ui.html('<a href="https://kwarecominc.com/" target="_blank" rel="noreferrer" class="pl-2 text-blue-300"> <strong className="font-semibold"> KWARECOM Inc.</strong></a>')
+                    ui.html('<a href="https://kwarecominc.com/" target="_blank" rel="noreferrer" class="pl-2 text-blue-300"> <strong className="font-semibold"> KWARECOM Inc.</strong></a>', sanitize=False)
 
 async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: str):
     isValid = True
@@ -64,8 +73,25 @@ async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: 
 async def dev_login():
     """Development login bypass for testing"""
     try:
-        # token = create_dev_auth_token("dev@hrmkit.com")
-        # app.storage.user.update({'token': token, 'authenticated': True})
+        from .authHelper import create_jwt_token
+        
+        # Create a dev user token
+        user_data = {
+            "email": "dev@hrmkit.com",
+            "username": "Developer",
+            "timestamp": str(int(time.time()))
+        }
+        
+        token = create_jwt_token(user_data)
+        
+        # Store authentication in context
+        context.client.storage.user.update({
+            'token': token, 
+            'authenticated': True,
+            'username': user_data['username'],
+            'email': user_data['email']
+        })
+        
         ui.notify('Development login successful!', color='positive')
         ui.navigate.to('/hrmkit/reporting/dashboard')
     except Exception as e:
@@ -82,11 +108,18 @@ async def send_magic_link(email: str):
         ui.notify('Please enter your email address', color='negative')
         return
     try:
+        print(f"Attempting to send magic link to: {email}")
         response = await generate_magic_link(email)
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.body}")
+        
         if response.status_code == 200:
             ui.notify('Magic link sent! Check your email.', color='positive')
         else:
             ui.notify('Failed to send magic link. Please try again.', color='negative')
     except Exception as e:
+        print(f"Exception in send_magic_link: {e}")
+        import traceback
+        traceback.print_exc()
         ui.notify(f'Error sending magic link: {str(e)}', color='negative')
     return None

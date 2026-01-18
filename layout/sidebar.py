@@ -1,5 +1,5 @@
 from datetime import datetime
-from nicegui import ui
+from nicegui import ui, app, context
 from helperFuns import imagePath, Toggle_Boolean
 from assets import SearchBox
 
@@ -143,6 +143,16 @@ def main_page(links: list[dict]) -> None:
     list_ui()
 
 def Sidebar() -> None:
+    # Check if user is authenticated
+    try:
+        is_authenticated = context.client.storage.user.get('authenticated', False)
+    except:
+        is_authenticated = False
+    
+    # Only show sidebar if authenticated
+    if not is_authenticated:
+        return
+    
     with ui.header(elevated=True).classes('bg-gradient-to-r from-[#7283a7] to-[#2e3951] py-2'):
         SearchBox()
         with ui.row().classes('justify-between items-center w-full'):

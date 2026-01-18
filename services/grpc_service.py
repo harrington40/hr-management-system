@@ -5,7 +5,7 @@ Handles gRPC server and client communication
 """
 
 import logging
-# import grpc
+import grpc
 from concurrent import futures
 from typing import Callable, Dict, Any
 from config.services import config
