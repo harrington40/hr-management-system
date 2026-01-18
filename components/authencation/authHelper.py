@@ -313,7 +313,7 @@ def validate_magic_link(redirect_to: str = '/'):
 
 def create_jwt_token(data: dict):
     try:
-        import jwt
+        import jwt as PyJWT
         payload = {
             "email": data['email'],
             "iat": int(time.time()),
@@ -321,9 +321,10 @@ def create_jwt_token(data: dict):
             "username": data['username']
         }
 
-        token = jwt.encode(payload, JWT_TOKEN_KEY, algorithm="HS256")
+        token = PyJWT.encode(payload, JWT_TOKEN_KEY, algorithm="HS256")
         return token
-    except ImportError:
+    except ImportError as e:
+        print(f"PyJWT import error: {e}")
         # Fallback to simple encoding if jwt library not available
         try:
             date = datetime.fromtimestamp(int(data['timestamp']))
@@ -346,11 +347,12 @@ def create_jwt_token(data: dict):
 
 def decode_jwt_token(token: str):
     try:
-        import jwt
+        import jwt as PyJWT
         # Try PyJWT first
-        data = jwt.decode(token, JWT_TOKEN_KEY, algorithms=["HS256"])
+        data = PyJWT.decode(token, JWT_TOKEN_KEY, algorithms=["HS256"])
         return data if (data and "email" in data) else None
-    except ImportError:
+    except ImportError as e:
+        print(f"PyJWT import error: {e}")
         # Fallback to simple decoding
         try:
             if not token or '.' not in token:

@@ -4,7 +4,7 @@ Handles user authentication, password hashing, and JWT token management
 """
 
 import os
-import jwt
+import jwt as PyJWT
 import bcrypt
 import logging
 from datetime import datetime, timedelta
@@ -44,18 +44,18 @@ class AuthService:
             'exp': datetime.utcnow() + timedelta(hours=self.token_expiry_hours),
             'iat': datetime.utcnow()
         }
-        token = jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
+        token = PyJWT.encode(payload, self.secret_key, algorithm=self.algorithm)
         return token
 
     def verify_token(self, token: str) -> Optional[Dict[str, Any]]:
         """Verify and decode a JWT token"""
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            payload = PyJWT.decode(token, self.secret_key, algorithms=[self.algorithm])
             return payload
-        except jwt.ExpiredSignatureError:
+        except PyJWT.ExpiredSignatureError:
             logger.warning("Token has expired")
             return None
-        except jwt.InvalidTokenError:
+        except PyJWT.InvalidTokenError:
             logger.warning("Invalid token")
             return None
 
