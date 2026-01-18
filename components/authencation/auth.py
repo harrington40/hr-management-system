@@ -47,7 +47,7 @@ def Login_Page():
                 html.span('HR MANAGEMENT Kit').classes('fadeIn-top text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-blue-900')
                 html.span('Seamlessly handle all HR related functions and actionable insights from time and attendance management to employee performance, turnover and relevant data trends for facilitating effective decision-makings, all from one place').classes('fadeIn-bottom w-3/5 text-lg bg-clip-text text-transparent bg-gradient-to-l from-blue-500 to-blue-600 my-2')
                 with html.span(f' © 2011 - {datetime.now().year} Copyright:').classes('flex text-sm font-medium absolute bottom-20 left-6 text-blue-100'):
-                    ui.html('<a href="https://kwarecominc.com/" target="_blank" rel="noreferrer" class="pl-2 text-blue-300"> <strong className="font-semibold"> KWARECOM Inc.</strong></a>', sanitize=False)
+                    ui.html('<a href="https://kwarecominc.com/" target="_blank" rel="noreferrer" class="pl-2 text-blue-300"> <strong className="font-semibold"> KWARECOM Inc.</strong></a>')
 
 async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: str):
     isValid = True

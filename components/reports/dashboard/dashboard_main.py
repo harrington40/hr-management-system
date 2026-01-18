@@ -391,13 +391,13 @@ def create_comprehensive_dashboard(initial_module=None):
         create_dashboard_footer(manager)
     
     if initial_module:
-        ui.notify(f"Loading module: {initial_module}", type='info', sanitize=False)
+        ui.notify(f"Loading module: {initial_module}", type='info')
 
 def create_dashboard_header(manager: HRDashboardManager, user_role: UserRole):
     with ui.row().classes('w-full p-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg'):
         with ui.row().classes('w-full justify-between items-center'):
             with ui.row().classes('items-center gap-4'):
-                ui.html('<div class="text-4xl">🏢</div>', sanitize=False)
+                ui.html('<div class="text-4xl">🏢</div>')
                 with ui.column().classes('gap-1'):
                     ui.label('Enterprise HR Dashboard').classes('text-2xl font-bold')
                     ui.label(f'Welcome, {user_role.value.replace("_", " ").title()}').classes('text-sm opacity-90')
@@ -413,16 +413,16 @@ def create_dashboard_header(manager: HRDashboardManager, user_role: UserRole):
                 ui.button(
                     f'🔧 Hardware ({hardware_online}/{total_hardware})',
                     on_click=lambda: create_hardware_management_modal(manager)
-                ).props('flat color=white', sanitize=False)
+                ).props('flat color=white')
                 
                 alert_count = len(manager.alerts)
                 ui.button(
                     f'🔔 Alerts ({alert_count})',
                     on_click=lambda: create_alerts_modal(manager)
-                ).props('flat color=white', sanitize=False)
+                ).props('flat color=white')
                 
-                ui.button('⚙️ Settings', on_click=lambda: create_settings_modal(manager)).props('flat color=white', sanitize=False)
-                ui.button('👤 Profile', on_click=lambda: ui.notify('Profile settings opened')).props('flat color=white', sanitize=False)
+                ui.button('⚙️ Settings', on_click=lambda: create_settings_modal(manager)).props('flat color=white')
+                ui.button('👤 Profile', on_click=lambda: ui.notify('Profile settings opened')).props('flat color=white')
 
 def create_dashboard_sidebar(manager: HRDashboardManager, user_role: UserRole):
     with ui.card().classes('w-full mb-4'):
@@ -440,9 +440,9 @@ def create_dashboard_sidebar(manager: HRDashboardManager, user_role: UserRole):
             for stat in quick_stats:
                 with ui.row().classes('w-full items-center justify-between py-2 border-b border-gray-100 last:border-0'):
                     with ui.row().classes('items-center gap-2'):
-                        ui.html(f'<span class="text-lg">{stat["icon"]}</span>', sanitize=False)
+                        ui.html(f'<span class="text-lg">{stat["icon"]}</span>')
                         ui.label(stat['label']).classes('text-sm text-gray-600')
-                    ui.label(str(stat['value'])).classes(f'font-semibold text-{stat["color"]}-600', sanitize=False)
+                    ui.label(str(stat['value'])).classes(f'font-semibold text-{stat["color"]}-600')
 
 def create_dashboard_widgets(manager: HRDashboardManager, user_role: UserRole):
     with ui.row().classes('w-full gap-4 mb-6'):
@@ -458,7 +458,7 @@ def create_attendance_overview_widget(manager: HRDashboardManager):
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-2xl">📊</span>', sanitize=False)
+                ui.html('<span class="text-2xl">📊</span>')
                 ui.label('Attendance Overview').classes('text-xl font-semibold text-gray-800')
             
             metrics = manager.current_metrics
@@ -490,7 +490,7 @@ def create_performance_metrics_widget(manager: HRDashboardManager):
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-2xl">🎯</span>', sanitize=False)
+                ui.html('<span class="text-2xl">🎯</span>')
                 ui.label('Performance Metrics').classes('text-xl font-semibold text-gray-800')
             
             metrics = manager.current_metrics
@@ -504,11 +504,11 @@ def create_performance_metrics_widget(manager: HRDashboardManager):
             for metric in performance_metrics:
                 with ui.row().classes('w-full items-center justify-between mb-3'):
                     ui.label(metric["label"]).classes('text-sm text-gray-600')
-                    ui.label(f'{metric["value"]}{metric["unit"]}').classes(f'font-semibold text-{metric["color"]}-600', sanitize=False)
+                    ui.label(f'{metric["value"]}{metric["unit"]}').classes(f'font-semibold text-{metric["color"]}-600')
                 
                 progress = min((metric["value"] / metric["target"]) * 100, 100)
                 bar_color = metric["color"] if progress >= 80 else "red"
-                ui.linear_progress(progress/100).classes(f'w-full h-2 bg-{bar_color}-500', sanitize=False)
+                ui.linear_progress(progress/100).classes(f'w-full h-2 bg-{bar_color}-500')
             
             with ui.card().classes('mt-4 bg-purple-50 border border-purple-200'):
                 with ui.card_section().classes('p-3'):
@@ -521,7 +521,7 @@ def create_leave_requests_widget(manager: HRDashboardManager):
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-xl">📝</span>', sanitize=False)
+                ui.html('<span class="text-xl">📝</span>')
                 ui.label('Leave Requests').classes('text-lg font-semibold text-gray-800')
             
             leave_requests = [
@@ -538,7 +538,7 @@ def create_leave_requests_widget(manager: HRDashboardManager):
                     with ui.column().classes('flex-1'):
                         ui.label(f"{urgent_indicator} {request['employee']}").classes('text-sm font-medium')
                         ui.label(f"{request['type']} - {request['days']} days").classes('text-xs text-gray-500')
-                    ui.label(request['status'].title()).classes(f'px-2 py-1 text-xs rounded bg-{status_color}-100 text-{status_color}-800', sanitize=False)
+                    ui.label(request['status'].title()).classes(f'px-2 py-1 text-xs rounded bg-{status_color}-100 text-{status_color}-800')
             
             ui.button('📋 Manage All Requests', on_click=lambda: ui.notify('Opening leave management...')).classes('w-full mt-3 bg-blue-500 text-white')
 
@@ -546,7 +546,7 @@ def create_hardware_monitoring_widget(manager: HRDashboardManager):
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-xl">🔧</span>', sanitize=False)
+                ui.html('<span class="text-xl">🔧</span>')
                 ui.label('Hardware Monitor').classes('text-lg font-semibold text-gray-800')
             
             online_devices = sum((1 for device in manager.hardware_devices.values() if device.status == 'online'))
@@ -564,7 +564,7 @@ def create_hardware_monitoring_widget(manager: HRDashboardManager):
                     with ui.column().classes('flex-1'):
                         ui.label(device.device_type.title()).classes('text-sm font-medium')
                         ui.label(f"{device.location}{battery_info}").classes('text-xs text-gray-500')
-                    ui.html(f'<span class="text-lg">{status_icon}</span>', sanitize=False)
+                    ui.html(f'<span class="text-lg">{status_icon}</span>')
             
             ui.button('🔧 Hardware Control Panel', on_click=lambda: create_hardware_management_modal(manager)).classes('w-full mt-3 bg-indigo-500 text-white')
 
@@ -572,7 +572,7 @@ def create_real_time_alerts_widget(manager: HRDashboardManager):
     with ui.card().classes('flex-1 hover:shadow-lg transition-shadow'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-xl">🔔</span>', sanitize=False)
+                ui.html('<span class="text-xl">🔔</span>')
                 ui.label('Real-Time Alerts').classes('text-lg font-semibold text-gray-800')
             
             high_alerts = sum((1 for alert in manager.alerts if alert['severity'] == 'high'))
@@ -587,16 +587,16 @@ def create_real_time_alerts_widget(manager: HRDashboardManager):
                     severity_color = 'red' if alert['severity'] == 'high' else 'yellow' if alert['severity'] == 'medium' else 'blue'
                     
                     with ui.row().classes('w-full p-2 border-b border-gray-100 hover:bg-gray-50'):
-                        ui.html(f'<span class="text-lg mr-2">{alert["icon"]}</span>', sanitize=False)
+                        ui.html(f'<span class="text-lg mr-2">{alert["icon"]}</span>')
                         with ui.column().classes('flex-1'):
-                            ui.label(alert["title"]).classes(f'text-sm font-medium text-{severity_color}-800', sanitize=False)
+                            ui.label(alert["title"]).classes(f'text-sm font-medium text-{severity_color}-800')
                             ui.label(alert["message"]).classes('text-xs text-gray-500')
                 
                 ui.button('🔔 View All Alerts', on_click=lambda: create_alerts_modal(manager)).classes('w-full mt-3 bg-red-500 text-white')
             else:
                 with ui.column().classes('text-center py-8 text-gray-500'):
-                    ui.html('<div class="text-4xl mb-2">✅</div>', sanitize=False)
-                    ui.label('All systems normal', sanitize=False)
+                    ui.html('<div class="text-4xl mb-2">✅</div>')
+                    ui.label('All systems normal')
 
 def create_dashboard_footer(manager: HRDashboardManager):
     with ui.row().classes('w-full p-4 bg-gray-100 border-t border-gray-200 mt-6'):
@@ -610,7 +610,7 @@ def create_hardware_management_modal(manager: HRDashboardManager):
     with ui.dialog() as dialog, ui.card().classes('w-full max-w-4xl'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-3xl">🔧</span>', sanitize=False)
+                ui.html('<span class="text-3xl">🔧</span>')
                 ui.label('Hardware Management Console').classes('text-2xl font-bold text-gray-800')
             
             # Modal content - make sure to remove sanitize from any ui.html calls here too
@@ -650,20 +650,20 @@ def create_hardware_management_modal(manager: HRDashboardManager):
                                 
                                 with ui.row().classes('items-center gap-2'):
                                     status_color = 'green' if device.status == 'online' else 'red' if device.status == 'offline' else 'yellow'
-                                    ui.label(device.status.title()).classes(f'px-2 py-1 rounded text-xs bg-{status_color}-100 text-{status_color}-800', sanitize=False)
+                                    ui.label(device.status.title()).classes(f'px-2 py-1 rounded text-xs bg-{status_color}-100 text-{status_color}-800')
                                     
                                     battery_display = f'{device.battery_level}%' if device.battery_level else 'N/A'
                                     ui.label(f'Battery: {battery_display}').classes('text-xs text-gray-600')
                                     
                                     with ui.row().classes('gap-1'):
-                                        ui.button('🔄', on_click=lambda d=device_id: ui.notify(f'Syncing {d}...')).props('dense flat', sanitize=False)
-                                        ui.button('⚙️', on_click=lambda d=device_id: ui.notify(f'Configuring {d}...')).props('dense flat', sanitize=False)
+                                        ui.button('🔄', on_click=lambda d=device_id: ui.notify(f'Syncing {d}...')).props('dense flat')
+                                        ui.button('⚙️', on_click=lambda d=device_id: ui.notify(f'Configuring {d}...')).props('dense flat')
             
             # Action buttons
             with ui.row().classes('w-full gap-4 mt-6'):
-                ui.button('🔄 Sync All Devices', on_click=lambda: ui.notify('Syncing all devices...')).props('color=blue', sanitize=False)
-                ui.button('➕ Add New Device', on_click=lambda: ui.notify('Opening device registration...')).props('color=green', sanitize=False)
-                ui.button('❌ Close', on_click=dialog.close).props('color=gray', sanitize=False)
+                ui.button('🔄 Sync All Devices', on_click=lambda: ui.notify('Syncing all devices...')).props('color=blue')
+                ui.button('➕ Add New Device', on_click=lambda: ui.notify('Opening device registration...')).props('color=green')
+                ui.button('❌ Close', on_click=dialog.close).props('color=gray')
     
     dialog.open()
 
@@ -674,7 +674,7 @@ def create_alerts_modal(manager: HRDashboardManager):
     with ui.dialog() as dialog, ui.card().classes('w-full max-w-3xl'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-3xl">🔔</span>', sanitize=False)
+                ui.html('<span class="text-3xl">🔔</span>')
                 ui.label('Alert Management Center').classes('text-2xl font-bold text-gray-800')
             
             # Modal content without sanitize
@@ -710,21 +710,21 @@ def create_alerts_modal(manager: HRDashboardManager):
                     with ui.card_section().classes('p-4'):
                         with ui.row().classes('w-full items-start justify-between'):
                             with ui.row().classes('items-start gap-3'):
-                                ui.html(f'<span class="text-2xl">{alert["icon"]}</span>', sanitize=False)
+                                ui.html(f'<span class="text-2xl">{alert["icon"]}</span>')
                                 with ui.column().classes('flex-1'):
-                                    ui.label(alert["title"]).classes(f'font-semibold text-{severity_color}-800', sanitize=False)
+                                    ui.label(alert["title"]).classes(f'font-semibold text-{severity_color}-800')
                                     ui.label(alert["message"]).classes('text-sm text-gray-600 mb-2')
                                     ui.label(f'{alert["timestamp"].strftime("%H:%M:%S")} - {alert["type"].title()}').classes('text-xs text-gray-500')
                             
                             with ui.column().classes('gap-2'):
-                                ui.label(alert["severity"].title()).classes(f'px-2 py-1 text-xs rounded bg-{severity_color}-100 text-{severity_color}-800', sanitize=False)
+                                ui.label(alert["severity"].title()).classes(f'px-2 py-1 text-xs rounded bg-{severity_color}-100 text-{severity_color}-800')
                                 if alert['action_required']:
-                                    ui.button('🔧 Take Action', on_click=lambda: ui.notify('Action initiated...')).props('dense', sanitize=False)
+                                    ui.button('🔧 Take Action', on_click=lambda: ui.notify('Action initiated...')).props('dense')
             
             # Action buttons
             with ui.row().classes('w-full gap-4 mt-6'):
-                ui.button('✅ Mark All Read', on_click=lambda: ui.notify('All alerts marked as read')).props('color=green', sanitize=False)
-                ui.button('❌ Close', on_click=dialog.close).props('color=gray', sanitize=False)
+                ui.button('✅ Mark All Read', on_click=lambda: ui.notify('All alerts marked as read')).props('color=green')
+                ui.button('❌ Close', on_click=dialog.close).props('color=gray')
     
     dialog.open()
     
@@ -734,16 +734,16 @@ def create_settings_modal(manager: HRDashboardManager):
     with ui.dialog() as dialog, ui.card().classes('w-full max-w-2xl'):
         with ui.card_section().classes('p-6'):
             with ui.row().classes('items-center gap-2'):
-                ui.html('<span class="text-3xl">⚙️</span>', sanitize=False)
+                ui.html('<span class="text-3xl">⚙️</span>')
                 ui.label('Dashboard Settings').classes('text-2xl font-bold text-gray-800')
             
             # Modal content without sanitize
             # ... (rest of modal implementation)
              # Settings sections
             with ui.tabs().classes('w-full') as tabs:
-                general_tab = ui.tab('General', icon='settings', sanitize=False)
-                widgets_tab = ui.tab('Widgets', icon='dashboard', sanitize=False)
-                hardware_tab = ui.tab('Hardware', icon='build', sanitize=False)
+                general_tab = ui.tab('General', icon='settings')
+                widgets_tab = ui.tab('Widgets', icon='dashboard')
+                hardware_tab = ui.tab('Hardware', icon='build')
             
             with ui.tab_panels(tabs, value=general_tab).classes('w-full'):
                 with ui.tab_panel(general_tab):
@@ -781,8 +781,8 @@ def create_settings_modal(manager: HRDashboardManager):
             
             # Action buttons
             with ui.row().classes('w-full gap-4 mt-6'):
-                ui.button('💾 Save Settings', on_click=lambda: [ui.notify('Settings saved successfully!'), dialog.close()]).props('color=green', sanitize=False)
-                ui.button('❌ Cancel', on_click=dialog.close).props('color=gray', sanitize=False)
+                ui.button('💾 Save Settings', on_click=lambda: [ui.notify('Settings saved successfully!'), dialog.close()]).props('color=green')
+                ui.button('❌ Cancel', on_click=dialog.close).props('color=gray')
     
     dialog.open()
     
