@@ -140,7 +140,7 @@ async def generate_magic_link(user_email: str, base_url: str | None = None) -> J
             # For development, show a notification instead of failing
             ui.notify("⚠️ Email service not configured. Use 'Dev Login' button for testing.", type='warning', timeout=5000)
             # Return a fake success for development
-            return JSONResponse(status_code=200, content={"message": "Email service not configured. Please use Dev Login or configure SMTP settings."})
+            return {"status_code": 200, "message": "Email service not configured. Please use Dev Login or configure SMTP settings."}
         
         # Send email using SMTP with proper connection handling
         server = None
@@ -178,13 +178,13 @@ async def generate_magic_link(user_email: str, base_url: str | None = None) -> J
                 except:
                     pass
         
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        return {"status_code": 200, "message": "email has been sent"}
     except Exception as e:
         print(f"Email sending error: {e}")
         print(f"Error type: {type(e)}")
         import traceback
         traceback.print_exc()
-        return JSONResponse(status_code=500, content={"message": f"Failed to send email: {str(e)}"})
+        return {"status_code": 500, "message": f"Failed to send email: {str(e)}"}
 
     # return f"{base_url}?{query_params}"
 
@@ -313,46 +313,71 @@ def validate_magic_link(redirect_to: str = '/'):
 
 def create_jwt_token(data: dict):
     try:
-        date = datetime.fromtimestamp(int(data['timestamp']))
+        import jwt
         payload = {
             "email": data['email'],
-            "iat": int(date.timestamp()),
-            "exp": int((date + JWT_TOKEN_LIFETIME).timestamp()),
+            "iat": int(time.time()),
+            "exp": int(time.time() + JWT_TOKEN_LIFETIME.total_seconds()),
             "username": data['username']
         }
-    
-        # Use simple JWT encoding for now
-        token = encode_jwt_simple(payload)
+
+        token = jwt.encode(payload, JWT_TOKEN_KEY, algorithm="HS256")
         return token
+    except ImportError:
+        # Fallback to simple encoding if jwt library not available
+        try:
+            date = datetime.fromtimestamp(int(data['timestamp']))
+            payload = {
+                "email": data['email'],
+                "iat": int(date.timestamp()),
+                "exp": int((date + JWT_TOKEN_LIFETIME).timestamp()),
+                "username": data['username']
+            }
+
+            # Use simple JWT encoding for now
+            token = encode_jwt_simple(payload)
+            return token
+        except Exception as e:
+            print(f"JWT encoding error: {e}")
+            return None
     except Exception as e:
         print(f"JWT encoding error: {e}")
         return None
 
 def decode_jwt_token(token: str):
     try:
-        # Simple JWT decode - for production use proper JWT library
-        if not token or '.' not in token:
-            return None
-        
-        parts = token.split('.')
-        if len(parts) < 2:
-            return None
-            
-        # Decode payload (add padding if needed)
-        payload_b64 = parts[1]
-        padding = 4 - len(payload_b64) % 4
-        if padding != 4:
-            payload_b64 += '=' * padding
-            
-        payload_str = base64.urlsafe_b64decode(payload_b64).decode()
-        data = json.loads(payload_str)
-        
-        # Check expiration
-        if 'exp' in data and int(time.time()) > data['exp']:
-            print("JWT token has expired")
-            return None
-            
+        import jwt
+        # Try PyJWT first
+        data = jwt.decode(token, JWT_TOKEN_KEY, algorithms=["HS256"])
         return data if (data and "email" in data) else None
+    except ImportError:
+        # Fallback to simple decoding
+        try:
+            if not token or '.' not in token:
+                return None
+
+            parts = token.split('.')
+            if len(parts) < 2:
+                return None
+
+            # Decode payload (add padding if needed)
+            payload_b64 = parts[1]
+            padding = 4 - len(payload_b64) % 4
+            if padding != 4:
+                payload_b64 += '=' * padding
+
+            payload_str = base64.urlsafe_b64decode(payload_b64).decode()
+            data = json.loads(payload_str)
+
+            # Check expiration
+            if 'exp' in data and int(time.time()) > data['exp']:
+                print("JWT token has expired")
+                return None
+
+            return data if (data and "email" in data) else None
+        except Exception as e:
+            print(f"Simple JWT decode error: {e}")
+            return None
     except Exception as e:
         print(f"JWT token decode error: {e}")
         return None

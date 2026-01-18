@@ -32,11 +32,11 @@ def Login_Page():
                 html.span('Email*').classes('text-sm font-medium pl-1')
                 email = ui.input(placeholder='Enter your email', validation=lambda value: 'Email is required!' if not value else None).props('dense outlined type="email" bg-color="blue-1" input-class="text-sm"').classes('pb-8 w-full') #.on("blur", lambda e: e.sender.validate())
                 html.span('Password*').classes('text-sm font-medium pl-1')
-                password = ui.input(password=True, password_toggle_button=True, placeholder='Enter your password', validation=validate_name).props('dense outlined bg-color="blue-1" input-class="text-sm"').classes('w-full') #.on("blur", lambda e: e.sender.validate())
+                password = ui.input(password=True, password_toggle_button=True, placeholder='Enter your password', validation=validate_password).props('dense outlined bg-color="blue-1" input-class="text-sm"').classes('w-full') #.on("blur", lambda e: e.sender.validate())
                 with ui.row().classes('grid grid-flow-col justify-items-end -mt-4 mb-4 w-full'):
                     ui.label('Forgot').classes('font-medium text-blue-600 hover:text-blue-800 -mr-16')
                     ui.label('Password?').classes('font-semibold text-blue-600 hover:text-blue-800 cursor-pointer -ml-[5rem]')
-                submit_btn = ui.button('Login', on_click=lambda: handleSubmit([email, password], submit_btn, email.value)).props(f'rounded').classes('mt-6 w-full font-bold') #.bind_enabled_from(checker, 'no_errors')
+                submit_btn = ui.button('Login', on_click=lambda: handleSubmit([email, password], submit_btn, email.value, password.value)).props(f'rounded').classes('mt-6 w-full font-bold') #.bind_enabled_from(checker, 'no_errors')
                
                 ui.button('Send Magic Link', on_click=lambda: send_magic_link(email.value)).props('outlined color=purple').classes('mt-2 w-full')
                 ui.button('Dev Login (Testing)', on_click=dev_login).props('outlined color=orange').classes('mt-2 w-full text-xs')
@@ -49,24 +49,41 @@ def Login_Page():
                 with html.span(f' © 2011 - {datetime.now().year} Copyright:').classes('flex text-sm font-medium absolute bottom-20 left-6 text-blue-100'):
                     ui.html('<a href="https://kwarecominc.com/" target="_blank" rel="noreferrer" class="pl-2 text-blue-300"> <strong className="font-semibold"> KWARECOM Inc.</strong></a>')
 
-async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: str):
+async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: str, password: str):
     isValid = True
     subminBtn.props('loading').disable()
     subminBtn.add_slot('loading', r'''
             <q-spinner-facebook /> Please Wait...
         ''')
-    for field in inputField:
-        if not field.validate():
-            isValid = False
-            ui.notify('Please correct the errors in the form!', color='negative')
-            break
+
+    # Validate email
+    if not email or '@' not in email:
+        ui.notify('Please enter a valid email address!', color='negative')
+        isValid = False
+
+    # Validate password
+    if not password or len(password) < 3:
+        ui.notify('Password must be at least 3 characters!', color='negative')
+        isValid = False
+
     if isValid:
         try:
-            await generate_magic_link(email)
-            ui.notify(f'Magic link sent to {email}! Please check your email.', color='positive')
+            # For now, just send magic link if email/password are provided
+            # In production, you'd validate against database here
+            response = await generate_magic_link(email)
+            if response.status_code == 200:
+                ui.notify(f'Magic link sent to {email}! Please check your email.', color='positive')
+            else:
+                ui.notify('Failed to send email. Please try again.', color='negative')
         except Exception as e:
             ui.notify('Failed to send email. Please try again.', color='negative')
-    await asyncio.sleep(5)
+    else:
+        # Re-enable button if validation failed
+        subminBtn.props(remove='loading')
+        subminBtn.enable()
+        return
+
+    await asyncio.sleep(3)
     subminBtn.props(remove='loading')
     subminBtn.enable()
 
@@ -97,7 +114,7 @@ async def dev_login():
     except Exception as e:
         ui.notify(f'Development login failed: {str(e)}', color='negative')
 
-def validate_name(value):
+def validate_password(value):
     if not value:
         return 'Password is required!'
     elif len(value) < 3:
@@ -110,10 +127,12 @@ async def send_magic_link(email: str):
     try:
         print(f"Attempting to send magic link to: {email}")
         response = await generate_magic_link(email)
-        print(f"Response status code: {response.status_code}")
-        print(f"Response content: {response.body}")
-        
-        if response.status_code == 200:
+        print(f"Response: {response}")
+
+        # Check if response indicates success
+        if hasattr(response, 'status_code') and response.status_code == 200:
+            ui.notify('Magic link sent! Check your email.', color='positive')
+        elif isinstance(response, dict) and response.get('status_code') == 200:
             ui.notify('Magic link sent! Check your email.', color='positive')
         else:
             ui.notify('Failed to send magic link. Please try again.', color='negative')
@@ -122,4 +141,3 @@ async def send_magic_link(email: str):
         import traceback
         traceback.print_exc()
         ui.notify(f'Error sending magic link: {str(e)}', color='negative')
-    return None
