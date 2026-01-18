@@ -217,6 +217,38 @@ class RethinkDBService:
         except Exception as e:
             logger.error(f"Error updating system settings: {e}")
             return False
+    
+    # User authentication methods
+    def get_user_by_username_or_email(self, username_or_email: str) -> Optional[Dict[str, Any]]:
+        """Get user by username or email"""
+        try:
+            # First try to find by username
+            result = list(self.r.table('users').filter(
+                lambda user: user['username'].eq(username_or_email)
+            ).run(self.get_connection()))
+            
+            if not result:
+                # Try to find by email
+                result = list(self.r.table('users').filter(
+                    lambda user: user['email'].eq(username_or_email)
+                ).run(self.get_connection()))
+            
+            return result[0] if result else None
+        except Exception as e:
+            logger.error(f"Error getting user by username/email {username_or_email}: {e}")
+            return None
+    
+    def update_user_last_login(self, user_id: str) -> bool:
+        """Update user's last login timestamp"""
+        try:
+            from datetime import datetime
+            result = self.r.table('users').get(user_id).update({
+                'last_login': datetime.now().isoformat()
+            }).run(self.get_connection())
+            return result.get('replaced', 0) > 0
+        except Exception as e:
+            logger.error(f"Error updating last login for user {user_id}: {e}")
+            return False
 
 # Global instance
 rethinkdb_service = RethinkDBService()

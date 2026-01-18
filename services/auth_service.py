@@ -62,15 +62,12 @@ class AuthService:
     def authenticate_user(self, username: str, password: str) -> Tuple[bool, Optional[str], Optional[Dict[str, Any]]]:
         """Authenticate a user with username and password"""
         try:
-            # Query user by username or email
-            query = f"SELECT FROM User WHERE username = '{username}' OR email = '{username}'"
-            result = self.db_service.execute_query(query)
-
-            if not result:
+            # Query user by username or email using RethinkDB
+            user_data = self.db_service.get_user_by_username_or_email(username)
+            
+            if not user_data:
                 logger.warning(f"User not found: {username}")
                 return False, None, None
-
-            user_data = result[0]
 
             # Check if user is active
             if not user_data.get('is_active', True):
@@ -85,8 +82,7 @@ class AuthService:
 
             # Update last login
             user_id = user_data.get('id')
-            update_query = f"UPDATE User SET last_login = '{datetime.now().isoformat()}' WHERE id = '{user_id}'"
-            self.db_service.execute_query(update_query)
+            self.db_service.update_user_last_login(user_id)
 
             # Generate token
             token = self.generate_token(user_data)

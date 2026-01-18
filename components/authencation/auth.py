@@ -68,15 +68,38 @@ async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: 
 
     if isValid:
         try:
-            # For now, just send magic link if email/password are provided
-            # In production, you'd validate against database here
-            response = await generate_magic_link(email)
-            if response.status_code == 200:
-                ui.notify(f'Magic link sent to {email}! Please check your email.', color='positive')
+            # Authenticate user against database
+            from services import get_service_manager
+            service_manager = get_service_manager()
+            auth_service = service_manager.get_service('auth')
+            
+            if auth_service:
+                success, token, user_data = auth_service.authenticate_user(email, password)
+                if success and token:
+                    # Store authentication in context
+                    context.client.storage.user.update({
+                        'token': token, 
+                        'authenticated': True,
+                        'username': user_data.get('username', email.split('@')[0]),
+                        'email': user_data.get('email', email),
+                        'role': user_data.get('role', 'user')
+                    })
+                    
+                    ui.notify('Login successful!', color='positive')
+                    ui.navigate.to('/hrmkit/reporting/dashboard')
+                    return
+                else:
+                    ui.notify('Invalid email or password!', color='negative')
             else:
-                ui.notify('Failed to send email. Please try again.', color='negative')
+                # Fallback to magic link if auth service not available
+                response = await generate_magic_link(email)
+                if response.status_code == 200:
+                    ui.notify(f'Magic link sent to {email}! Please check your email.', color='positive')
+                else:
+                    ui.notify('Failed to send email. Please try again.', color='negative')
         except Exception as e:
-            ui.notify('Failed to send email. Please try again.', color='negative')
+            ui.notify('Login failed. Please try again.', color='negative')
+            print(f"Login error: {e}")
     else:
         # Re-enable button if validation failed
         subminBtn.props(remove='loading')
