@@ -1,0 +1,48 @@
+# HR Policies Configuration
+# Manage organisation-wide HR policies — edit this file to add, update or archive policies.
+
+hr_policies:
+  version: "1.0"
+  last_updated: "2026-03-14"
+
+  policies:
+    - policy_id: "POL001"
+      title: "Code of Conduct"
+      category: "Governance"
+      description: "Defines ethical standards and employee behavior expectations"
+      status: "Active"
+      last_updated: "2025-11-15"
+      version: "3.2"
+
+    - policy_id: "POL002"
+      title: "Leave Policy"
+      category: "Time Off"
+      description: "Annual leave, sick leave, and special leave provisions"
+      status: "Active"
+      last_updated: "2025-10-20"
+      version: "2.1"
+
+    - policy_id: "POL003"
+      title: "Workplace Safety"
+      category: "Safety"
+      description: "Health and safety guidelines for all work environments"
+      status: "Active"
+      last_updated: "2025-09-10"
+      version: "4.0"
+
+    - policy_id: "POL004"
+      title: "Remote Work Policy"
+      category: "Flexibility"
+      description: "Guidelines for remote and hybrid work arrangements"
+      status: "Draft"
+      last_updated: "2025-11-25"
+      version: "1.0"
+      applies_to: "remote_hybrid"   # special tag: affects remote/hybrid employees only
+
+    - policy_id: "POL005"
+      title: "Performance Management"
+      category: "Development"
+      description: "Annual appraisal and performance review process"
+      status: "Active"
+      last_updated: "2025-08-05"
+      version: "2.5"

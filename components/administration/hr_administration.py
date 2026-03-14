@@ -3,11 +3,18 @@ HR Administration Module
 Modern HR administration interface for policies, compliance, and organizational management
 """
 
+import os
+import yaml
 from nicegui import ui
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Dict
 from datetime import datetime, timedelta
+from helperFuns.employee_registry import employee_registry
+
+_CONFIG_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'config')
+_POLICIES_FILE    = os.path.join(_CONFIG_DIR, 'hr_policies.yaml')
+_COMPLIANCE_FILE  = os.path.join(_CONFIG_DIR, 'compliance_items.yaml')
 
 
 class PolicyStatus(Enum):
@@ -55,124 +62,165 @@ class HRAdministrationManager:
     """HR Administration Manager"""
     
     def __init__(self):
+        # Pull live workforce data once so all methods share the same snapshot
+        self._all_employees = employee_registry.get_all()
+        self._total = max(len(self._all_employees), 1)  # avoid div/0
         self.policies = self.load_policies()
         self.compliance_items = self.load_compliance_items()
         self.kpis = self.calculate_kpis()
     
+    # ------------------------------------------------------------------
+    # YAML-backed loaders
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _load_yaml_file(path: str) -> dict:
+        """Read a YAML config file; return empty dict on error."""
+        try:
+            with open(path, 'r') as fh:
+                return yaml.safe_load(fh) or {}
+        except Exception as exc:
+            print(f'[HRAdmin] Warning – could not load {path}: {exc}')
+            return {}
+
+    @staticmethod
+    def _save_yaml_file(path: str, data: dict) -> None:
+        """Persist data back to a YAML config file."""
+        try:
+            with open(path, 'w') as fh:
+                yaml.dump(data, fh, default_flow_style=False, allow_unicode=True)
+        except Exception as exc:
+            print(f'[HRAdmin] Warning – could not save {path}: {exc}')
+
+    # Policy status string → enum
+    _STATUS_MAP = {
+        'active':            PolicyStatus.ACTIVE,
+        'draft':             PolicyStatus.DRAFT,
+        'archived':          PolicyStatus.ARCHIVED,
+        'pending approval':  PolicyStatus.PENDING_APPROVAL,
+        'pending_approval':  PolicyStatus.PENDING_APPROVAL,
+    }
+
     def load_policies(self) -> List[HRPolicy]:
-        """Load HR policies"""
-        return [
-            HRPolicy(
-                policy_id="POL001",
-                title="Code of Conduct",
-                category="Governance",
-                description="Defines ethical standards and employee behavior expectations",
-                status=PolicyStatus.ACTIVE,
-                last_updated="2025-11-15",
-                version="3.2",
-                affected_employees=150
-            ),
-            HRPolicy(
-                policy_id="POL002",
-                title="Leave Policy",
-                category="Time Off",
-                description="Annual leave, sick leave, and special leave provisions",
-                status=PolicyStatus.ACTIVE,
-                last_updated="2025-10-20",
-                version="2.1",
-                affected_employees=150
-            ),
-            HRPolicy(
-                policy_id="POL003",
-                title="Workplace Safety",
-                category="Safety",
-                description="Health and safety guidelines for all work environments",
-                status=PolicyStatus.ACTIVE,
-                last_updated="2025-09-10",
-                version="4.0",
-                affected_employees=150
-            ),
-            HRPolicy(
-                policy_id="POL004",
-                title="Remote Work Policy",
-                category="Flexibility",
-                description="Guidelines for remote and hybrid work arrangements",
-                status=PolicyStatus.DRAFT,
-                last_updated="2025-11-25",
-                version="1.0",
-                affected_employees=85
-            ),
-            HRPolicy(
-                policy_id="POL005",
-                title="Performance Management",
-                category="Development",
-                description="Annual appraisal and performance review process",
-                status=PolicyStatus.ACTIVE,
-                last_updated="2025-08-05",
-                version="2.5",
-                affected_employees=150
-            ),
-        ]
+        """Load HR policies from config/hr_policies.yaml.
+        affected_employees is resolved live from the employee registry.
+        """
+        t = self._total
+        remote_count = sum(1 for e in self._all_employees if e.get('location', '').lower() == 'remote')
+        hybrid_count = max(remote_count, round(t * 0.4))
+
+        raw = self._load_yaml_file(_POLICIES_FILE)
+        rows = raw.get('hr_policies', {}).get('policies', [])
+        policies = []
+        for r in rows:
+            applies_to = r.get('applies_to', 'all')
+            affected = hybrid_count if applies_to == 'remote_hybrid' else t
+            status_key = r.get('status', 'Draft').lower()
+            policies.append(HRPolicy(
+                policy_id=r.get('policy_id', ''),
+                title=r.get('title', ''),
+                category=r.get('category', ''),
+                description=r.get('description', ''),
+                status=self._STATUS_MAP.get(status_key, PolicyStatus.DRAFT),
+                last_updated=r.get('last_updated', ''),
+                version=r.get('version', '1.0'),
+                affected_employees=affected,
+            ))
+        return policies
+
+    def save_policies(self) -> None:
+        """Persist current policies list back to hr_policies.yaml."""
+        rows = []
+        for p in self.policies:
+            rows.append({
+                'policy_id':   p.policy_id,
+                'title':       p.title,
+                'category':    p.category,
+                'description': p.description,
+                'status':      p.status.value,
+                'last_updated': p.last_updated,
+                'version':     p.version,
+            })
+        existing = self._load_yaml_file(_POLICIES_FILE)
+        existing.setdefault('hr_policies', {})['policies'] = rows
+        self._save_yaml_file(_POLICIES_FILE, existing)
     
+    # Compliance status string → enum
+    _COMP_STATUS_MAP = {
+        'compliant':       ComplianceStatus.COMPLIANT,
+        'at risk':         ComplianceStatus.AT_RISK,
+        'at_risk':         ComplianceStatus.AT_RISK,
+        'non-compliant':   ComplianceStatus.NON_COMPLIANT,
+        'non_compliant':   ComplianceStatus.NON_COMPLIANT,
+        'pending review':  ComplianceStatus.PENDING_REVIEW,
+        'pending_review':  ComplianceStatus.PENDING_REVIEW,
+    }
+
     def load_compliance_items(self) -> List[ComplianceItem]:
-        """Load compliance items"""
-        return [
-            ComplianceItem(
-                item_id="COMP001",
-                title="Employee Records Audit",
-                category="Documentation",
-                status=ComplianceStatus.COMPLIANT,
-                due_date="2025-12-31",
-                responsible_person="HR Manager",
-                progress=100
-            ),
-            ComplianceItem(
-                item_id="COMP002",
-                title="Safety Training Certification",
-                category="Training",
-                status=ComplianceStatus.AT_RISK,
-                due_date="2025-12-15",
-                responsible_person="Safety Officer",
-                progress=75
-            ),
-            ComplianceItem(
-                item_id="COMP003",
-                title="Annual Compensation Review",
-                category="Compensation",
-                status=ComplianceStatus.PENDING_REVIEW,
-                due_date="2026-01-15",
-                responsible_person="CFO",
-                progress=40
-            ),
-            ComplianceItem(
-                item_id="COMP004",
-                title="Benefits Enrollment Updates",
-                category="Benefits",
-                status=ComplianceStatus.COMPLIANT,
-                due_date="2025-12-10",
-                responsible_person="Benefits Admin",
-                progress=100
-            ),
-            ComplianceItem(
-                item_id="COMP005",
-                title="Diversity & Inclusion Report",
-                category="Reporting",
-                status=ComplianceStatus.NON_COMPLIANT,
-                due_date="2025-11-30",
-                responsible_person="HR Director",
-                progress=20
-            ),
-        ]
+        """Load compliance checklist from config/compliance_items.yaml."""
+        raw = self._load_yaml_file(_COMPLIANCE_FILE)
+        rows = raw.get('compliance_items', {}).get('items', [])
+        items = []
+        for r in rows:
+            status_key = r.get('status', 'Pending Review').lower()
+            items.append(ComplianceItem(
+                item_id=r.get('item_id', ''),
+                title=r.get('title', ''),
+                category=r.get('category', ''),
+                status=self._COMP_STATUS_MAP.get(status_key, ComplianceStatus.PENDING_REVIEW),
+                due_date=r.get('due_date', ''),
+                responsible_person=r.get('responsible_person', ''),
+                progress=int(r.get('progress', 0)),
+            ))
+        return items
+
+    def save_compliance_items(self) -> None:
+        """Persist current compliance items back to compliance_items.yaml."""
+        rows = []
+        for c in self.compliance_items:
+            rows.append({
+                'item_id':            c.item_id,
+                'title':              c.title,
+                'category':           c.category,
+                'status':             c.status.value,
+                'due_date':           c.due_date,
+                'responsible_person': c.responsible_person,
+                'progress':           c.progress,
+            })
+        existing = self._load_yaml_file(_COMPLIANCE_FILE)
+        existing.setdefault('compliance_items', {})['items'] = rows
+        self._save_yaml_file(_COMPLIANCE_FILE, existing)
     
     def calculate_kpis(self) -> Dict:
-        """Calculate HR KPIs"""
+        """Calculate HR KPIs dynamically from registry data."""
+        t        = self._total
+        ratings  = [e.get('performance_rating', 0) for e in self._all_employees]
+        avg_r    = sum(ratings) / len(ratings) if ratings else 0
+
+        # Compliance rate: employees with benefits fields set
+        compliant = sum(
+            1 for e in self._all_employees
+            if e.get('health_insurance') or e.get('benefits') or e.get('status', '').lower() == 'active'
+        )
+        compliance_rate = round((compliant / t) * 100)
+
+        # Training completion: proportion with a performance_rating recorded (non-zero)
+        trained = sum(1 for e in self._all_employees if e.get('performance_rating', 0) > 0)
+        training_completion = round((trained / t) * 100)
+
+        # Employee satisfaction: scale avg performance rating (0–5 scale) to 0–10
+        satisfaction = round(min(avg_r * 2, 10), 1)
+
+        # Retention rate: 100% minus % of terminated employees
+        terminated = sum(1 for e in self._all_employees if e.get('status', '').lower() == 'terminated')
+        retention_rate = round(((t - terminated) / t) * 100)
+
         return {
-            "total_employees": 150,
+            "total_employees": employee_registry.count(),
             "active_policies": len([p for p in self.policies if p.status == PolicyStatus.ACTIVE]),
-            "compliance_rate": 80,
-            "training_completion": 85,
-            "employee_satisfaction": 7.8,
-            "retention_rate": 92
+            "compliance_rate": compliance_rate,
+            "training_completion": training_completion,
+            "employee_satisfaction": satisfaction,
+            "retention_rate": retention_rate
         }
 
 
