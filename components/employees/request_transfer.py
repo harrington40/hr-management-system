@@ -1,5 +1,6 @@
 from nicegui import ui, app
 from helperFuns import imagePath
+from helperFuns.employee_registry import employee_registry
 from assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, timedelta, date
@@ -76,16 +77,28 @@ class TransferRequestManager:
         }
 
     def get_employee_eligibility(self, employee_id):
-        """Smart algorithm to check employee transfer eligibility"""
-        # This would integrate with employee data system
+        """Smart algorithm to check employee transfer eligibility.
+        Pulls real tenure from registry when available."""
+        emp = employee_registry.get(employee_id)
+        tenure_months = 12  # default
+        if emp and emp.get('hire_date'):
+            try:
+                from datetime import date as _date
+                hd = emp['hire_date'][:10]
+                hire = _date.fromisoformat(hd)
+                delta = _date.today() - hire
+                tenure_months = max(0, delta.days // 30)
+            except Exception:
+                pass
+        performance_score = int(round((emp or {}).get('performance_rating', 3.0) * 20)) if emp else 60
         mock_employee_data = {
-            "tenure_months": 12,
-            "performance_score": 82,
-            "current_position_critical": False,
-            "pending_requests": 0,
-            "last_transfer_date": "2023-05-01",
-            "disciplinary_actions": 0,
-            "skill_compatibility": 75
+            'tenure_months': tenure_months,
+            'performance_score': performance_score,
+            'current_position_critical': False,
+            'pending_requests': 0,
+            'last_transfer_date': '2023-05-01',
+            'disciplinary_actions': 0,
+            'skill_compatibility': 75,
         }
         
         eligibility_score = 0

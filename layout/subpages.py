@@ -180,6 +180,13 @@ def show_assets():
     Sidebar()
     create_asset_inventory_page()
 
+# Reporting - Leaves
+@router.page('/reporting/leaves')
+def show_reporting_leaves():
+    """Display leave requests / leave management page under reporting"""
+    Sidebar()
+    RequestLeave()
+
 
 # Employees - Request Leave
 @router.page('/employees/request-leave')

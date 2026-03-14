@@ -6,6 +6,7 @@ Provides seamless navigation between modern dashboard and traditional menu items
 
 from nicegui import ui
 from helperFuns import build_mount_route
+from helperFuns.employee_registry import employee_registry
 
 
 def _navigate(route: str) -> None:
@@ -161,13 +162,17 @@ def create_integrated_dashboard_menu():
                                              on_click=lambda route=item['route']: _navigate(route)
                                     ).classes('w-full justify-start mb-2 p-3 bg-yellow-50 text-yellow-700 hover:bg-yellow-100')
         
-        # Footer with quick stats
+        # Footer with quick stats — live from registry
+        _f_total  = employee_registry.count()
+        _f_active = employee_registry.count('active')
+        _f_leave  = employee_registry.count('on_leave')
+        _f_remote = sum(1 for e in employee_registry.get_all() if e.get('location', '').lower() == 'remote')
         with ui.row().classes('w-full p-6 bg-gray-100 border-t'):
             with ui.row().classes('w-full justify-center gap-8'):
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-blue-600">63</div><div class="text-sm text-gray-600">Total Employees</div></div>')
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-green-600">49</div><div class="text-sm text-gray-600">Currently Active</div></div>')
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-yellow-600">7</div><div class="text-sm text-gray-600">On Break</div></div>')
-                ui.html('<div class="text-center"><div class="text-2xl font-bold text-purple-600">6</div><div class="text-sm text-gray-600">Remote Workers</div></div>')
+                ui.html(f'<div class="text-center"><div class="text-2xl font-bold text-blue-600">{_f_total}</div><div class="text-sm text-gray-600">Total Employees</div></div>')
+                ui.html(f'<div class="text-center"><div class="text-2xl font-bold text-green-600">{_f_active}</div><div class="text-sm text-gray-600">Currently Active</div></div>')
+                ui.html(f'<div class="text-center"><div class="text-2xl font-bold text-yellow-600">{_f_leave}</div><div class="text-sm text-gray-600">On Leave</div></div>')
+                ui.html(f'<div class="text-center"><div class="text-2xl font-bold text-purple-600">{_f_remote}</div><div class="text-sm text-gray-600">Remote Workers</div></div>')
                 ui.html('<div class="text-center"><div class="text-2xl font-bold text-indigo-600">4/4</div><div class="text-sm text-gray-600">Hardware Online</div></div>')
 
 def create_dashboard_landing_page():
@@ -175,12 +180,22 @@ def create_dashboard_landing_page():
     from datetime import datetime
     now = datetime.now()
 
+    # --- Live counts from the shared registry ---
+    _total   = employee_registry.count()
+    _active  = employee_registry.count('active')
+    _leave   = employee_registry.count('on_leave')
+    _remote  = sum(1 for e in employee_registry.get_all() if e.get('location', '').lower() == 'remote')
+    _present = max(_active, 0)   # active == present for current data model
+    _att_pct = f'{round(_present / _total * 100, 1)}% rate' if _total else '0% rate'
+    _leave_trend = f'{_leave} on leave'
+    _remote_pct  = f'{round(_remote / _total * 100, 1)}% of workforce' if _total else '0% of workforce'
+
     kpi_cards = [
-        {'label': 'Total Employees', 'value': '63',  'icon': 'groups',            'bg': 'bg-blue-600',   'trend': '+2 this month'},
-        {'label': 'Present Today',   'value': '49',  'icon': 'check_circle',      'bg': 'bg-green-600',  'trend': '77.8% rate'},
-        {'label': 'On Leave',        'value': '7',   'icon': 'beach_access',      'bg': 'bg-orange-500', 'trend': '3 pending approval'},
-        {'label': 'Remote Workers',  'value': '6',   'icon': 'home_work',         'bg': 'bg-purple-600', 'trend': '9.5% of workforce'},
-        {'label': 'Open Positions',  'value': '4',   'icon': 'work',              'bg': 'bg-red-600',    'trend': '2 in final round'},
+        {'label': 'Total Employees', 'value': str(_total),   'icon': 'groups',            'bg': 'bg-blue-600',   'trend': 'from registry'},
+        {'label': 'Present Today',   'value': str(_present), 'icon': 'check_circle',      'bg': 'bg-green-600',  'trend': _att_pct},
+        {'label': 'On Leave',        'value': str(_leave),   'icon': 'beach_access',      'bg': 'bg-orange-500', 'trend': _leave_trend},
+        {'label': 'Remote Workers',  'value': str(_remote),  'icon': 'home_work',         'bg': 'bg-purple-600', 'trend': _remote_pct},
+        {'label': 'Open Positions',  'value': '4',           'icon': 'work',              'bg': 'bg-red-600',    'trend': '2 in final round'},
     ]
 
     devices = [

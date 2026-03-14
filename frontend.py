@@ -19,6 +19,9 @@ from fastapi.responses import RedirectResponse
 from nicegui import ui, app, context
 import urllib.parse
 import random
+from datetime import datetime
+
+from helperFuns.employee_registry import employee_registry
 
 
 APP_MOUNT_PATH = get_mount_path()
@@ -394,38 +397,65 @@ def create_modern_hr_dashboard():
     # Smart HR Analytics Engine
     class HRAnalyticsEngine:
         def __init__(self):
-            self.employee_count = 63
-            self.attendance_rate = 89.2
-            self.productivity_score = 92.5
-            self.turnover_rate = 4.2
-            
+            all_emps = employee_registry.get_all()
+            self.employee_count = max(len(all_emps), 1)
+            # Avg performance rating (0-5) → normalise to attendance %
+            ratings = [float(e.get('performance_rating', 3.5)) for e in all_emps]
+            avg_rating = sum(ratings) / self.employee_count if ratings else 3.5
+            # Day-of-week attendance factor
+            dow = datetime.now().weekday()
+            dow_factor = {0: 0.88, 1: 0.93, 2: 0.93, 3: 0.93, 4: 0.86}.get(dow, 0.90)
+            self.attendance_rate = round(
+                min(dow_factor + (avg_rating / 5.0) * 0.08, 0.98) * 100, 1
+            )
+            # Productivity: perf rating 50% + attendance 30% + collab 20%
+            self.productivity_score = round(
+                (avg_rating / 5.0 * 0.5 + (self.attendance_rate / 100) * 0.3 + 0.87 * 0.2) * 100, 1
+            )
+            # Turnover: % employees with rating < 3.5 (at-risk proxy)
+            at_risk = sum(1 for r in ratings if r < 3.5)
+            self.turnover_rate = round(at_risk / self.employee_count * 100, 1)
+            # Dept breakdown for performance chart
+            dept_map: dict = {}
+            for emp in all_emps:
+                dept = emp.get('department', 'General')
+                dept_map.setdefault(dept, []).append(emp)
+            colors = ['green', 'blue', 'purple', 'orange', 'indigo', 'teal', 'red']
+            self.dept_performance = []
+            for i, (dept, emps) in enumerate(sorted(dept_map.items())):
+                dept_ratings = [float(e.get('performance_rating', 3.5)) for e in emps]
+                dept_avg = round(sum(dept_ratings) / len(dept_ratings), 1)
+                dept_pct = round(dept_avg / 5.0 * 100, 1)
+                # Trend: random ±2% for now; future: derived from historical snapshots
+                change_val = round(random.uniform(-2.0, 3.5), 1)
+                change_str = f'+{change_val}%' if change_val >= 0 else f'{change_val}%'
+                self.dept_performance.append({
+                    'name': dept, 'score': dept_pct,
+                    'change': change_str, 'color': colors[i % len(colors)],
+                })
+
         def predict_attendance(self):
-            """AI-powered attendance prediction algorithm"""
-            # Simulate ML prediction based on historical data, weather, time of year
-            base_prediction = self.attendance_rate
-            weather_factor = random.uniform(0.95, 1.05)
-            seasonal_factor = 1.02 if random.random() > 0.5 else 0.98
-            return round(base_prediction * weather_factor * seasonal_factor, 1)
-        
+            """Return predicted attendance % for tomorrow."""
+            weather_factor  = random.uniform(0.97, 1.03)
+            seasonal_factor = 1.01 if random.random() > 0.5 else 0.99
+            return round(self.attendance_rate * weather_factor * seasonal_factor, 1)
+
         def calculate_productivity_trend(self):
-            """Smart productivity trend analysis"""
-            # Analyze productivity patterns using time-series analysis
-            trend = random.choice(['↗️ Improving', '→ Stable', '↗️ Growing'])
+            trend  = random.choice(['\u2197\ufe0f Improving', '\u2192 Stable', '\u2197\ufe0f Growing'])
             change = round(random.uniform(-2.1, 3.8), 1)
             return trend, change
-        
+
         def optimize_leave_scheduling(self):
-            """AI algorithm for optimal leave scheduling"""
-            # Consider team coverage, project deadlines, individual performance
+            employees = employee_registry.get_all()
+            names = [f"{e.get('first_name','')} {e.get('last_name','')}" for e in employees]
             recommendations = [
-                "Schedule John's leave for next month to maintain team coverage",
-                "Consider early approval for Sarah's vacation request",
-                "Optimize leave distribution to avoid coverage gaps"
+                f"Schedule {names[0] if names else 'staff'}'s leave to maintain team coverage",
+                "Consider early approval for pending vacation requests",
+                "Optimize leave distribution to avoid coverage gaps",
             ]
             return random.choice(recommendations)
-        
+
         def detect_anomalies(self):
-            """Anomaly detection for HR metrics"""
             anomalies = []
             if random.random() > 0.7:
                 anomalies.append("Unusual spike in sick leaves this week")
@@ -468,10 +498,10 @@ def create_modern_hr_dashboard():
                     with ui.card().classes('p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-blue-400 hover:border-blue-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html('<div class="text-3xl font-bold mb-1">63</div>')
+                                ui.html(f'<div class="text-3xl font-bold mb-1">{analytics.employee_count}</div>')
                                 ui.html('<div class="text-blue-100 text-sm">Total Employees</div>')
                             ui.html('<div class="text-4xl opacity-80">👥</div>')
-                        ui.html('<div class="mt-4 text-xs text-blue-200">↗️ +2.1% from last month</div>')
+                        ui.html('<div class="mt-4 text-xs text-blue-200">↗️ Registry count (live)</div>')
                     
                     # Attendance Rate
                     attendance_pred = analytics.predict_attendance()
@@ -488,7 +518,7 @@ def create_modern_hr_dashboard():
                     with ui.card().classes('p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-purple-400 hover:border-purple-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html('<div class="text-3xl font-bold mb-1">92.5%</div>')
+                                ui.html(f'<div class="text-3xl font-bold mb-1">{analytics.productivity_score}%</div>')
                                 ui.html('<div class="text-purple-100 text-sm">Productivity</div>')
                             ui.html('<div class="text-4xl opacity-80">📈</div>')
                         ui.html(f'<div class="mt-4 text-xs text-purple-200">{trend_icon} {trend_change}% this week</div>')
@@ -497,10 +527,10 @@ def create_modern_hr_dashboard():
                     with ui.card().classes('p-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-orange-400 hover:border-orange-300'):
                         with ui.row().classes('justify-between items-start'):
                             with ui.column():
-                                ui.html('<div class="text-3xl font-bold mb-1">4.2%</div>')
-                                ui.html('<div class="text-orange-100 text-sm">Turnover Rate</div>')
+                                ui.html(f'<div class="text-3xl font-bold mb-1">{analytics.turnover_rate}%</div>')
+                                ui.html('<div class="text-orange-100 text-sm">At-Risk Rate</div>')
                             ui.html('<div class="text-4xl opacity-80">📉</div>')
-                        ui.html('<div class="mt-4 text-xs text-orange-200">↘️ -0.8% from last quarter</div>')
+                        ui.html('<div class="mt-4 text-xs text-orange-200">Performance rating &lt; 3.5 threshold</div>')
             
             # Charts and Analytics Row
             with ui.element('div').classes('bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100'):
@@ -528,17 +558,10 @@ def create_modern_hr_dashboard():
                     # Department Performance
                     with ui.card().classes('p-6 hover:shadow-xl transition-all duration-300 border-2 border-green-200 hover:border-green-300 bg-gradient-to-br from-green-50 to-emerald-50 h-full flex flex-col'):
                         ui.html('<h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"><span class="text-2xl">🏆</span>Department Performance</h3>')
-                        
-                        departments = [
-                            {'name': 'Engineering', 'score': 95, 'change': '+2.1%', 'color': 'green'},
-                            {'name': 'Marketing', 'score': 88, 'change': '+1.5%', 'color': 'blue'},
-                            {'name': 'Sales', 'score': 92, 'change': '-0.3%', 'color': 'purple'},
-                            {'name': 'HR', 'score': 89, 'change': '+1.8%', 'color': 'orange'},
-                            {'name': 'Finance', 'score': 91, 'change': '+0.9%', 'color': 'indigo'},
-                        ]
+                        ui.html('<p class="text-xs text-gray-500 mb-3">Avg performance rating per department (from registry)</p>')
                         
                         with ui.element('div').classes('space-y-4 flex-1'):
-                            for dept in departments:
+                            for dept in analytics.dept_performance:
                                 with ui.row().classes('items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors'):
                                     with ui.row().classes('items-center gap-3'):
                                         ui.html(f'<div class="w-3 h-3 bg-{dept["color"]}-500 rounded-full"></div>')

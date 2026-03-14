@@ -1,5 +1,5 @@
 from nicegui import ui, app
-from helperFuns import imagePath, emailValidation
+from helperFuns import imagePath, emailValidation, employee_registry
 from assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, date
@@ -14,12 +14,12 @@ from .institution_profile import data_manager as institution_data_manager
 class EmployeeDataManager:
     """
     Sophisticated employee enrollment system with validation algorithms,
-    department integration, and automated employee ID generation
+    department integration, and automated employee ID generation.
+    Uses employee_registry as the single shared data store.
     """
     
     def __init__(self):
-        self.employees = {}  # Store employee data
-        self.next_employee_id = 1001  # Starting employee ID
+        # employees dict is a live view of the shared registry for backward compatibility
         self.departments = [
             "Human Resources", "Information Technology", "Finance", 
             "Marketing", "Operations", "Sales", "Legal", "Administration"
@@ -42,14 +42,16 @@ class EmployeeDataManager:
             "email": r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
             "phone": r'^\+?1?\d{9,15}$',
             "ssn": r'^\d{3}-\d{2}-\d{4}$',
-            "employee_id": r'^EMP\d{4}$'
         }
-    
+
+    @property
+    def employees(self):
+        """Live view of the shared registry keyed by canonical ID."""
+        return {e['employee_id']: e for e in employee_registry.get_all()}
+
     def generate_employee_id(self):
-        """Generate unique employee ID with algorithm"""
-        employee_id = f"EMP{self.next_employee_id}"
-        self.next_employee_id += 1
-        return employee_id
+        """Return next canonical employee ID from shared registry."""
+        return employee_registry.next_id()
     
     def validate_employee_data(self, data):
         """Advanced validation algorithm for employee data"""
@@ -73,14 +75,12 @@ class EmployeeDataManager:
         if data.get("ssn") and not re.match(self.validation_patterns["ssn"], data["ssn"]):
             errors.append("Invalid SSN format (XXX-XX-XXXX)")
         
-        # Date validation
+        # Date validation — allow past dates (transfers, retroactive enrollments)
         if data.get("start_date"):
             try:
-                start_date = datetime.strptime(data["start_date"], "%Y-%m-%d").date()
-                if start_date < date.today():
-                    errors.append("Start date cannot be in the past")
+                datetime.strptime(data["start_date"], "%Y-%m-%d")
             except ValueError:
-                errors.append("Invalid start date format")
+                errors.append("Invalid start date format (YYYY-MM-DD required)")
         
         # Department-Position validation
         if data.get("department") and data.get("position"):
@@ -90,21 +90,23 @@ class EmployeeDataManager:
         return errors
     
     def create_employee_profile(self, data):
-        """Create comprehensive employee profile with institutional integration"""
-        # Validate data first
+        """Create comprehensive employee profile — stores in shared registry."""
         validation_errors = self.validate_employee_data(data)
         if validation_errors:
             return False, validation_errors
         
-        # Generate employee ID
-        employee_id = self.generate_employee_id()
-        
-        # Get institution data for integration
         institution_data = institution_data_manager.get_institution_data()
         
-        # Create comprehensive employee profile
+        # Register in shared employee_registry (canonical source of truth)
+        canon_id = employee_registry.add({
+            **data,
+            'work_location': data.get('work_location', institution_data['contact_info']['headquarters']),
+            'institution_id': institution_data['basic_info']['registration_number'],
+        })
+        
+        # Build the legacy nested-dict format returned to calling UI code
         employee_profile = {
-            "employee_id": employee_id,
+            "employee_id": canon_id,
             "personal_info": {
                 "first_name": data["first_name"],
                 "last_name": data["last_name"],
@@ -134,38 +136,35 @@ class EmployeeDataManager:
             }
         }
         
-        # Store employee data
-        self.employees[employee_id] = employee_profile
-        
-        # Update institution statistics
         self.update_institution_statistics()
-        
         return True, employee_profile
     
     def update_institution_statistics(self):
-        """Update institution employee count automatically"""
-        new_count = len(self.employees)
+        """Update institution employee count from shared registry."""
+        new_count = employee_registry.count()
         institution_data_manager.update_section("statistics", {"total_employees": new_count})
     
     def get_department_positions(self, department):
-        """Get positions for a specific department"""
         return self.positions.get(department, [])
     
     def search_employees(self, query):
-        """Advanced employee search algorithm"""
-        results = []
         query_lower = query.lower()
-        
-        for emp_id, employee in self.employees.items():
-            # Search in multiple fields
-            searchable_text = f"{employee['personal_info']['first_name']} {employee['personal_info']['last_name']} {employee['personal_info']['email']} {employee['employment_info']['department']} {employee['employment_info']['position']} {emp_id}".lower()
-            
-            if query_lower in searchable_text:
-                results.append(employee)
-        
+        results = []
+        for emp in employee_registry.get_all():
+            searchable = f"{emp.get('first_name','')} {emp.get('last_name','')} {emp.get('email','')} {emp.get('department','')} {emp.get('position','')} {emp.get('employee_id','')}".lower()
+            if query_lower in searchable:
+                results.append(emp)
         return results
 
-# Global employee data manager
+    def get_employee_statistics(self):
+        stats = employee_registry.get_statistics()
+        return {
+            "total_employees": stats["total_employees"],
+            "active_employees": stats["active"],
+            "departments": stats["departments"],
+        }
+
+# Global employee data manager — delegates to shared registry
 employee_data_manager = EmployeeDataManager()
 
 def EnrollNewStaff():

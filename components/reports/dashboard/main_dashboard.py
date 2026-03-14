@@ -15,8 +15,8 @@ from enum import Enum
 # import asyncio
 import random
 
-# Import employee data manager for real-time statistics
-from ...administration import employee_data_manager
+# Import shared employee registry for real-time statistics
+from helperFuns.employee_registry import employee_registry
 
 class UserRole(Enum):
     ADMIN = "admin"
@@ -312,22 +312,16 @@ class HRDashboardManager:
         return round(compliance, 1)
     
     def _get_employee_statistics(self) -> Dict[str, int]:
-        """Get real-time employee statistics from HR algorithms"""
+        """Get real-time employee statistics from shared registry"""
         try:
-            # Get actual employee count from the employee data manager
-            total_employees = len(employee_data_manager.employees)
-            
-            # Calculate present employees (assuming 85-95% attendance rate)
+            total_employees = max(employee_registry.count(), 1)
             attendance_rate = random.uniform(0.85, 0.95)
             present_today = int(total_employees * attendance_rate)
-            
-            # Calculate other metrics based on total employees
             absent_today = total_employees - present_today
-            on_leave = random.randint(max(0, total_employees // 20), max(1, total_employees // 10))  # 5-10% on leave
-            remote_workers = random.randint(max(0, total_employees // 8), max(1, total_employees // 5))  # 12-20% remote
-            
+            on_leave = random.randint(max(0, total_employees // 20), max(1, total_employees // 10))
+            remote_workers = random.randint(max(0, total_employees // 8), max(1, total_employees // 5))
             return {
-                'total_employees': max(total_employees, 1),  # Ensure at least 1 employee
+                'total_employees': total_employees,
                 'present_today': present_today,
                 'absent_today': absent_today,
                 'on_leave': on_leave,

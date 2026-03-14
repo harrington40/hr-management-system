@@ -9,6 +9,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Dict, Any, Optional
 import random
+from helperFuns.employee_registry import employee_registry
 
 # Enums for employee status
 class EmployeeStatus(Enum):
@@ -36,61 +37,73 @@ class Employee:
     location: str = "On-site"
 
 class EmployeeManager:
-    """Manages employee data and operations"""
+    """Manages employee data from the shared registry."""
     
     def __init__(self):
-        self.employees: Dict[str, Employee] = {}
-        self.load_employees()
-    
-    def load_employees(self):
-        """Load sample employees"""
-        departments = ['Engineering', 'Sales', 'HR', 'Finance', 'Operations']
-        positions = {
-            'Engineering': ['Senior Developer', 'Developer', 'DevOps Engineer'],
-            'Sales': ['Sales Manager', 'Sales Executive', 'Account Manager'],
-            'HR': ['HR Manager', 'Recruiter', 'HR Analyst'],
-            'Finance': ['CFO', 'Accountant', 'Financial Analyst'],
-            'Operations': ['Operations Manager', 'Coordinator', 'Analyst']
-        }
-        employment_types = ['Full-time', 'Part-time', 'Contract', 'Intern']
-        
+        pass
+
+    def get_employees(self) -> List[Employee]:
+        """Load all employees from shared registry, return as Employee dataclass list."""
+        result = []
+        for rec in employee_registry.get_all():
+            # Map status string to enum (tolerate unknown values)
+            raw_status = (rec.get('status') or 'active').lower()
+            try:
+                status = EmployeeStatus(raw_status)
+            except ValueError:
+                status = EmployeeStatus.ACTIVE
+
+            salary = rec.get('salary')
+            sal_str = f"${int(salary):,}" if salary else rec.get('salary_grade', 'N/A')
+
+            result.append(Employee(
+                id=rec['employee_id'],
+                first_name=rec.get('first_name', ''),
+                last_name=rec.get('last_name', ''),
+                email=rec.get('email', ''),
+                department=rec.get('department', ''),
+                position=rec.get('position', ''),
+                employment_type=rec.get('employment_type', 'full_time'),
+                status=status,
+                hire_date=rec.get('hire_date', ''),
+                salary_range=sal_str,
+                direct_manager=rec.get('manager_id', ''),
+                phone=rec.get('phone', ''),
+                location=rec.get('location', 'On-site'),
+            ))
+        # Fall back to sample data only when registry is empty (first-run / no YAML)
+        if not result:
+            result = self._sample_employees()
+        return result
+
+    def _sample_employees(self) -> List[Employee]:
         employees_data = [
             ('Alice Johnson', 'Engineering', 'Senior Developer'),
             ('Bob Smith', 'Sales', 'Sales Manager'),
-            ('Carol White', 'HR', 'HR Manager'),
+            ('Carol White', 'Human Resources', 'HR Manager'),
             ('David Brown', 'Finance', 'Accountant'),
             ('Emma Davis', 'Operations', 'Operations Manager'),
-            ('Frank Miller', 'Engineering', 'Developer'),
-            ('Grace Lee', 'Sales', 'Sales Executive'),
-            ('Henry Wilson', 'Engineering', 'DevOps Engineer'),
-            ('Iris Anderson', 'Finance', 'Financial Analyst'),
-            ('Jack Taylor', 'Operations', 'Coordinator'),
         ]
-        
+        out = []
         for idx, (name, dept, pos) in enumerate(employees_data):
             first, last = name.split()
-            emp_id = f"EMP{1000 + idx}"
-            email = f"{first.lower()}.{last.lower()}@company.com"
-            
-            self.employees[emp_id] = Employee(
+            emp_id = f"EMP{1001 + idx:06d}"
+            out.append(Employee(
                 id=emp_id,
                 first_name=first,
                 last_name=last,
-                email=email,
+                email=f"{first.lower()}.{last.lower()}@company.com",
                 department=dept,
                 position=pos,
-                employment_type=random.choice(employment_types),
-                status=random.choice(list(EmployeeStatus)),
-                hire_date=f"2021-{random.randint(1,12):02d}-{random.randint(1,28):02d}",
-                salary_range=f"${random.randint(50, 150)}K - ${random.randint(150, 200)}K",
-                direct_manager="John Doe" if idx > 0 else "CEO",
-                phone=f"+1-555-{random.randint(1000, 9999)}",
-                location=random.choice(['On-site', 'Remote', 'Hybrid'])
-            )
-    
-    def get_employees(self):
-        """Get all employees"""
-        return list(self.employees.values())
+                employment_type='Full-time',
+                status=EmployeeStatus.ACTIVE,
+                hire_date='2022-01-01',
+                salary_range='$60K - $90K',
+                direct_manager='John Doe' if idx > 0 else 'CEO',
+                phone=f'+1-555-{1000+idx}',
+                location='On-site',
+            ))
+        return out
 
 
 def create_modern_employee_interface():
@@ -119,7 +132,7 @@ def create_modern_employee_interface():
                         ui.label('Manage team members, track performance, and organize company structure').classes('text-gray-600 text-lg')
                     
                     with ui.row().classes('gap-3'):
-                        ui.button('Add Employee', icon='person_add').props('color=green')
+                        ui.button('Add Employee', icon='person_add').props('color=green').on_click(lambda: show_add_employee())
                         ui.button('Import', icon='upload').props('flat')
                         ui.button('Export', icon='download').props('flat')
         
@@ -296,22 +309,141 @@ def create_modern_employee_interface():
                 with ui.card().classes('w-full'):
                     with ui.card_section().classes('p-6'):
                         ui.label(f'Edit {emp.first_name} {emp.last_name}').classes('text-xl font-bold')
-                        
+
                         with ui.column().classes('gap-4 w-96'):
-                            ui.input(label='First Name', value=emp.first_name)
-                            ui.input(label='Last Name', value=emp.last_name)
-                            ui.input(label='Email', value=emp.email)
-                            ui.select(label='Department', value=emp.department, 
-                                    options=['Engineering', 'Sales', 'HR', 'Finance', 'Operations'])
-                            ui.input(label='Position', value=emp.position)
-                            ui.input(label='Phone', value=emp.phone)
-                            
+                            fn_in    = ui.input(label='First Name', value=emp.first_name)
+                            ln_in    = ui.input(label='Last Name',  value=emp.last_name)
+                            email_in = ui.input(label='Email',      value=emp.email)
+                            dept_in  = ui.select(
+                                label='Department', value=emp.department,
+                                options=['Engineering', 'Sales', 'HR', 'Finance', 'Operations', 'IT', 'Marketing']
+                            )
+                            pos_in   = ui.input(label='Position',   value=emp.position)
+                            phone_in = ui.input(label='Phone',      value=emp.phone)
+
+                            def save_edit():
+                                updates = {
+                                    'first_name': (fn_in.value or '').strip(),
+                                    'last_name':  (ln_in.value or '').strip(),
+                                    'email':      (email_in.value or '').strip(),
+                                    'department': dept_in.value,
+                                    'position':   (pos_in.value or '').strip(),
+                                    'phone':      (phone_in.value or '').strip(),
+                                }
+                                employee_registry.update(emp.id, updates)
+                                employee_registry.save_yaml()
+                                dialog.close()
+                                ui.notify(
+                                    f"✅ {fn_in.value} {ln_in.value} updated successfully",
+                                    type='positive'
+                                )
+                                ui.navigate.reload()
+
                             with ui.row().classes('w-full gap-2 justify-end'):
                                 ui.button('Cancel').on_click(dialog.close).props('flat')
-                                ui.button('Save', icon='save').props('color=blue')
-            
+                                ui.button('Save', icon='save').props('color=blue').on_click(save_edit)
+
             dialog.open()
-        
+
+        def show_add_employee():
+            """Dialog to add a new employee — defined as inner function for NiceGUI context."""
+            with ui.dialog() as dialog:
+                with ui.card().classes('w-full max-w-2xl'):
+                    with ui.card_section().classes('p-6'):
+                        ui.label('➕ Add New Employee').classes('text-2xl font-bold text-blue-800 mb-2')
+                        preview_id = employee_registry.next_id()
+                        ui.label(f'New Employee ID: {preview_id}').classes(
+                            'text-sm text-gray-500 font-mono bg-gray-50 px-3 py-1 rounded border mb-3 block'
+                        )
+
+                        with ui.column().classes('gap-3 w-full'):
+                            with ui.row().classes('w-full gap-3'):
+                                f_name  = ui.input(label='First Name *').classes('flex-1')
+                                l_name  = ui.input(label='Last Name *').classes('flex-1')
+
+                            email_in  = ui.input(label='Email *', placeholder='user@company.com').classes('w-full')
+                            phone_in  = ui.input(label='Phone', placeholder='+1-555-0000').classes('w-full')
+
+                            with ui.row().classes('w-full gap-3'):
+                                dept_in = ui.select(
+                                    label='Department *', value='Engineering',
+                                    options=['Engineering', 'Sales', 'HR', 'Finance', 'Operations', 'IT', 'Marketing']
+                                ).classes('flex-1')
+                                emp_type = ui.select(
+                                    label='Employment Type', value='full_time',
+                                    options=[
+                                        {'label': 'Full Time',  'value': 'full_time'},
+                                        {'label': 'Part Time',  'value': 'part_time'},
+                                        {'label': 'Contract',   'value': 'contract'},
+                                        {'label': 'Intern',     'value': 'intern'},
+                                    ]
+                                ).classes('flex-1')
+
+                            position_in = ui.input(label='Position / Job Title *').classes('w-full')
+
+                            with ui.row().classes('w-full gap-3'):
+                                hire_date_in = ui.input(
+                                    label='Hire Date',
+                                    value=datetime.now().strftime('%Y-%m-%d'),
+                                    placeholder='YYYY-MM-DD'
+                                ).classes('flex-1')
+                                status_in = ui.select(
+                                    label='Status', value='active',
+                                    options=[
+                                        {'label': 'Active',  'value': 'active'},
+                                        {'label': 'Pending', 'value': 'pending'},
+                                    ]
+                                ).classes('flex-1')
+
+                            with ui.row().classes('w-full gap-3'):
+                                location_in = ui.select(
+                                    label='Work Location', value='On-site',
+                                    options=['On-site', 'Remote', 'Hybrid']
+                                ).classes('flex-1')
+                                salary_in = ui.number(label='Salary (optional)', placeholder='e.g. 75000').classes('flex-1')
+
+                            manager_in = ui.input(label='Direct Manager (optional)').classes('w-full')
+
+                        def save_employee():
+                            data = {
+                                'first_name':      (f_name.value or '').strip(),
+                                'last_name':       (l_name.value or '').strip(),
+                                'email':           (email_in.value or '').strip(),
+                                'phone':           (phone_in.value or '').strip(),
+                                'department':      dept_in.value or 'Engineering',
+                                'position':        (position_in.value or '').strip(),
+                                'employment_type': emp_type.value or 'full_time',
+                                'hire_date':       hire_date_in.value or datetime.now().strftime('%Y-%m-%d'),
+                                'status':          status_in.value or 'active',
+                                'work_location':   location_in.value or 'On-site',
+                                'salary':          float(salary_in.value) if salary_in.value else None,
+                                'manager_id':      (manager_in.value or '').strip(),
+                            }
+                            if not data['first_name'] or not data['last_name']:
+                                ui.notify('First and last name are required.', type='warning')
+                                return
+                            if not data['email']:
+                                ui.notify('Email is required.', type='warning')
+                                return
+                            if not data['position']:
+                                ui.notify('Position / Job title is required.', type='warning')
+                                return
+
+                            new_id = employee_registry.add(data)
+                            employee_registry.save_yaml()
+                            dialog.close()
+                            ui.notify(
+                                f"✅ {data['first_name']} {data['last_name']} added (ID: {new_id})",
+                                type='positive'
+                            )
+                            ui.navigate.reload()
+
+                        with ui.row().classes('w-full gap-2 justify-end pt-4'):
+                            ui.button('Cancel', icon='close').props('flat').on_click(dialog.close)
+                            ui.button('Save Employee', icon='save').props('color=green').on_click(save_employee)
+
+            dialog.open()
+
         # Footer
         with ui.card().classes('w-full bg-white shadow-lg'):
             with ui.card_section().classes('p-4 text-center'):

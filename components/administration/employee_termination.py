@@ -1,5 +1,6 @@
 from nicegui import ui, app
 from helperFuns import imagePath
+from helperFuns.employee_registry import employee_registry
 from assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, timedelta, date
@@ -73,43 +74,9 @@ class TerminationManager:
             }
         }
         
-        # Mock employee data with security classifications
-        self.employees = [
-            {
-                "id": "EMP-001",
-                "name": "John Smith",
-                "department": "Information Technology",
-                "position": "Senior Developer",
-                "security_clearance": "High",
-                "start_date": "2020-03-15",
-                "direct_reports": 2,
-                "access_level": "Administrative",
-                "critical_projects": ["Banking System", "Security Framework"]
-            },
-            {
-                "id": "EMP-002",
-                "name": "Sarah Johnson",
-                "department": "Human Resources",
-                "position": "HR Manager",
-                "security_clearance": "High",
-                "start_date": "2019-01-10",
-                "direct_reports": 5,
-                "access_level": "Administrative",
-                "critical_projects": ["Employee Management System"]
-            },
-            {
-                "id": "EMP-003",
-                "name": "Mike Davis",
-                "department": "Finance",
-                "position": "Accountant",
-                "security_clearance": "Medium",
-                "start_date": "2021-06-20",
-                "direct_reports": 0,
-                "access_level": "Standard",
-                "critical_projects": []
-            }
-        ]
-        
+        # Employee list loaded live from shared registry
+        self._employee_overrides = {}  # termination-specific fields
+
         # Existing termination records
         self.termination_records = [
             {
@@ -147,17 +114,17 @@ class TerminationManager:
                 "created_date": "2024-09-20"
             }
         ]
-        
+
         # Security audit configuration
         self.security_settings = {
             "require_dual_authorization": True,
-            "audit_trail_retention_days": 2555,  # 7 years
+            "audit_trail_retention_days": 2555,
             "immediate_access_revocation_types": ["Dismissal for Cause"],
             "sensitive_data_handling": True,
             "mandatory_security_review": ["High", "Administrative"],
             "encryption_required": True
         }
-        
+
         # Approval workflow based on security level
         self.approval_workflows = {
             "Low": [
@@ -177,6 +144,33 @@ class TerminationManager:
                 {"stage": "Executive Approval", "timeout_days": 1}
             ]
         }
+
+    @property
+    def employees(self):
+        """Live employee list from shared registry in the format this module expects."""
+        result = []
+        for rec in employee_registry.get_all(status='active'):
+            emp_id = rec['employee_id']
+            overrides = self._employee_overrides.get(emp_id, {})
+            result.append({
+                'id': emp_id,
+                'name': f"{rec.get('first_name','')} {rec.get('last_name','')}".strip(),
+                'department': rec.get('department', ''),
+                'position': rec.get('position', ''),
+                'security_clearance': overrides.get('security_clearance', 'Standard'),
+                'start_date': rec.get('hire_date', ''),
+                'direct_reports': overrides.get('direct_reports', 0),
+                'access_level': overrides.get('access_level', 'Standard'),
+                'critical_projects': overrides.get('critical_projects', []),
+            })
+        if not result:
+            result = [
+                {'id': 'EMP000001', 'name': 'John Smith', 'department': 'Information Technology',
+                 'position': 'Senior Developer', 'security_clearance': 'High',
+                 'start_date': '2020-03-15', 'direct_reports': 0,
+                 'access_level': 'Standard', 'critical_projects': []},
+            ]
+        return result
 
     def calculate_security_score(self, termination_data):
         """Advanced security scoring algorithm"""

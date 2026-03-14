@@ -8,6 +8,7 @@ import uuid
 
 # Import employee data manager for real-time statistics
 from .enroll_staff import employee_data_manager
+from helperFuns.employee_registry import employee_registry
 
 # Advanced Department Management System with HR Time Management Algorithms
 class DepartmentDataManager:
@@ -19,123 +20,75 @@ class DepartmentDataManager:
     def __init__(self):
         # Connect with institution data for consistency
         self.institution_id = "KWARECOM-001"
-        
-        self.departments_data = {
-            "departments": [
-                {
-                    "id": "DEPT-001",
-                    "name": "Human Resources",
-                    "code": "HR",
-                    "description": "Manages employee relations, recruitment, and compliance",
-                    "head_employee_id": "EMP-001",
-                    "head_name": "Sarah Johnson",
-                    "location": "Building A, Floor 2",
-                    "budget": 250000,
-                    "employee_count": 8,
-                    "established_date": "2011-02-01",
-                    "status": "Active",
-                    "department_type": "Core",
-                    "cost_center": "CC-HR-001",
-                    "working_hours": {
-                        "start": "08:00",
-                        "end": "17:00",
-                        "break_duration": 60,
-                        "flexible_hours": True
-                    },
-                    "performance_metrics": {
-                        "efficiency_score": 92,
-                        "employee_satisfaction": 88,
-                        "turnover_rate": 5.2,
-                        "productivity_index": 94
-                    }
+
+        # Department metadata: budget, head, location, type, performance baselines, hours
+        _meta = {
+            "Human Resources":        dict(code="HR",  budget=250000, head="Sarah Johnson",   location="Building A, Floor 2", dept_type="Core",    efficiency=92, satisfaction=88, turnover=5.2,  productivity=94, start="08:00", end="17:00", break_m=60, flex=True),
+            "Information Technology": dict(code="IT",  budget=450000, head="Michael Chen",    location="Building B, Floor 3", dept_type="Core",    efficiency=96, satisfaction=91, turnover=8.1,  productivity=98, start="09:00", end="18:00", break_m=60, flex=True),
+            "Finance":                dict(code="FIN", budget=180000, head="Emily Rodriguez", location="Building A, Floor 4", dept_type="Core",    efficiency=89, satisfaction=85, turnover=3.4,  productivity=91, start="08:30", end="17:30", break_m=45, flex=False),
+            "Marketing":              dict(code="MKT", budget=320000, head="David Thompson",  location="Building C, Floor 1", dept_type="Revenue", efficiency=87, satisfaction=82, turnover=12.3, productivity=86, start="08:00", end="17:00", break_m=60, flex=True),
+            "Operations":             dict(code="OPS", budget=210000, head="Patricia Brown",  location="Building D, Floor 1", dept_type="Core",    efficiency=90, satisfaction=84, turnover=6.8,  productivity=88, start="07:30", end="16:30", break_m=60, flex=False),
+            "Sales":                  dict(code="SLS", budget=380000, head="James Wilson",    location="Building C, Floor 2", dept_type="Revenue", efficiency=84, satisfaction=79, turnover=14.5, productivity=83, start="08:00", end="17:00", break_m=60, flex=True),
+            "Legal":                  dict(code="LGL", budget=150000, head="Amanda Foster",   location="Building A, Floor 3", dept_type="Support", efficiency=93, satisfaction=90, turnover=2.1,  productivity=95, start="08:30", end="17:30", break_m=60, flex=True),
+            "Administration":         dict(code="ADM", budget=130000, head="Robert Taylor",   location="Building A, Floor 1", dept_type="Support", efficiency=88, satisfaction=86, turnover=4.5,  productivity=87, start="08:00", end="17:00", break_m=60, flex=False),
+        }
+
+        # Build real employee counts per department from registry
+        emp_counts: dict = {}
+        for e in employee_registry.get_all():
+            d = e.get('department', '')
+            if d:
+                emp_counts[d] = emp_counts.get(d, 0) + 1
+
+        departments_list = []
+        for i, dept_name in enumerate(employee_data_manager.departments, start=1):
+            m = _meta.get(dept_name, {})
+            code = m.get('code', dept_name[:3].upper())
+            budget = m.get('budget', 100000)
+            # Real registry count — 0 for empty departments is valid
+            emp_count = emp_counts.get(dept_name, 0)
+            departments_list.append({
+                "id": f"DEPT-{i:03d}",
+                "name": dept_name,
+                "code": code,
+                "description": f"Manages {dept_name.lower()} operations and related functions",
+                "head_employee_id": f"EMP-{i:03d}",
+                "head_name": m.get('head', 'TBD'),
+                "location": m.get('location', f'Building A, Floor {i}'),
+                "budget": budget,
+                "employee_count": emp_count,
+                "established_date": "2020-01-15",
+                "status": "Active",
+                "department_type": m.get('dept_type', 'Core'),
+                "cost_center": f"CC-{code}-001",
+                "working_hours": {
+                    "start": m.get('start', '08:00'),
+                    "end": m.get('end', '17:00'),
+                    "break_duration": m.get('break_m', 60),
+                    "flexible_hours": m.get('flex', True)
                 },
-                {
-                    "id": "DEPT-002", 
-                    "name": "Information Technology",
-                    "code": "IT",
-                    "description": "Manages technology infrastructure and software development",
-                    "head_employee_id": "EMP-002",
-                    "head_name": "Michael Chen",
-                    "location": "Building B, Floor 3",
-                    "budget": 450000,
-                    "employee_count": 24,
-                    "established_date": "2011-03-15",
-                    "status": "Active",
-                    "department_type": "Core",
-                    "cost_center": "CC-IT-001",
-                    "working_hours": {
-                        "start": "09:00",
-                        "end": "18:00",
-                        "break_duration": 60,
-                        "flexible_hours": True
-                    },
-                    "performance_metrics": {
-                        "efficiency_score": 96,
-                        "employee_satisfaction": 91,
-                        "turnover_rate": 8.1,
-                        "productivity_index": 98
-                    }
-                },
-                {
-                    "id": "DEPT-003",
-                    "name": "Finance & Accounting",
-                    "code": "FIN",
-                    "description": "Handles financial planning, accounting, and budget management",
-                    "head_employee_id": "EMP-003",
-                    "head_name": "Emily Rodriguez",
-                    "location": "Building A, Floor 4",
-                    "budget": 180000,
-                    "employee_count": 12,
-                    "established_date": "2011-01-20",
-                    "status": "Active",
-                    "department_type": "Core",
-                    "cost_center": "CC-FIN-001",
-                    "working_hours": {
-                        "start": "08:30",
-                        "end": "17:30",
-                        "break_duration": 45,
-                        "flexible_hours": False
-                    },
-                    "performance_metrics": {
-                        "efficiency_score": 89,
-                        "employee_satisfaction": 85,
-                        "turnover_rate": 3.4,
-                        "productivity_index": 91
-                    }
-                },
-                {
-                    "id": "DEPT-004",
-                    "name": "Marketing & Sales",
-                    "code": "MKT",
-                    "description": "Drives business growth through marketing and sales initiatives",
-                    "head_employee_id": "EMP-004",
-                    "head_name": "David Thompson",
-                    "location": "Building C, Floor 1",
-                    "budget": 320000,
-                    "employee_count": 18,
-                    "established_date": "2011-04-10",
-                    "status": "Active",
-                    "department_type": "Revenue",
-                    "cost_center": "CC-MKT-001",
-                    "working_hours": {
-                        "start": "08:00",
-                        "end": "17:00",
-                        "break_duration": 60,
-                        "flexible_hours": True
-                    },
-                    "performance_metrics": {
-                        "efficiency_score": 87,
-                        "employee_satisfaction": 82,
-                        "turnover_rate": 12.3,
-                        "productivity_index": 86
-                    }
+                "performance_metrics": {
+                    "efficiency_score": m.get('efficiency', 85),
+                    "employee_satisfaction": m.get('satisfaction', 80),
+                    "turnover_rate": m.get('turnover', 5.0),
+                    "productivity_index": m.get('productivity', 85)
                 }
-            ],
+            })
+
+        total_budget = sum(d['budget'] for d in departments_list)
+        # Use registry as the single source of truth for total employees
+        total_emps = employee_registry.count()
+        avg_eff = round(
+            sum(d['performance_metrics']['efficiency_score'] for d in departments_list) / len(departments_list), 1
+        ) if departments_list else 0
+
+        self.departments_data = {
+            "departments": departments_list,
             "statistics": {
-                "total_departments": len(employee_data_manager.departments),
-                "total_employees": len(employee_data_manager.employees),
-                "total_budget": 1200000,
-                "average_efficiency": 91,
+                "total_departments": len(departments_list),
+                "total_employees": total_emps,
+                "total_budget": total_budget,
+                "average_efficiency": avg_eff,
                 "last_updated": datetime.now().isoformat()
             }
         }
@@ -174,12 +127,15 @@ class DepartmentDataManager:
 
     def calculate_department_metrics(self, department):
         """Advanced HR time management metrics calculation algorithm"""
+        total_budget = self.departments_data["statistics"]["total_budget"] or 1
+        total_employees = self.departments_data["statistics"]["total_employees"] or 1
+        emp_count = max(department["employee_count"], 1)
         return {
-            "cost_per_employee": round(department["budget"] / department["employee_count"], 2),
+            "cost_per_employee": round(department["budget"] / emp_count, 2),
             "efficiency_rating": self.get_efficiency_rating(department["performance_metrics"]["efficiency_score"]),
             "turnover_status": self.get_turnover_status(department["performance_metrics"]["turnover_rate"]),
-            "budget_utilization": round((department["budget"] / 1200000) * 100, 1),  # Total budget from institution
-            "workforce_distribution": round((department["employee_count"] / 62) * 100, 1),  # Total employees
+            "budget_utilization": round((department["budget"] / total_budget) * 100, 1),
+            "workforce_distribution": round((emp_count / total_employees) * 100, 1),
             "working_hours_per_week": self.calculate_weekly_hours(department["working_hours"]),
             "overtime_projection": self.calculate_overtime_projection(department),
             "productivity_trend": self.get_productivity_trend(department["performance_metrics"]["productivity_index"])

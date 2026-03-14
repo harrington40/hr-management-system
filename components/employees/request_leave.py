@@ -1,5 +1,6 @@
 from nicegui import ui, app
 from helperFuns import imagePath
+from helperFuns.employee_registry import employee_registry
 from assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, timedelta, date
@@ -73,19 +74,34 @@ class LeaveRequestManager:
             }
         }
         
-        # Employee leave balances (mock data)
-        self.employee_balances = {
-            "EMP-123": {
-                "Annual Leave": {"used": 8, "remaining": 17, "pending": 3},
-                "Sick Leave": {"used": 2, "remaining": 10, "pending": 0},
-                "Personal Leave": {"used": 1, "remaining": 4, "pending": 0},
-                "Maternity Leave": {"used": 0, "remaining": 90, "pending": 0},
-                "Paternity Leave": {"used": 0, "remaining": 14, "pending": 0},
-                "Study Leave": {"used": 3, "remaining": 7, "pending": 0}
+        # Employee leave balances — keyed by canonical ID, pre-seeded from registry
+        # New employees start with full allocations; requests reduce them at runtime.
+        self.employee_balances = self._build_balances()
+        self._init_runtime_data()
+
+    def _build_balances(self):
+        """Build default leave balances for every employee in the registry."""
+        balances = {}
+        for emp in employee_registry.get_all():
+            eid = emp['employee_id']
+            balances[eid] = {
+                lt: {
+                    'used': 0,
+                    'remaining': cfg['allocation_per_year'],
+                    'pending': 0,
+                }
+                for lt, cfg in self.leave_types.items()
             }
-        }
-        
-        # Existing leave requests
+        # Keep any legacy hard-coded entries for backward compat
+        if not balances:
+            balances['EMP000123'] = {
+                lt: {'used': 0, 'remaining': cfg['allocation_per_year'], 'pending': 0}
+                for lt, cfg in self.leave_types.items()
+            }
+        return balances
+
+    def _init_runtime_data(self):
+        """Initialise runtime leave requests and config — called from __init__."""
         self.leave_requests = [
             {
                 "id": "LR-001",

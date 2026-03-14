@@ -1,5 +1,6 @@
 from nicegui import ui, app
 from helperFuns import imagePath
+from helperFuns.employee_registry import employee_registry
 from assets import FlipCards, SearchBox
 import asyncio
 from datetime import datetime, timedelta, date
@@ -64,43 +65,9 @@ class ProbationManager:
             }
         }
         
-        # Mock employee data for probation
-        self.employees = [
-            {
-                "id": "EMP-101",
-                "name": "Alice Johnson",
-                "department": "Marketing",
-                "position": "Marketing Specialist",
-                "start_date": "2024-08-01",
-                "manager_id": "MGR-001",
-                "manager_name": "David Thompson",
-                "security_clearance": "Standard",
-                "is_new_hire": True
-            },
-            {
-                "id": "EMP-102", 
-                "name": "Robert Chen",
-                "department": "Information Technology",
-                "position": "Junior Developer",
-                "start_date": "2024-07-15",
-                "manager_id": "MGR-002",
-                "manager_name": "Michael Chen",
-                "security_clearance": "Standard",
-                "is_new_hire": True
-            },
-            {
-                "id": "EMP-103",
-                "name": "Maria Garcia",
-                "department": "Human Resources",
-                "position": "HR Assistant",
-                "start_date": "2024-06-01",
-                "manager_id": "MGR-003",
-                "manager_name": "Sarah Johnson",
-                "security_clearance": "Standard",
-                "is_new_hire": False
-            }
-        ]
-        
+        # Employee list loaded live from shared registry
+        self._employee_overrides = {}  # probation-specific fields e.g. security_clearance
+
         # Existing probation records
         self.probation_records = [
             {
@@ -193,6 +160,32 @@ class ProbationManager:
                 "manager_rating_weight": 10
             }
         }
+
+    @property
+    def employees(self):
+        """Live employee list from shared registry in the format this module expects."""
+        result = []
+        for rec in employee_registry.get_all():
+            emp_id = rec['employee_id']
+            overrides = self._employee_overrides.get(emp_id, {})
+            result.append({
+                'id': emp_id,
+                'name': f"{rec.get('first_name','')} {rec.get('last_name','')}".strip(),
+                'department': rec.get('department', ''),
+                'position': rec.get('position', ''),
+                'start_date': rec.get('hire_date', ''),
+                'manager_id': rec.get('manager_id', ''),
+                'manager_name': overrides.get('manager_name', ''),
+                'security_clearance': overrides.get('security_clearance', 'Standard'),
+                'is_new_hire': overrides.get('is_new_hire', False),
+            })
+        if not result:
+            result = [
+                {'id': 'EMP000101', 'name': 'Alice Johnson', 'department': 'Marketing',
+                 'position': 'Marketing Specialist', 'start_date': '2024-08-01',
+                 'manager_id': '', 'manager_name': '', 'security_clearance': 'Standard', 'is_new_hire': True},
+            ]
+        return result
 
     def calculate_probation_score(self, probation_data, performance_reviews=None):
         """Advanced algorithm to calculate overall probation performance score"""

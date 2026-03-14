@@ -132,7 +132,7 @@ def set_active_item(item_name):
 @ui.refreshable
 def navigation_menu():
   for navItem, navList in linkData.items():
-    with ui.expansion(navItem.capitalize(), group='navitems', icon=images[navItem]).classes('w-full -mt-4 text-gray-200 text-[16px]').props('expand-icon-class="text-gray-200"') as expansion:
+    with ui.expansion(navItem.capitalize(), group='navitems', icon=images[navItem]).classes('w-full -mt-2 text-teal-200 text-[13px] tracking-wide').props('expand-icon-class="text-teal-400" dense') as expansion:
       selected_item = next((item for item in linkData[navItem] if item["id"] == active_item), None)
       if selected_item:
         expansion.set_value(True)
@@ -141,9 +141,9 @@ def navigation_menu():
 def main_page(links: list[dict]) -> None:
     @ui.refreshable
     def list_ui():
-      with ui.list().props(f'separator').classes('w-full mx-2 border-l-4 border-slate-300 pl-3'):
+      with ui.list().props(f'separator').classes('w-full mx-2 border-l-2 border-teal-500/40 pl-2'):
         for item in links:
-          ui.item(item['label'], on_click=lambda i=item: {select_item(i), ui.navigate.to(i['route'])}).classes('hover:font-bold').props(f':active="{item['id'] == active_item}" active-class="text-white font-bold bg-red-400"')
+          ui.item(item['label'], on_click=lambda i=item: {select_item(i), ui.navigate.to(i['route'])}).classes('text-gray-300 text-[12px] hover:text-teal-300 hover:font-semibold py-1').props(f':active="{item["id"] == active_item}" active-class="text-white font-semibold bg-gradient-to-r from-[#0d9488] to-[#059669] rounded"')
            
     def select_item(selected_item):
       global active_item
@@ -163,7 +163,7 @@ def Sidebar() -> None:
     storage['_sidebar_rendered_path'] = str(current_path)
   print('[Sidebar] render invoked')
 
-  with ui.header(elevated=True).classes('bg-gradient-to-r from-[#7283a7] to-[#2e3951] py-2'):
+  with ui.header(elevated=True).classes('bg-gradient-to-r from-[#0d1117] via-[#111827] to-[#0d1117] py-2'):
         SearchBox()
         with ui.row().classes('justify-between items-center w-full'):
              with ui.element('div').classes('searchWrapper') as div:
@@ -199,15 +199,16 @@ def Sidebar() -> None:
                 with ui.column().classes('items-start pr-5'):
                     ui.label('Yarkpawolo Kulobo').classes('text-white font-bold text-lg -mb-5')
                     ui.label('KWARECOM Developer').classes('text-stone-200 text-sm')
-  with ui.left_drawer(top_corner=True, bottom_corner=True, elevated=True).classes('mx-0 bg-gradient-to-b from-[#1c2a48] to-[#31497D] p-0') as drawer:
-    # Fixed persistent branding header — no collapse/mini toggle
-    with ui.row().classes('items-center gap-3 w-full px-4 py-4 bg-gradient-to-r from-[#465f9c] to-[#7283a7]'):
-      ui.label('🚀').classes('text-3xl leading-none')
+  with ui.left_drawer(top_corner=True, bottom_corner=True, elevated=True).props('width=220').classes('mx-0 p-0') as drawer:
+    # Obsidian + Teal-Emerald — modern HR palette
+    with ui.row().classes('items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-[#0d9488] to-[#059669]'):
+      ui.icon('people_alt').classes('text-white text-2xl')
       with ui.column().classes('gap-0'):
-        ui.label('HRMS').classes('text-white font-bold text-xl leading-tight')
-        ui.label('Management System').classes('text-gray-300 text-xs leading-tight')
-    navigation_menu()
-  with ui.footer().style('background-color: #3874c8'):
+        ui.label('HRMS').classes('text-white font-bold text-base leading-tight')
+        ui.label('Management System').classes('text-teal-100 text-[10px] leading-tight tracking-widest uppercase')
+    with ui.element('div').style('background: linear-gradient(180deg, #0d1117 0%, #111827 100%); flex: 1; overflow-y: auto;'):
+        navigation_menu()
+  with ui.footer().style('background-color: #0d1117; border-top: 1px solid #0d948840'):
         label = ui.label()
         ui.timer(1.0, lambda: label.set_text(f'Active Session: {datetime.now():%X}'))
 
