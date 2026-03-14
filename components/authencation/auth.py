@@ -1,20 +1,20 @@
 import asyncio
 import time
-from nicegui import ui, html, app, context
+import urllib.parse
 from datetime import datetime
 
-from helperFuns import imagePath
+from nicegui import ui, html, app, context
+
+from helperFuns import imagePath, build_mount_route
+from helperFuns.auth_storage import set_auth_data, is_authenticated
 from assets import RemoveOverPadding, SildeFromTop, SlideFromBottom, Wave_AnimationCSS, ZoomIn
 from .authHelper import create_dev_auth_token, generate_magic_link
 
 def Login_Page():
     # Check if user is already authenticated, redirect to dashboard
-    try:
-        if context.client.storage.user.get('authenticated', False):
-            ui.navigate.to('/hrmkit/reporting/dashboard')
-            return
-    except:
-        pass
+    if is_authenticated():
+        ui.navigate.to(build_mount_route('/reporting/dashboard'))
+        return
     
     ZoomIn()
     RemoveOverPadding()
@@ -74,11 +74,14 @@ async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: 
             auth_service = service_manager.get_service('auth')
             
             if auth_service:
-                success, token, user_data = auth_service.authenticate_user(email, password)
+                import asyncio as _asyncio
+                success, token, user_data = await _asyncio.get_event_loop().run_in_executor(
+                    None, auth_service.authenticate_user, email, password
+                )
                 if success and token:
                     # Store authentication in context
-                    context.client.storage.user.update({
-                        'token': token, 
+                    set_auth_data({
+                        'token': token,
                         'authenticated': True,
                         'username': user_data.get('username', email.split('@')[0]),
                         'email': user_data.get('email', email),
@@ -86,7 +89,12 @@ async def handleSubmit(inputField: list[ui.input], subminBtn: ui.button, email: 
                     })
                     
                     ui.notify('Login successful!', color='positive')
-                    ui.navigate.to('/hrmkit/reporting/dashboard')
+                    redirect_url = (
+                        f"{build_mount_route('/reporting/dashboard')}?"
+                        f"jwt_token={urllib.parse.quote(token)}&"
+                        f"email={urllib.parse.quote(user_data.get('email', email))}"
+                    )
+                    ui.navigate.to(redirect_url)
                     return
                 else:
                     ui.notify('Invalid email or password!', color='negative')
@@ -125,15 +133,20 @@ async def dev_login():
         token = create_jwt_token(user_data)
         
         # Store authentication in context
-        context.client.storage.user.update({
-            'token': token, 
+        set_auth_data({
+            'token': token,
             'authenticated': True,
             'username': user_data['username'],
             'email': user_data['email']
         })
         
         ui.notify('Development login successful!', color='positive')
-        ui.navigate.to('/hrmkit/reporting/dashboard')
+        redirect_url = (
+            f"{build_mount_route('/reporting/dashboard')}?"
+            f"jwt_token={urllib.parse.quote(token)}&"
+            f"email={urllib.parse.quote(user_data['email'])}"
+        )
+        ui.navigate.to(redirect_url)
     except Exception as e:
         ui.notify(f'Development login failed: {str(e)}', color='negative')
 

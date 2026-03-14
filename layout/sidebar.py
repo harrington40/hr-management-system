@@ -1,11 +1,17 @@
 from datetime import datetime
 from nicegui import ui, app, context
-from helperFuns import imagePath, Toggle_Boolean
+from helperFuns import imagePath, Toggle_Boolean, get_mount_path, build_mount_route
+from helperFuns.auth_storage import is_authenticated as auth_is_authenticated
 from assets import SearchBox
 
 drawerState = Toggle_Boolean()
 active_Expansion_label = 'reporting'
 active_item = -1
+APP_MOUNT_PATH = get_mount_path()
+
+
+def route(path: str) -> str:
+  return build_mount_route(path, base=APP_MOUNT_PATH)
 
 def toggle(drawer: ui.left_drawer):
     if 'mini' in drawer._props:
@@ -21,6 +27,7 @@ images = {
     "attendance": 'fingerprint',
     # "document": imagePath('icons/document.png'),
     "reporting": 'addchart',
+    "ai": 'psychology',
     "map": 'map',
 }
 linkData = {
@@ -28,87 +35,90 @@ linkData = {
     {
       "id": 1,
       "label": 'Institution Profile',
-      "route": '/hrmkit/administration/institution'
+      "route": route('/administration/institution')
     },
     {
       "id": 2,
-      "label": 'Enroll Departments',
-      "route": '/hrmkit/administration/departments'
+      "label": 'Departmental Sections',
+      "route": route('/administration/departments')
     },
-    { "id": 3, "label": 'Enroll New Staff', "route": '/hrmkit/administration/employee/enroll-staff'},
+    { "id": 3, "label": 'Enroll New Staff', "route": route('/administration/employee/enroll-staff')},
     {
       "id": 4,
       "label": 'Probation',
-      "route": '/hrmkit/administration/probation',
+      "route": route('/administration/probation'),
     },
     {
       "id": 5,
       "label": 'Termination',
-      "route": '/hrmkit/administration/termination'
+      "route": route('/administration/termination')
     },
     {
       "id": 6,
       "label": 'View Leave Requests',
-      "route": '/hrmkit/administration/leave/requests'
+      "route": route('/administration/leave/requests')
     },
     {
       "id": 7,
       "label": 'View Transfer Requests',
-      "route": '/hrmkit/administration/transfer/requests'
+      "route": route('/administration/transfer/requests')
     }
   ],
   "employees": [
     {
       "id": 8,
       "label": 'Request Transfer',
-      "route": '/hrmkit/employees/request-transfer'
+      "route": route('/employees/request-transfer')
     },
     {
       "id": 9,
       "label": 'Request Leave',
-      "route": '/hrmkit/employees/request-leave'
+      "route": route('/employees/request-leave')
     }
   ],
   "attendance": [
-    { "id": 10, "label": 'Attendance Rules', "route": '/hrmkit/attendance/attendance-rules'},
+    { "id": 10, "label": 'Attendance Rules', "route": route('/attendance/attendance-rules')},
     {
         "id": 11,
       "label": 'Leave Rules',
-      "route": '/hrmkit/attendance/leave/rules'
+      "route": route('/attendance/leave/rules')
     },
-    { "id": 12, "label": 'Shift Timetable', "route": '/hrmkit/attendance/timetable'},
+    { "id": 12, "label": 'Shift Timetable', "route": route('/attendance/timetable')},
     {
       "id": 13,
       "label": 'Set Holidays',
-      "route": '/hrmkit/attendance/holidays'
+      "route": route('/attendance/holidays')
     },
     {
       "id": 14,
       "label": 'Staff Schedule',
-      "route": '/hrmkit/attendance/employee/schedule'
+      "route": route('/attendance/employee/schedule')
     },
     {
       "id": 15,
       "label": 'On Duty Status',
-      "route": '/hrmkit/attendance/staff/on_duty_status'
+      "route": route('/attendance/staff/on_duty_status')
     }
   ],
   "reporting": [
-    { "id": 16, "label": 'Dashboard', "route": '/hrmkit/reporting/dashboard-landing'},
-    { "id": 17, "label": 'Analytics', "route": '/hrmkit/reporting/modern-dashboard'},
-    { "id": 18, "label": 'Stats Analysis', "route": '/hrmkit/reporting/dashboard'},
-    { "id": 19, "label": 'Menu View', "route": '/hrmkit/reporting/menu-integration'},
-    { "id": 20, "label": 'Employees', "route": '/hrmkit/reporting/employees'},
-    { "id": 21, "label": 'Timesheet', "route": '/hrmkit/reporting/employees/timesheet'},
+    { "id": 16, "label": 'Dashboard', "route": route('/reporting/dashboard-landing')},
+    { "id": 17, "label": 'Analytics', "route": route('/reporting/modern-dashboard')},
+    { "id": 18, "label": 'Stats Analysis', "route": route('/reporting/dashboard')},
+    { "id": 19, "label": 'Menu View', "route": route('/reporting/menu-integration')},
+    { "id": 20, "label": 'Employees', "route": route('/reporting/employees')},
+    { "id": 21, "label": 'Timesheet', "route": route('/reporting/employees/timesheet')},
     {
       "id": 22,
       "label": 'Administration',
-      "route": '/hrmkit/reporting/administration',
+      "route": route('/reporting/administration'),
       "active": False
     },
-    { "id": 23, "label": 'Departments', "route": '/hrmkit/reporting/departments'},
-    { "id": 24, "label": 'Leaves', "route": '/hrmkit/reporting/leaves'},
-    { "id": 25, "label": 'Asset Inventory', "route": '/hrmkit/reporting/assets'}
+    { "id": 23, "label": 'Departments', "route": route('/reporting/departments')},
+    { "id": 24, "label": 'Leaves', "route": route('/reporting/leaves')},
+    { "id": 25, "label": 'Asset Inventory', "route": route('/reporting/assets')}
+  ],
+  "ai": [
+    { "id": 27, "label": 'AI Orchestrator', "route": route('/ai/orchestrator')},
   ],
   # "map": [{ "id": 26, "label": 'View Interactive Map', "route": '/app/map'}],
 }
@@ -143,17 +153,17 @@ def main_page(links: list[dict]) -> None:
     list_ui()
 
 def Sidebar() -> None:
-    # Check if user is authenticated
-    try:
-        is_authenticated = context.client.storage.user.get('authenticated', False)
-    except:
-        is_authenticated = False
-    
-    # Only show sidebar if authenticated
-    if not is_authenticated:
-        return
-    
-    with ui.header(elevated=True).classes('bg-gradient-to-r from-[#7283a7] to-[#2e3951] py-2'):
+  client = getattr(context, 'client', None)
+  storage = getattr(client, 'storage', None) if client else None
+  request = getattr(client, 'request', None) if client else None
+  current_path = getattr(request, 'url', None)
+  if storage is not None and current_path is not None:
+    if storage.get('_sidebar_rendered_path') == str(current_path):
+      return
+    storage['_sidebar_rendered_path'] = str(current_path)
+  print('[Sidebar] render invoked')
+
+  with ui.header(elevated=True).classes('bg-gradient-to-r from-[#7283a7] to-[#2e3951] py-2'):
         SearchBox()
         with ui.row().classes('justify-between items-center w-full'):
              with ui.element('div').classes('searchWrapper') as div:
@@ -189,15 +199,15 @@ def Sidebar() -> None:
                 with ui.column().classes('items-start pr-5'):
                     ui.label('Yarkpawolo Kulobo').classes('text-white font-bold text-lg -mb-5')
                     ui.label('KWARECOM Developer').classes('text-stone-200 text-sm')
-    with ui.left_drawer(top_corner=True, bottom_corner=True, elevated=True, ).classes('mx-0 bg-gradient-to-b from-[#1c2a48] to-[#31497D] p-0') as drawer:
-        with ui.row().classes('flex justify-between items-center bg-gradient-to-r from-[#465f9c] to-[#7283a7] w-full px-[0.35rem] py-[0.40rem]').bind_visibility_from(drawerState, 'visible'):
-            with ui.avatar(color='white', size='xl'):
-                ui.image(f'{imagePath('logo.png')}')
-            ui.button(on_click=lambda: toggle(drawer)).props('icon=menu flat color=white size="xl" padding="xs" dense round unelevated')
-        with ui.column().classes('flex justify-between items-center bg-gradient-to-r from-[#465f9c] to-[#7283a7] w-full p-[0.35rem]').bind_visibility_from(drawerState, 'is_visible'):
-            ui.button(on_click=lambda: toggle(drawer)).props('icon=clear flat color=white size="xl" padding="none" dense round unelevated')
-        navigation_menu()
-    with ui.footer().style('background-color: #3874c8'):
+  with ui.left_drawer(top_corner=True, bottom_corner=True, elevated=True).classes('mx-0 bg-gradient-to-b from-[#1c2a48] to-[#31497D] p-0') as drawer:
+    # Fixed persistent branding header — no collapse/mini toggle
+    with ui.row().classes('items-center gap-3 w-full px-4 py-4 bg-gradient-to-r from-[#465f9c] to-[#7283a7]'):
+      ui.label('🚀').classes('text-3xl leading-none')
+      with ui.column().classes('gap-0'):
+        ui.label('HRMS').classes('text-white font-bold text-xl leading-tight')
+        ui.label('Management System').classes('text-gray-300 text-xs leading-tight')
+    navigation_menu()
+  with ui.footer().style('background-color: #3874c8'):
         label = ui.label()
         ui.timer(1.0, lambda: label.set_text(f'Active Session: {datetime.now():%X}'))
 

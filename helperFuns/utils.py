@@ -62,6 +62,32 @@ def validate_password(password):
 def readEnv(key: str) -> str:
    return os.getenv(key)
 
+
+def _normalize_mount_path(raw: str | None, default: str = '/hrmkit') -> str:
+    mount = (raw or '').strip() or default
+    if not mount.startswith('/'):
+        mount = f'/{mount}'
+    if mount != '/' and mount.endswith('/'):
+        mount = mount.rstrip('/')
+    return mount or '/'
+
+
+def get_mount_path(default: str = '/hrmkit') -> str:
+    """Return the configured APP_MOUNT_PATH with a leading slash and no trailing slash."""
+    return _normalize_mount_path(readEnv('APP_MOUNT_PATH'), default)
+
+
+def build_mount_route(sub_path: str = '', base: str | None = None, default: str = '/hrmkit') -> str:
+    """Combine the mount path with a sub-path, respecting root mounts."""
+    mount = _normalize_mount_path(base, default) if base is not None else get_mount_path(default)
+    if not sub_path or sub_path == '/':
+        return mount
+    if not sub_path.startswith('/'):
+        sub_path = f'/{sub_path}'
+    if mount == '/':
+        return sub_path
+    return f'{mount}{sub_path}'
+
 @contextmanager
 def disable_enable_button(button: ui.button):
     button.disable()

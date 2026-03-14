@@ -7,9 +7,12 @@ import logging
 from starlette.middleware.sessions import SessionMiddleware
 import secrets
 
+import urllib.parse
+
 # Import service manager
 from services import get_service_manager
 from components import validate_magic_link_server, create_jwt_token
+from helperFuns import readEnv, get_mount_path, build_mount_route
     
 
 # from sqlmodel import select
@@ -21,6 +24,13 @@ from components import validate_magic_link_server, create_jwt_token
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+APP_MOUNT_PATH = get_mount_path()
+
+
+def mount_route(sub_path: str = '') -> str:
+    return build_mount_route(sub_path, base=APP_MOUNT_PATH)
+
 
 app = FastAPI()  # Remove lifespan for debugging
 
@@ -67,7 +77,7 @@ else:
 
 @app.get('/')
 def read_root():
-    return {"message": "Welcome to HRMkit! Visit /hrmkit for the application."}
+    return {"message": f"Welcome to HRMkit! Visit {APP_MOUNT_PATH} for the application."}
 
 @app.get('/health')
 def health_check():
@@ -89,24 +99,42 @@ def auth_endpoint(email: str, timestamp: str, token: str):
     """Handle magic link authentication"""
     # Validate the magic link
     is_valid, message = validate_magic_link_server(email, timestamp, token)
-    
+
     if not is_valid:
-        # Redirect to login page with error
-        return RedirectResponse(url=f"http://127.0.0.1:8000/hrmkit/?error={message}", status_code=302)
-    
+        return RedirectResponse(url=f"{mount_route()}?error={message}", status_code=302)
+
     # Generate JWT token for the user
     user_data = {
-        "email": email, 
+        "email": email,
         "username": email.split('@')[0],
         "timestamp": timestamp
     }
     jwt_token = create_jwt_token(user_data)
-    
+
     if jwt_token is None:
-        return RedirectResponse(url=f"http://127.0.0.1:8000/hrmkit/?error=Failed%20to%20generate%20token", status_code=302)
-    
-    # Redirect to dashboard with JWT token
-    return RedirectResponse(url=f"http://127.0.0.1:8000/hrmkit/reporting/dashboard?jwt_token={jwt_token}&username={email.split('@')[0]}", status_code=302)
+        return RedirectResponse(url=f"{mount_route()}?error=Failed%20to%20generate%20token", status_code=302)
+
+    # Relative redirect so this works on any host (local or production)
+    return RedirectResponse(
+        url=f"{mount_route('/reporting/dashboard')}?jwt_token={jwt_token}&username={email.split('@')[0]}",
+        status_code=302
+    )
+
+@app.get(mount_route('/auth'))
+def hrmkit_auth_endpoint(email: str = '', timestamp: str = '', token: str = ''):
+    """FastAPI HTTP handler for magic link auth — no WebSocket/NiceGUI context needed."""
+    if not email or not timestamp or not token:
+        return RedirectResponse(url=f"{mount_route()}?error=Missing+parameters", status_code=302)
+
+    is_valid, result = validate_magic_link_server(email, timestamp, token)
+    if not is_valid:
+        return RedirectResponse(url=f"{mount_route()}?error={urllib.parse.quote(str(result))}", status_code=302)
+
+    # result is the JWT token; pass it via URL so dashboard can consume it in a timer
+    return RedirectResponse(
+        url=f"{mount_route('/reporting/dashboard')}?jwt_token={urllib.parse.quote(result)}&email={urllib.parse.quote(email)}",
+        status_code=302
+    )
 
 init(app)
 

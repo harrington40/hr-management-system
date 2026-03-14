@@ -16,7 +16,8 @@ import hashlib
 import time
 # import base64
 from urllib.parse import urlencode, urlparse, parse_qs
-from helperFuns import readEnv
+from helperFuns import readEnv, build_mount_route
+from helperFuns.auth_storage import set_auth_data, get_auth_value, clear_auth_data, is_authenticated
 # import jwt as PyJWT
 # from jwt import JWT as PyJWT, jwk_from_bytes
 
@@ -91,10 +92,10 @@ async def generate_magic_link(user_email: str, base_url: str | None = None) -> J
         
         # Derive base URL if not provided (prefer env var, then sensible default)
         if not base_url:
-            origin = readEnv('APP_ORIGIN') or 'http://localhost:8081'
-            # Ensure no trailing slash
+            origin = readEnv('APP_ORIGIN') or 'http://127.0.0.1:8000'
+            # Ensure no trailing slash and align with configured mount path
             origin = origin.rstrip('/')
-            base_url = f"{origin}/auth"
+            base_url = f"{origin}{build_mount_route('/auth')}"
 
         timestamp = int(time.time())  # Current time in seconds
         data = f"{user_email}{timestamp}{SECRET_KEY}"
@@ -128,8 +129,12 @@ async def generate_magic_link(user_email: str, base_url: str | None = None) -> J
         # Create email using built-in libraries
         msg = MIMEMultipart('alternative')
         msg['Subject'] = "ACCOUNT SIGNIN - HRMkit"
-        msg['From'] = SMTP_CONFIG['username']
+        msg['From'] = f"KWARECOM Inc. - HRMkit <{SMTP_CONFIG['username']}>"
         msg['To'] = user_email
+        msg['Date'] = time.strftime('%a, %d %b %Y %H:%M:%S %z', time.gmtime())
+        msg['Message-ID'] = f"<{int(time.time())}@{SMTP_CONFIG['server']}>"
+        msg['X-Mailer'] = "HRMkit Authentication System"
+        msg['List-Unsubscribe'] = f"<mailto:{SMTP_CONFIG['username']}>"
         
         # Create HTML part
         html_part = MIMEText(html_body, 'html')
@@ -142,42 +147,45 @@ async def generate_magic_link(user_email: str, base_url: str | None = None) -> J
             # Return a fake success for development
             return {"status_code": 200, "message": "Email service not configured. Please use Dev Login or configure SMTP settings."}
         
-        # Send email using SMTP with proper connection handling
-        server = None
-        try:
-            # Try STARTTLS on port 587 first
+        # Send email in a thread so the async event loop is never blocked
+        import asyncio
+        import socket
+
+        def _send_blocking():
+            server = None
             try:
                 print(f"Attempting SMTP connection to {SMTP_CONFIG['server']}:587 with STARTTLS...")
-                server = smtplib.SMTP()
-                server.set_debuglevel(1)  # Enable debug output
+                server = smtplib.SMTP(timeout=10)
                 server.connect(SMTP_CONFIG['server'], 587)
                 server.ehlo()
-                server.starttls()
+                server.starttls(server_hostname=SMTP_CONFIG['server'])
                 server.ehlo()
                 server.login(SMTP_CONFIG['username'], SMTP_CONFIG['password'])
                 server.send_message(msg)
                 print("Email sent successfully via STARTTLS")
+                return True
             except Exception as e1:
                 print(f"STARTTLS failed: {e1}, trying SSL on port 465...")
                 if server:
-                    try:
-                        server.quit()
-                    except:
-                        pass
-                
-                # Try SSL on port 465
-                server = smtplib.SMTP_SSL(SMTP_CONFIG['server'], 465)
-                server.set_debuglevel(1)
-                server.login(SMTP_CONFIG['username'], SMTP_CONFIG['password'])
-                server.send_message(msg)
-                print("Email sent successfully via SSL")
-        finally:
-            if server:
+                    try: server.quit()
+                    except: pass
                 try:
-                    server.quit()
-                except:
-                    pass
-        
+                    server = smtplib.SMTP_SSL(SMTP_CONFIG['server'], 465, timeout=10)
+                    server.login(SMTP_CONFIG['username'], SMTP_CONFIG['password'])
+                    server.send_message(msg)
+                    print("Email sent successfully via SSL")
+                    return True
+                except Exception as e2:
+                    print(f"SSL also failed: {e2}")
+                    raise e2
+            finally:
+                if server:
+                    try: server.quit()
+                    except: pass
+
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, _send_blocking)
+
         return {"status_code": 200, "message": "email has been sent"}
     except Exception as e:
         print(f"Email sending error: {e}")
@@ -259,7 +267,7 @@ async def validate_magic_link_from_url(redirect_to: str = '/hrmkit/reporting/das
                             "username": user_email.split('@')[0].title()
                         }
                         userToken = create_jwt_token(user_data)
-                        app.storage.user.update({'token': userToken, 'authenticated': True})
+                        set_auth_data({'token': userToken, 'authenticated': True})
                         ui.notify(f"Welcome {user_data['username']}! You have been successfully logged in.", color='positive')
                         
                         # Redirect to clean dashboard URL
@@ -304,7 +312,7 @@ def validate_magic_link(redirect_to: str = '/'):
                 "username": 'John Doe'
             }
             userToken = create_jwt_token(user_data)
-            app.storage.user.update({'token': userToken, 'authenticated': True})
+            set_auth_data({'token': userToken, 'authenticated': True})
             # app.add_route(redirect_to)
             return RedirectResponse(url=redirect_to)
         
@@ -323,8 +331,8 @@ def create_jwt_token(data: dict):
 
         token = PyJWT.encode(payload, JWT_TOKEN_KEY, algorithm="HS256")
         return token
-    except ImportError as e:
-        print(f"PyJWT import error: {e}")
+    except Exception as e:
+        print(f"PyJWT encoding error: {e}")
         # Fallback to simple encoding if jwt library not available
         try:
             date = datetime.fromtimestamp(int(data['timestamp']))
@@ -351,8 +359,8 @@ def decode_jwt_token(token: str):
         # Try PyJWT first
         data = PyJWT.decode(token, JWT_TOKEN_KEY, algorithms=["HS256"])
         return data if (data and "email" in data) else None
-    except ImportError as e:
-        print(f"PyJWT import error: {e}")
+    except Exception as e:
+        print(f"PyJWT decode error: {e}")
         # Fallback to simple decoding
         try:
             if not token or '.' not in token:
@@ -386,22 +394,20 @@ def decode_jwt_token(token: str):
     #     return None
     
 def extract_user() -> None:
-     if app.storage.user.get('authenticated', False):
-        return RedirectResponse('/')
-     
-     token = app.storage.user.get(JWT_TOKEN_KEY)
-     if not token:
-        return None
-     data = decode_jwt_token(token)
-     if not data:
-        del app.storage.browser[JWT_TOKEN_KEY]
-        return None
+      if is_authenticated():
+          return RedirectResponse('/')
 
-     if not (datetime.time(data['exp']) - datetime.now().time()) > 0:
-        app.storage.user.clear()
-        return RedirectResponse('/')
-        # return None
-     return data
+      token = get_auth_value(JWT_TOKEN_KEY)
+      if not token:
+          return None
+      data = decode_jwt_token(token)
+      if not data:
+          return None
+
+      if not (datetime.time(data['exp']) - datetime.now().time()) > 0:
+          clear_auth_data()
+          return RedirectResponse('/')
+      return data
 
 # Example usage
 # magic_link = generate_magic_link("user@example.com")

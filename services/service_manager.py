@@ -47,11 +47,15 @@ class ServiceManager:
             if not backblaze_service.connect():
                 logger.warning("Backblaze B2 service initialization failed - continuing without file storage")
             
-            # Initialize MQTT service
-            if not mqtt_service.connect():
-                logger.warning("MQTT service initialization failed - continuing without MQTT")
+            # Initialize MQTT service (only if enabled)
+            from config.services import config
+            if config.MQTT_ENABLED:
+                if not mqtt_service.connect():
+                    logger.warning("MQTT service initialization failed - continuing without MQTT")
+                else:
+                    logger.info("MQTT service connected successfully")
             else:
-                logger.info("MQTT service connected successfully")
+                logger.info("MQTT service disabled - skipping initialization")
             
             # Initialize HRMS gRPC service
             try:

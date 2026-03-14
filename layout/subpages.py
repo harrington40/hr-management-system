@@ -1,5 +1,7 @@
-from nicegui import ui, APIRouter, context
+from nicegui import ui, APIRouter, context, app as ngapp
 from components import Login_Page
+from helperFuns import readEnv, get_mount_path, build_mount_route
+from helperFuns.auth_storage import set_auth_data
 from components.attendance import SetHolidays, LeaveRules, AttendanceRules, ShiftTimetable
 from components.attendance.staff_schedule import create_modern_staff_schedule_page
 from components.attendance.staff_status import create_staff_status_page
@@ -22,7 +24,9 @@ from components.employees.request_transfer import RequestTransfer
 
 from layout.sidebar import Sidebar
 
-router = APIRouter(prefix='/hrmkit')
+APP_MOUNT_PATH = get_mount_path()
+
+router = APIRouter(prefix=APP_MOUNT_PATH)
 
 # Main dashboard page
 @router.page('/')
@@ -36,8 +40,6 @@ def show():
                     ui.notify(f"Authentication error: {error}", color='negative')
     except:
         pass    
-    
-    Sidebar()
     Login_Page()
 
 # Attendance - Set Holidays
@@ -106,9 +108,42 @@ def show_menu_integration():
 # Reporting - Comprehensive Dashboard
 @router.page('/reporting/dashboard')
 def show_dashboard():
-    """Display comprehensive dashboard page"""
+    print('[show_dashboard] invoked')
+    """Display comprehensive dashboard page.
+    Handles ?jwt_token= from magic link redirect via ui.timer (socket context).
+    """
+    jwt_token = None
+    email = ''
+    try:
+        params = dict(context.client.request.query_params)
+        jwt_token = params.get('jwt_token')
+        email = params.get('email', '')
+    except Exception:
+        pass
+
+    if jwt_token:
+        from components.authencation.authHelper import decode_jwt_token
+
+        user_data = decode_jwt_token(jwt_token)
+        if user_data:
+            set_auth_data({
+                'token': jwt_token,
+                'authenticated': True,
+                'username': user_data.get('username', email.split('@')[0]),
+                'email': user_data.get('email', email),
+            })
+            clean_url = build_mount_route('/reporting/dashboard', base=APP_MOUNT_PATH)
+            print(f'[show_dashboard] replacing URL with {clean_url}')
+            try:
+                ui.run_javascript(f"window.history.replaceState(null, '', '{clean_url}');")
+            except Exception as exc:
+                print(f'[show_dashboard] history replace failed: {exc}')
+            Sidebar()
+            create_dashboard_landing_page()
+            return
+
     Sidebar()
-    create_comprehensive_dashboard()
+    create_dashboard_landing_page()
 
 # Reporting - Employees
 @router.page('/reporting/employees')
@@ -208,6 +243,17 @@ def show_transfer_requests():
     """Display transfer requests management page"""
     Sidebar()
     RequestTransfer()
+
+
+# NOTE: Magic link auth is handled by the FastAPI /hrmkit/auth HTTP endpoint in main.py.
+# The FastAPI endpoint is registered first and takes priority; this NiceGUI page is
+# a fallback that should never be reached in normal operation.
+@router.page('/auth')
+def show_auth_fallback():
+    """Fallback: auth should be handled by the FastAPI /hrmkit/auth endpoint."""
+    ui.navigate.to(APP_MOUNT_PATH)
+
+
 # Generic catch-all route for undefined pages
 @router.page('/{path:path}')
 def catch_all(path: str):
@@ -218,8 +264,8 @@ def catch_all(path: str):
         ui.label("This page route is defined but not yet implemented.").classes('text-gray-500')
         
         # Display the path that was requested
-        ui.code(f"Route: /hrmkit/{path}").classes('bg-gray-100 p-4')
+        ui.code(f"Route: {build_mount_route(path, base=APP_MOUNT_PATH)}").classes('bg-gray-100 p-4')
         
         # Back button
         with ui.row():
-            ui.button('Back to Dashboard', on_click=lambda: ui.navigate('/hrmkit/')).props('flat')
+            ui.button('Back to Dashboard', on_click=lambda: ui.navigate(APP_MOUNT_PATH)).props('flat')

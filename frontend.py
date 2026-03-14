@@ -5,14 +5,84 @@ LeaveRules, ShiftTimetable, SetHolidays, create_staff_status_page as StaffStatus
 create_staff_schedule_page as StaffSchedulePage, create_main_dashboard, UserRole, 
 create_integrated_dashboard_menu, create_dashboard_landing_page
 )
-from helperFuns import imagePath
+from helperFuns import imagePath, get_mount_path, build_mount_route
+from helperFuns.auth_storage import set_auth_data, is_authenticated
 from layout import Sidebar, router
+from components.reports.asset_inventory import create_asset_inventory_page
+from components.employees.employee_management import create_employee_management_page
+from components.timesheets.timesheet_management import create_modern_timesheet_management_page
+from components.administration.hr_administration import create_hr_administration_page
+from ai_orchestrator.ui import create_ai_orchestrator_page
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from nicegui import ui, app, context
 import urllib.parse
 import random
+
+
+APP_MOUNT_PATH = get_mount_path()
+
+
+def mount_route(sub_path: str = '') -> str:
+    """Combine the configured mount path with the provided sub-path."""
+    return build_mount_route(sub_path, base=APP_MOUNT_PATH)
+
+
+def ensure_authenticated() -> bool:
+    """Redirect unauthenticated users back to the login page."""
+    if not is_authenticated():
+        ui.navigate.to(mount_route())
+        return False
+    return True
+
+
+def process_magic_link_from_request(
+    notify_user: bool = False,
+    clean_url: bool = False,
+    redirect_on_error: bool = True,
+):
+    """Consume jwt_token/username query params and persist auth state."""
+    try:
+        request = None
+        if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
+            request = context.client.request
+        if not request or not hasattr(request, 'query_params'):
+            return None
+
+        params = request.query_params
+        jwt_token = params.get('jwt_token')
+        username_param = params.get('username')
+        if not jwt_token:
+            return None
+
+        jwt_token = urllib.parse.unquote(jwt_token)
+        user_data = decode_jwt_token(jwt_token)
+        if not user_data:
+            if notify_user:
+                ui.notify('Magic link is invalid or has expired. Please log in again.', color='negative')
+            if redirect_on_error:
+                ui.navigate.to(mount_route())
+            return False
+
+        username = username_param or user_data.get('username', 'User')
+        set_auth_data({
+            'token': jwt_token,
+            'authenticated': True,
+            'username': username,
+            'email': user_data.get('email', ''),
+        })
+
+        if notify_user:
+            ui.notify(f"Welcome {username}! You have been successfully logged in.", color='positive')
+        if clean_url:
+            ui.navigate.to(mount_route('/reporting/dashboard'))
+        return True
+    except Exception as exc:
+        print(f'Magic link processing error: {exc}')
+        if redirect_on_error:
+            ui.navigate.to(mount_route())
+        return False
 
 def create_page_layout():
     """Create a proper page layout container that works with the modern fixed sidebar"""
@@ -21,61 +91,76 @@ def create_page_layout():
     return ui.element('div').classes('ml-72 transition-all duration-300 ease-in-out min-h-screen bg-gray-50 p-6 relative z-10')
 
 def dashboard_page():
-    # # Check for JWT token in URL (from magic link auth)
-    # jwt_token = None
-    # username = None
-    
-    # try:
-    #     if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
-    #         request = context.client.request
-    #         if request and hasattr(request, 'query_params'):
-    #             jwt_token = request.query_params.get("jwt_token")
-    #             username = request.query_params.get("username")
-                
-    #             if jwt_token:
-    #                 # Decode and validate the JWT token
-    #                 jwt_token = urllib.parse.unquote(jwt_token)
-    #                 user_data = decode_jwt_token(jwt_token)
-                    
-    #                 if user_data:
-    #                     # Set authentication in storage
-    #                     app.storage.user.update({'token': jwt_token, 'authenticated': True})
-    #                     ui.notify(f"Welcome {username or user_data.get('username', 'User')}! You have been successfully logged in.", color='positive')
-    #                     # Clean redirect to remove token from URL - use relative path since we're already in /hrmkit mount
-    #                     ui.navigate.to('/hrmkit/reporting/dashboard')
-    #                     return
-    # except Exception as e:
-    #     print(f"Error processing JWT token: {e}")
-    # # Check if user is authenticated
-    # if not app.storage.user.get('authenticated', False):
-    #     ui.navigate.to('/hrmkit')
-    #     return
-    # # Check if user wants traditional menu or modern dashboard
-    # view_mode = None
-    # try:
-    #     if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
-    #         request = context.client.request
-    #         if request and hasattr(request, 'query_params'):
-    #             view_mode = request.query_params.get("view")
-    # except:
-    #     pass
-    
-    # if view_mode == "menu":
-    #     ui.label('Welcome to the Dashboard!').classes('text-2xl font-bold')
-    #     # Add quick access to modern dashboard
-    #     with ui.card().classes('w-full max-w-md mt-6'):
-    #         with ui.card_section().classes('p-6'):
-    #             ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>')
-    #             ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>')
-    #             ui.button('🏢 Open Modern Dashboard', on_click=lambda: ui.navigate.to('/hrmkit/reporting/dashboard')).classes('w-full bg-blue-600 text-white')
-    # else:
+    # ── Step 1: consume jwt_token from URL (magic link redirect) ───────────
+    token_result = process_magic_link_from_request(
+        notify_user=True,
+        clean_url=True,
+        redirect_on_error=True,
+    )
+    if token_result is not None:
+        return
+
+    # ── Step 2: guard – redirect unauthenticated visitors to login ─────────
+    if not is_authenticated():
+        ui.navigate.to(mount_route())
+        return
+
+    # ── Step 3: optional ?view=menu classic layout ─────────────────────────
+    view_mode = None
+    try:
+        if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
+            request = context.client.request
+            if request and hasattr(request, 'query_params'):
+                view_mode = request.query_params.get("view")
+    except Exception:
+        pass
+
+    if view_mode == "menu":
+        ui.label('Welcome to the Dashboard!').classes('text-2xl font-bold')
+        with ui.card().classes('w-full max-w-md mt-6'):
+            with ui.card_section().classes('p-6'):
+                ui.html('<h2 class="text-xl font-semibold mb-4">🚀 Experience the Modern Dashboard</h2>')
+                ui.html('<p class="text-gray-600 mb-4">Switch to our comprehensive enterprise dashboard with real-time analytics, hardware integration, and AI-powered insights.</p>')
+                ui.button('🏢 Open Modern Dashboard', on_click=lambda: ui.navigate.to(mount_route('/reporting/dashboard'))).classes('w-full bg-blue-600 text-white')
+    else:
         # Modern comprehensive dashboard
-        # Determine user role (for now, default to admin - could be enhanced with user management)
-        user_role = UserRole.ADMIN  # This could be determined from user data in a real system
-        # Add option to switch to traditional menu
+        user_role = UserRole.ADMIN
         with ui.row().classes('fixed top-4 right-4 z-50'):
-            ui.button('📋 Traditional Menu', on_click=lambda: ui.navigate.to('/hrmkit/reporting/dashboard?view=menu')).classes('bg-gray-600 text-white shadow-lg hover:bg-gray-700 transition-colors')
+            ui.button('📋 Traditional Menu', on_click=lambda: ui.navigate.to(f"{mount_route('/reporting/dashboard')}?view=menu")).classes('bg-gray-600 text-white shadow-lg hover:bg-gray-700 transition-colors')
         create_main_dashboard(user_role)
+
+def auth_callback_page():
+    """Magic link auth handler -- reachable at https://kwarecominc.com/hr/auth via nginx"""
+    try:
+        if hasattr(context, 'client') and context.client and hasattr(context.client, 'request'):
+            request = context.client.request
+            if request and hasattr(request, 'query_params'):
+                params = dict(request.query_params)
+                email = params.get('email')
+                timestamp = params.get('timestamp')
+                token = params.get('token')
+
+                if email and timestamp and token:
+                    is_valid, result = validate_magic_link_server(email, timestamp, token)
+                    if is_valid:
+                        username = email.split('@')[0]
+                        set_auth_data({
+                            'token': result,
+                            'authenticated': True,
+                            'username': username,
+                            'email': email,
+                        })
+                        ui.navigate.to(mount_route('/reporting/dashboard'))
+                        return
+                    else:
+                        ui.notify(f'Login failed: {result}', color='negative')
+                        ui.navigate.to(mount_route())
+                        return
+    except Exception as e:
+        print(f"Auth callback error: {e}")
+
+    ui.navigate.to(mount_route())
+
 
 def institution_profile_page():
     # Check if user is authenticated
@@ -149,8 +234,7 @@ def shift_timetable_page():
 
 def set_holidays_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
     # Now load the full SetHolidays component
     try:
@@ -163,128 +247,119 @@ def set_holidays_page():
 
 def staff_schedule_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
     StaffSchedulePage()
 
 def staff_status_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
     StaffStatus()
 
 def menu_integration_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
     create_integrated_dashboard_menu()
 
 def dashboard_landing_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
     create_dashboard_landing_page()
     
 def leave_request_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Staff Leave Request Page!').classes('text-2xl font-bold')
+    RequestLeave()
     
 def transfer_request_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Staff Transfer Request Page!').classes('text-2xl font-bold')
+    RequestTransfer()
     
 def employee_report_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Employee Report and Listing!').classes('text-2xl font-bold')
+    create_employee_management_page()
     
 def employee_timesheet_report_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Employee Timeshee Report!').classes('text-2xl font-bold')
+    create_modern_timesheet_management_page()
     
 def administration_report_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Administration Page!').classes('text-2xl font-bold')
-    ui.label('This report presents stats on staff under probation and termination').classes('text-xl font-semibold')
+    create_hr_administration_page()
     
 def report_department_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Department and Section Report Page!').classes('text-2xl font-bold')
+    DepartmentalSections()
     
 def leave_report_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Staff Leave Report Page!').classes('text-2xl font-bold')
+    RequestLeave()
     
 def assets_report_page():
     # Check if user is authenticated
-    if not app.storage.user.get('authenticated', False):
-        ui.navigate.to('/hrmkit')
+    if not ensure_authenticated():
         return
-    # UI to be designed and developed
-    ui.label('Welcome to Assets Report Page!').classes('text-2xl font-bold')
-    
+    create_asset_inventory_page()
+
+def ai_orchestrator_page():
+    # Check if user is authenticated
+    if not ensure_authenticated():
+        return
+    create_ai_orchestrator_page()
+
 def init(fastapi_app: FastAPI) -> None:
-    @ui.page('/hrmkit/{_:path}')
-    def page_layout():   
-      Sidebar()
-      ui.sub_pages({
-      '/hrmkit/reporting/dashboard': lambda: dashboard_page(),
-      '/hrmkit/reporting/menu-integration': lambda: menu_integration_page(),
-      '/hrmkit/reporting/dashboard-landing': lambda: dashboard_landing_page(),
-      '/hrmkit/administration/institution': lambda: institution_profile_page(),
-      '/hrmkit/administration/employee/enroll-staff': lambda: enroll_staff_page(),
-      '/hrmkit/administration/departments': lambda: departmental_sections_page(),
-      '/hrmkit/administration/termination': lambda: employee_termination_page(),
-      '/hrmkit/administration/probation': lambda: employee_probation_page(),
-      '/hrmkit/administration/transfer/requests': lambda: transfer_request_page(),
-      '/hrmkit/administration/leave/requests': lambda: leave_request_page(),
-      '/hrmkit/employees/request-transfer': lambda: request_transfer_page(),
-      '/hrmkit/employees/request-leave': lambda: request_leave_page(),
-      '/hrmkit/attendance/attendance-rules': lambda: attendance_rules_page(),
-      '/hrmkit/attendance/leave/rules': lambda: leave_rules_page(),
-      '/hrmkit/attendance/timetable': lambda: shift_timetable_page(),
-      '/hrmkit/attendance/holidays': lambda: set_holidays_page(),
-      '/hrmkit/attendance/employee/schedule': lambda: staff_schedule_page(),
-      '/hrmkit/attendance/staff/on_duty_status': lambda: staff_status_page(),
-      '/hrmkit/reporting/modern-dashboard': lambda: create_modern_hr_dashboard(),
-      '/hrmkit/reporting/employees': lambda: employee_report_page(),
-      '/hrmkit/reporting/employees/timesheet': lambda: employee_timesheet_report_page(),
-      '/hrmkit/reporting/administration': lambda: administration_report_page(),
-      '/hrmkit/reporting/departments': lambda: report_department_page(),
-      '/hrmkit/reporting/leaves': lambda: leave_report_page(),
-      '/hrmkit/reporting/assets': lambda: assets_report_page(),
-   })
+    @ui.page(mount_route('/{_:path}'))
+    def page_layout():
+        process_magic_link_from_request(
+            notify_user=False,
+            clean_url=False,
+            redirect_on_error=False,
+        )
+        Sidebar()
+        ui.sub_pages({
+            mount_route('/reporting/dashboard'): dashboard_page,
+            mount_route('/reporting/menu-integration'): menu_integration_page,
+            mount_route('/reporting/dashboard-landing'): dashboard_landing_page,
+            mount_route('/administration/institution'): institution_profile_page,
+            mount_route('/administration/employee/enroll-staff'): enroll_staff_page,
+            mount_route('/administration/departments'): departmental_sections_page,
+            mount_route('/administration/termination'): employee_termination_page,
+            mount_route('/administration/probation'): employee_probation_page,
+            mount_route('/administration/transfer/requests'): transfer_request_page,
+            mount_route('/administration/leave/requests'): leave_request_page,
+            mount_route('/employees/request-transfer'): request_transfer_page,
+            mount_route('/employees/request-leave'): request_leave_page,
+            mount_route('/attendance/attendance-rules'): attendance_rules_page,
+            mount_route('/attendance/leave/rules'): leave_rules_page,
+            mount_route('/attendance/timetable'): shift_timetable_page,
+            mount_route('/attendance/holidays'): set_holidays_page,
+            mount_route('/attendance/employee/schedule'): staff_schedule_page,
+            mount_route('/attendance/staff/on_duty_status'): staff_status_page,
+            mount_route('/reporting/modern-dashboard'): create_modern_hr_dashboard,
+            mount_route('/reporting/employees'): employee_report_page,
+            mount_route('/reporting/employees/timesheet'): employee_timesheet_report_page,
+            mount_route('/reporting/administration'): administration_report_page,
+            mount_route('/reporting/departments'): report_department_page,
+            mount_route('/reporting/leaves'): leave_report_page,
+            mount_route('/reporting/assets'): assets_report_page,
+            mount_route('/ai/orchestrator'): ai_orchestrator_page,
+        })
     fastapi_app.include_router(router)
     
     # Use run_with to integrate NiceGUI with FastAPI
@@ -365,82 +440,8 @@ def create_modern_hr_dashboard():
     # Main dashboard layout
     with ui.element('div').classes('min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'):
         
-        # Modern Sidebar
-        with ui.element('div').classes('fixed left-0 top-0 h-full w-80 bg-white shadow-2xl border-r border-gray-200 z-40 transform transition-transform duration-300'):
-            
-            # Sidebar Header
-            with ui.element('div').classes('p-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white'):
-                with ui.row().classes('items-center gap-3'):
-                    ui.html('<div class="text-3xl">🏢</div>')
-                    with ui.column():
-                        ui.html('<div class="text-xl font-bold">HR Analytics</div>')
-                        ui.html('<div class="text-sm opacity-90">Smart Dashboard</div>')
-            
-            # Navigation Menu
-            with ui.element('div').classes('p-4 space-y-2'):
-                
-                # Dashboard Overview
-                with ui.element('div').classes('group'):
-                    with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">📊</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Dashboard</div>')
-                            ui.html('<div class="text-sm text-gray-500">Overview & Analytics</div>')
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
-                
-                # Employee Management
-                with ui.element('div').classes('group'):
-                    with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">👥</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Employees</div>')
-                            ui.html('<div class="text-sm text-gray-500">Staff Directory</div>')
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
-                
-                # Attendance Tracking
-                with ui.element('div').classes('group'):
-                    with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">🕐</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Attendance</div>')
-                            ui.html('<div class="text-sm text-gray-500">Time Tracking</div>')
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
-                
-                # Performance
-                with ui.element('div').classes('group'):
-                    with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">🎯</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Performance</div>')
-                            ui.html('<div class="text-sm text-gray-500">Reviews & Goals</div>')
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
-                
-                # Leave Management
-                with ui.element('div').classes('group'):
-                    with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">🏖️</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Leave</div>')
-                            ui.html('<div class="text-sm text-gray-500">Requests & Planning</div>')
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
-                
-                # Reports & Analytics
-                with ui.element('div').classes('group'):
-                    with ui.row().classes('items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors border-l-4 border-blue-500'):
-                        ui.html('<div class="text-xl">📈</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="font-semibold text-gray-800">Reports</div>')
-                            ui.html('<div class="text-sm text-gray-500">Analytics & Insights</div>')
-                        ui.html('<div class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">→</div>')
-            
-            # AI Insights Panel
-            with ui.element('div').classes('absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-gray-200'):
-                ui.html('<div class="text-sm font-semibold text-gray-800 mb-2">🤖 AI Insights</div>')
-                ai_insight = analytics.optimize_leave_scheduling()
-                ui.html(f'<div class="text-xs text-gray-600 leading-relaxed">{ai_insight}</div>')
-        
-        # Main Content Area - Adjusted for collapsible sidebar
-        with ui.element('div').classes('ml-16 p-8 transition-all duration-300'):
+        # Main Content Area
+        with ui.element('div').classes('p-8'):
             
             # Header
             with ui.row().classes('justify-between items-center mb-8'):

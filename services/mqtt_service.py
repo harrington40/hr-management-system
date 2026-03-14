@@ -52,7 +52,8 @@ class MQTTService:
             
         except Exception as e:
             logger.error(f"Failed to connect to MQTT broker: {e}")
-            raise
+            self.is_connected = False
+            return False
     
     def _on_connect(self, client, userdata, flags, rc):
         """Callback when connected to MQTT broker"""

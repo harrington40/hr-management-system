@@ -27,7 +27,7 @@ idna==3.10
 ifaddr==0.2.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
-jwt==1.4.0
+PyJWT==2.8.0
 markdown-it-py==4.0.0
 markdown2==2.5.4
 MarkupSafe==3.0.2
@@ -70,6 +70,8 @@ paho-mqtt==2.1.0
 
 # Backblaze B2 Storage
 b2sdk==2.7.0
+
+# AI Orchestrator — uses httpx (already a NiceGUI dependency, no extra packages needed)
 
 # gRPC
 grpcio==1.70.0

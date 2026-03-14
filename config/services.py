@@ -11,6 +11,7 @@ class ServiceConfig(BaseSettings):
     """Service configuration settings"""
     
     # MQTT Configuration
+    MQTT_ENABLED: bool = False
     MQTT_BROKER_HOST: str = "localhost"
     MQTT_BROKER_PORT: int = 1883
     MQTT_USERNAME: Optional[str] = None
@@ -50,7 +51,8 @@ class ServiceConfig(BaseSettings):
     # JWT Configuration
     SECRET_KEY: str = "your-secret-key"
     JWT_TOKEN_KEY: str = "your-jwt-key"
-    APP_ORIGIN: str = "http://127.0.0.1:8081"
+    APP_ORIGIN: str = "https://kwarecominc.com"
+    APP_MOUNT_PATH: str = "/hrmkit"
     
     # Additional Oracle fields (if .env uses lowercase)
     PORT: int = 1521
