@@ -19,10 +19,13 @@ from components.administration.enroll_staff import EnrollNewStaff
 from components.administration.employee_probation import EmployeeProbation
 from components.administration.employee_termination import EmployeeTermination
 from components.administration.admin_management import create_administration_page
+from components.administration.license_pricing import create_license_pricing_page
+from components.administration.connectivity import create_connectivity_page
 from components.employees.request_leave import RequestLeave
 from components.employees.request_transfer import RequestTransfer
 
 from layout.sidebar import Sidebar
+from layout.license_guard import require_license
 
 APP_MOUNT_PATH = get_mount_path()
 
@@ -47,6 +50,7 @@ def show():
 def show_holidays():
     """Display holidays management page"""
     Sidebar()
+    if require_license('Holiday & Vacation Management'): return
     SetHolidays()
 
 # Attendance - Staff Schedule
@@ -54,6 +58,7 @@ def show_holidays():
 def show_staff_schedule():
     """Display staff schedule management page"""
     Sidebar()
+    if require_license('Staff Schedule'): return
     create_modern_staff_schedule_page()
 
 # Attendance - Leave Rules
@@ -61,6 +66,7 @@ def show_staff_schedule():
 def show_leave_rules():
     """Display leave rules management page"""
     Sidebar()
+    if require_license('Leave Rules'): return
     LeaveRules()
 
 # Attendance - Shift Timetable
@@ -68,6 +74,7 @@ def show_leave_rules():
 def show_shift_timetable():
     """Display shift timetable management page"""
     Sidebar()
+    if require_license('Shift Timetable'): return
     ShiftTimetable()
 
 # Attendance - Attendance Rules
@@ -75,6 +82,7 @@ def show_shift_timetable():
 def show_attendance_rules():
     """Display attendance rules management page"""
     Sidebar()
+    if require_license('Attendance Rules'): return
     AttendanceRules()
 
 # Attendance - On Duty Status
@@ -82,6 +90,7 @@ def show_attendance_rules():
 def show_on_duty_status():
     """Display staff on-duty status management page"""
     Sidebar()
+    if require_license('Staff On-Duty Status'): return
     create_staff_status_page()
 
 # Reporting - Dashboard Landing
@@ -89,6 +98,7 @@ def show_on_duty_status():
 def show_dashboard_landing():
     """Display dashboard landing page"""
     Sidebar()
+    if require_license('Dashboard'): return
     create_dashboard_landing_page()
 
 # Reporting - Modern Dashboard
@@ -96,6 +106,7 @@ def show_dashboard_landing():
 def show_modern_dashboard():
     """Display modern dashboard page"""
     Sidebar()
+    if require_license('Modern Dashboard'): return
     create_main_dashboard()
 
 # Reporting - Menu Integration
@@ -103,6 +114,7 @@ def show_modern_dashboard():
 def show_menu_integration():
     """Display integrated dashboard menu page"""
     Sidebar()
+    if require_license('Menu Integration'): return
     create_integrated_dashboard_menu()
 
 # Reporting - Comprehensive Dashboard
@@ -143,6 +155,7 @@ def show_dashboard():
             return
 
     Sidebar()
+    if require_license('HR Dashboard'): return
     create_dashboard_landing_page()
 
 # Reporting - Employees
@@ -150,6 +163,7 @@ def show_dashboard():
 def show_employees():
     """Display employees management page"""
     Sidebar()
+    if require_license('Employee Management'): return
     create_employee_management_page()
 
 # Reporting - Employees Timesheet
@@ -157,6 +171,7 @@ def show_employees():
 def show_employees_timesheet():
     """Display employees timesheet management page"""
     Sidebar()
+    if require_license('Employee Timesheet'): return
     create_modern_timesheet_management_page()
 
 # Reporting - Departments
@@ -164,6 +179,7 @@ def show_employees_timesheet():
 def show_departments():
     """Display departments management page"""
     Sidebar()
+    if require_license('Departments'): return
     DepartmentalSections()
 
 # Reporting - Administration
@@ -171,6 +187,7 @@ def show_departments():
 def show_administration():
     """Display HR administration page"""
     Sidebar()
+    if require_license('HR Administration'): return
     create_hr_administration_page()
 
 # Reporting - Assets
@@ -178,6 +195,7 @@ def show_administration():
 def show_assets():
     """Display asset inventory page"""
     Sidebar()
+    if require_license('Asset Inventory'): return
     create_asset_inventory_page()
 
 # Reporting - Leaves
@@ -185,6 +203,7 @@ def show_assets():
 def show_reporting_leaves():
     """Display leave requests / leave management page under reporting"""
     Sidebar()
+    if require_license('Leave Reports'): return
     RequestLeave()
 
 
@@ -193,6 +212,7 @@ def show_reporting_leaves():
 def show_request_leave():
     """Display request leave management page"""
     Sidebar()
+    if require_license('Request Leave'): return
     RequestLeave()
 
 # Employees - Request Transfer
@@ -200,6 +220,7 @@ def show_request_leave():
 def show_request_transfer():
     """Display request transfer management page"""
     Sidebar()
+    if require_license('Request Transfer'): return
     RequestTransfer()
 
 # Administration - Institution Profile
@@ -207,6 +228,7 @@ def show_request_transfer():
 def show_institution():
     """Display institution profile management page"""
     Sidebar()
+    if require_license('Institution Profile'): return
     InstitutionProfile()
 
 # Administration - Departments
@@ -214,6 +236,7 @@ def show_institution():
 def show_admin_departments():
     """Display departments management page"""
     Sidebar()
+    if require_license('Departments'): return
     DepartmentalSections()
 
 # Administration - Enroll Staff
@@ -221,6 +244,7 @@ def show_admin_departments():
 def show_enroll_staff():
     """Display enroll new staff page"""
     Sidebar()
+    if require_license('Enroll Staff'): return
     EnrollNewStaff()
 
 # Administration - Probation
@@ -228,6 +252,7 @@ def show_enroll_staff():
 def show_probation():
     """Display employee probation management page"""
     Sidebar()
+    if require_license('Employee Probation'): return
     EmployeeProbation()
 
 # Administration - Termination
@@ -235,6 +260,7 @@ def show_probation():
 def show_termination():
     """Display employee termination management page"""
     Sidebar()
+    if require_license('Employee Termination'): return
     EmployeeTermination()
 
 # Administration - Leave Requests
@@ -242,6 +268,7 @@ def show_termination():
 def show_leave_requests():
     """Display leave requests management page"""
     Sidebar()
+    if require_license('Leave Requests'): return
     RequestLeave()
 
 # Administration - Transfer Requests
@@ -249,7 +276,25 @@ def show_leave_requests():
 def show_transfer_requests():
     """Display transfer requests management page"""
     Sidebar()
+    if require_license('Transfer Requests'): return
     RequestTransfer()
+
+
+# Billing - License & Pricing
+@router.page('/billing/license-pricing')
+def show_license_pricing():
+    """Display license and pricing management page"""
+    Sidebar()
+    create_license_pricing_page()
+
+
+# Administration - Connectivity Hub (Bluetooth + QR Code)
+@router.page('/administration/connectivity')
+def show_connectivity():
+    """Display Bluetooth scanner and QR code generator"""
+    Sidebar()
+    if require_license('Connectivity Hub'): return
+    create_connectivity_page()
 
 
 # NOTE: Magic link auth is handled by the FastAPI /hrmkit/auth HTTP endpoint in main.py.

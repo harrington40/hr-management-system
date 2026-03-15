@@ -283,63 +283,53 @@ def RequestTransfer():
     Modern Request Transfer page with smart HR algorithms
     and intelligent recommendation system
     """
-    
-    # Modern gradient header with career growth focus
-    with ui.element('div').classes('w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white p-8 rounded-lg mb-8 shadow-xl'):
-        with ui.row().classes('w-full justify-between items-center'):
-            with ui.column():
-                ui.html('''
-                    <div class="flex items-center gap-4">
-                        <div class="bg-white bg-opacity-20 p-3 rounded-full">
-                            <i class="material-icons text-4xl">transfer_within_a_station</i>
-                        </div>
-                        <div>
-                            <h1 class="text-4xl font-bold mb-2">Smart Career Transitions</h1>
-                            <p class="text-indigo-100 text-lg">AI-powered transfer planning and intelligent career pathway optimization</p>
-                        </div>
-                    </div>
-                ''')
-                
-                # Breadcrumb navigation
-                with ui.row().classes('items-center gap-2 text-sm text-indigo-200 mt-4'):
-                    ui.icon('home').classes('text-indigo-300')
-                    ui.label('Dashboard')
-                    ui.icon('chevron_right').classes('text-xs')
-                    ui.label('Employees')
-                    ui.icon('chevron_right').classes('text-xs')
-                    ui.label('Transfer Management').classes('text-white font-medium')
-            
-            # Smart action buttons
-            with ui.column().classes('gap-3'):
-                ui.button('🚀 Career Pathways', on_click=show_career_pathways).props('color=white text-color=indigo-700').classes('font-semibold')
-                ui.button('📈 Transfer Analytics', on_click=show_transfer_analytics).props('outlined color=white').classes('font-semibold')
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-indigo-50 min-h-screen p-6 gap-6'):
 
-    # Smart transfer dashboard
-    create_smart_transfer_dashboard()
+        # ── Header card ───────────────────────────────────────────────────────
+        with ui.card().classes(
+            'w-full rounded-2xl shadow-md text-white overflow-hidden'
+        ).style('background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);'):
+            with ui.card_section().classes('px-8 py-6'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    with ui.column().classes('gap-2'):
+                        with ui.row().classes('items-center gap-2 text-indigo-200 text-sm mb-1'):
+                            ui.html('<span>🏠 Dashboard</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span>Employees</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span class="text-white font-medium">Transfer Management</span>')
+                        with ui.row().classes('items-center gap-4'):
+                            ui.html(
+                                '<div style="background:rgba(255,255,255,0.18);border-radius:0.875rem;'
+                                'width:52px;height:52px;display:flex;align-items:center;'
+                                'justify-content:center;font-size:1.75rem;">🔄</div>'
+                            )
+                            with ui.column().classes('gap-0.5'):
+                                ui.html('<h1 class="text-3xl font-extrabold tracking-tight">Smart Career Transitions</h1>')
+                                ui.html('<p class="text-indigo-100 text-sm">AI-powered transfer planning and intelligent career pathway optimization</p>')
+                    with ui.row().classes('gap-3'):
+                        ui.button('🚀 Career Pathways',   on_click=show_career_pathways).props('outline color=white')
+                        ui.button('📈 Transfer Analytics', on_click=show_transfer_analytics).props('outline color=white')
 
-    # Main content with tabs
-    with ui.tabs().classes('w-full mb-4') as tabs:
-        request_tab = ui.tab('New Request', icon='send')
-        recommendations_tab = ui.tab('Smart Recommendations', icon='psychology')
-        my_requests_tab = ui.tab('My Requests', icon='folder_shared')
-        guidelines_tab = ui.tab('Guidelines', icon='info')
+        # ── KPI dashboard ─────────────────────────────────────────────────────
+        create_smart_transfer_dashboard()
 
-    with ui.tab_panels(tabs, value=request_tab).classes('w-full'):
-        # New Request Panel
-        with ui.tab_panel(request_tab):
-            create_new_request_section()
-        
-        # Smart Recommendations Panel
-        with ui.tab_panel(recommendations_tab):
-            create_recommendations_section()
-        
-        # My Requests Panel
-        with ui.tab_panel(my_requests_tab):
-            create_my_requests_section()
-        
-        # Guidelines Panel
-        with ui.tab_panel(guidelines_tab):
-            create_guidelines_section()
+        # ── Tabs ──────────────────────────────────────────────────────────────
+        with ui.tabs().classes('w-full') as tabs:
+            request_tab        = ui.tab('New Request',           icon='send')
+            recommendations_tab = ui.tab('Smart Recommendations', icon='psychology')
+            my_requests_tab    = ui.tab('My Requests',           icon='folder_shared')
+            guidelines_tab     = ui.tab('Guidelines',            icon='info')
+
+        with ui.tab_panels(tabs, value=request_tab).classes('w-full'):
+            with ui.tab_panel(request_tab):
+                create_new_request_section()
+            with ui.tab_panel(recommendations_tab):
+                create_recommendations_section()
+            with ui.tab_panel(my_requests_tab):
+                create_my_requests_section()
+            with ui.tab_panel(guidelines_tab):
+                create_guidelines_section()
 
 def create_eligibility_check_section():
     """Create smart eligibility checking section"""
@@ -378,136 +368,279 @@ def create_eligibility_check_section():
                         ui.label(f'• {issue}').classes('text-sm text-red-500 ml-4')
 
 def create_new_request_section():
-    """Create new transfer request form"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('Submit New Transfer Request').classes('text-xl font-semibold mb-4')
-        
-        with ui.row().classes('w-full gap-6'):
-            # Left column - Basic Information
-            with ui.column().classes('flex-1'):
-                ui.label('Basic Information').classes('font-semibold text-lg text-blue-600 mb-3')
-                
-                current_dept = ui.input(label='Current Department', value='Human Resources').props('outlined readonly').classes('w-full mb-3')
-                
-                # Department selection with smart filtering
-                departments = [dept["name"] for dept in transfer_manager.departments if dept["name"] != "Human Resources"]
-                requested_dept = ui.select(options=departments, label='Requested Department', with_input=True).props('outlined').classes('w-full mb-3')
-                
-                priority = ui.select(
-                    options=['Normal', 'High', 'Low'], 
-                    label='Priority Level',
-                    value='Normal'
-                ).props('outlined').classes('w-full mb-3')
-                
-                ui.label('Preferred Transition Date').classes('text-sm font-medium text-gray-700 mb-1')
-                transition_date = ui.date(value=date.today() + timedelta(days=30)
-                ).props('outlined').classes('w-full mb-3')
-                
-            # Right column - Justification and Details
-            with ui.column().classes('flex-1'):
-                ui.label('Request Details').classes('font-semibold text-lg text-blue-600 mb-3')
-                
-                justification = ui.textarea('Justification for Transfer', 
-                    placeholder='Please provide detailed reasons for requesting this transfer...'
-                ).props('outlined rows=4').classes('w-full mb-3')
-                
-                skills_input = ui.input('Relevant Skills', 
-                    placeholder='List skills relevant to target department'
-                ).props('outlined').classes('w-full mb-3')
-                
-                experience_input = ui.textarea('Relevant Experience', 
-                    placeholder='Describe experience relevant to the requested role...'
-                ).props('outlined rows=3').classes('w-full mb-3')
-        
-        # Smart score preview
-        with ui.row().classes('w-full p-4 bg-gray-50 rounded-lg mb-4'):
-            ui.label('🎯 Smart Score Preview').classes('font-semibold text-gray-700')
-            score_preview = ui.label('Score will be calculated automatically').classes('text-blue-600 ml-4')
-        
-        # Action buttons
-        with ui.row().classes('w-full justify-end gap-2 mt-6'):
-            ui.button('Save as Draft', on_click=save_as_draft).props('flat color=gray')
-            ui.button('Submit Request', on_click=lambda: submit_transfer_request(
-                current_dept.value, requested_dept.value, priority.value,
-                transition_date.value, justification.value, skills_input.value,
-                experience_input.value, score_preview
-            )).props('color=primary')
+    """Create new transfer request form — styled fields and modern date picker"""
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        # Section header
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #4f46e5, #7c3aed);'
+            'padding: 1rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📝 Submit New Transfer Request</h2>')
+
+        with ui.card_section().classes('p-6'):
+            with ui.row().classes('w-full gap-6'):
+
+                # ── Left column — Basic Information ───────────────────────────
+                with ui.card().classes('flex-1 rounded-xl border border-indigo-100 bg-indigo-50/40'):
+                    with ui.card_section().classes('p-5'):
+                        ui.html(
+                            '<div class="flex items-center gap-2 mb-4">'
+                            '<span style="background:linear-gradient(135deg,#4f46e5,#7c3aed);'
+                            'color:#fff;padding:.25rem .65rem;border-radius:.5rem;font-size:.75rem;'
+                            'font-weight:700;">STEP 1</span>'
+                            '<span class="font-semibold text-indigo-800">Basic Information</span></div>'
+                        )
+
+                        current_dept = ui.input(
+                            label='Current Department', value='Human Resources'
+                        ).props('outlined readonly bg-color=white').classes('w-full')
+
+                        departments = [d["name"] for d in transfer_manager.departments
+                                       if d["name"] != "Human Resources"]
+                        requested_dept = ui.select(
+                            options=departments, label='Requested Department ✦', with_input=True
+                        ).props('outlined bg-color=white').classes('w-full')
+
+                        priority = ui.select(
+                            options=['Normal', 'High', 'Low'],
+                            label='Priority Level',
+                            value='Normal'
+                        ).props('outlined bg-color=white').classes('w-full')
+
+                        ui.html(
+                            '<div class="text-xs font-semibold text-gray-500 uppercase '
+                            'tracking-wider mt-4 mb-1">📅 Preferred Transition Date</div>'
+                        )
+                        transition_date = ui.date(
+                            value=date.today() + timedelta(days=30)
+                        ).classes('w-full').props(
+                            'minimal today-btn color=indigo'
+                        )
+
+                # ── Right column — Justification ──────────────────────────────
+                with ui.card().classes('flex-1 rounded-xl border border-purple-100 bg-purple-50/40'):
+                    with ui.card_section().classes('p-5'):
+                        ui.html(
+                            '<div class="flex items-center gap-2 mb-4">'
+                            '<span style="background:linear-gradient(135deg,#7c3aed,#db2777);'
+                            'color:#fff;padding:.25rem .65rem;border-radius:.5rem;font-size:.75rem;'
+                            'font-weight:700;">STEP 2</span>'
+                            '<span class="font-semibold text-purple-800">Request Details</span></div>'
+                        )
+
+                        justification = ui.textarea(
+                            'Justification for Transfer ✦',
+                            placeholder='Provide detailed reasons for this transfer request...'
+                        ).props('outlined rows=4 bg-color=white').classes('w-full')
+
+                        skills_input = ui.input(
+                            'Relevant Skills',
+                            placeholder='e.g. Python, data analysis, project management'
+                        ).props('outlined bg-color=white').classes('w-full')
+
+                        experience_input = ui.textarea(
+                            'Relevant Experience',
+                            placeholder='Describe experience relevant to the requested role...'
+                        ).props('outlined rows=3 bg-color=white').classes('w-full')
+
+            # ── Smart score preview ───────────────────────────────────────────
+            with ui.element('div').style(
+                'margin-top:1.25rem;padding:1rem 1.25rem;'
+                'background:linear-gradient(90deg,#eef2ff,#f5f3ff);'
+                'border-radius:.875rem;border-left:4px solid #4f46e5;'
+                'display:flex;justify-content:space-between;align-items:center;'
+            ):
+                ui.html('<span class="font-semibold text-indigo-800">🎯 Smart Score Preview</span>')
+                score_preview = ui.label('Score will be calculated automatically')
+                score_preview.style('color:#6d28d9;font-weight:600;font-size:.9rem;')
+
+            # ── Actions ───────────────────────────────────────────────────────
+            with ui.row().classes('w-full justify-end gap-3 mt-4'):
+                ui.button('Save as Draft', on_click=save_as_draft).props('flat color=indigo')
+                ui.button('🚀 Submit Request', on_click=lambda: submit_transfer_request(
+                    current_dept.value, requested_dept.value, priority.value,
+                    transition_date.value, justification.value, skills_input.value,
+                    experience_input.value, score_preview
+                )).props('color=primary').style(
+                    'background:linear-gradient(90deg,#4f46e5,#7c3aed);'
+                    'color:#fff;border-radius:.75rem;font-weight:700;padding:.5rem 1.5rem;'
+                )
 
 def create_recommendations_section():
-    """Create AI-powered department recommendations"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('🤖 AI-Powered Department Recommendations').classes('text-xl font-semibold mb-4')
-        
-        # Mock employee profile
-        employee_profile = {"skills": ["communication", "analysis"], "interests": ["technology", "leadership"]}
-        recommendations = transfer_manager.get_department_recommendations(employee_profile)
-        
-        ui.label('Based on your skills, performance, and career goals:').classes('text-gray-600 mb-4')
-        
-        with ui.grid(columns=2).classes('gap-4 w-full'):
-            for i, rec in enumerate(recommendations[:6]):  # Show top 6 recommendations
-                compatibility_color = 'bg-green-100 border-green-500' if rec['compatibility_score'] >= 80 else 'bg-yellow-100 border-yellow-500' if rec['compatibility_score'] >= 60 else 'bg-red-100 border-red-500'
-                
-                with ui.card().classes(f'p-4 border-l-4 {compatibility_color}'):
-                    with ui.row().classes('items-center justify-between mb-2'):
-                        ui.label(rec['department']).classes('font-semibold text-lg')
-                        ui.chip(f"{rec['compatibility_score']}%", color='blue').props('dense')
-                    
-                    with ui.column().classes('gap-2'):
-                        with ui.row().classes('justify-between text-sm'):
-                            ui.label('Capacity:').classes('text-gray-600')
-                            ui.label(rec['capacity_status']).classes('font-medium')
-                        
-                        with ui.row().classes('justify-between text-sm'):
-                            ui.label('Growth Potential:').classes('text-gray-600')
-                            ui.label(rec['growth_potential']).classes('font-medium')
-                        
-                        ui.button(f'Request Transfer to {rec["code"]}', 
-                            on_click=lambda dept=rec['department']: quick_request_transfer(dept)
-                        ).props('size=sm color=primary').classes('w-full mt-2')
+    """Create AI-powered department recommendations — evenly distributed horizontal cards."""
+    employee_profile = {"skills": ["communication", "analysis"], "interests": ["technology", "leadership"]}
+    recommendations = transfer_manager.get_department_recommendations(employee_profile)
+
+    _gradients = [
+        ("#4f46e5", "#3730a3"),  # indigo
+        ("#10b981", "#065f46"),  # emerald
+        ("#8b5cf6", "#6d28d9"),  # violet
+        ("#ef4444", "#9f1239"),  # rose
+        ("#f59e0b", "#b45309"),  # amber
+        ("#06b6d4", "#0284c7"),  # cyan
+    ]
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #4f46e5, #7c3aed);'
+            'padding: 1rem 1.5rem; display:flex; justify-content:space-between; align-items:center;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">🤖 AI-Powered Department Recommendations</h2>')
+            ui.html('<span style="background:rgba(255,255,255,0.2);color:#fff;padding:.2rem .75rem;'
+                    'border-radius:9999px;font-size:.72rem;font-weight:700;">Based on your skills &amp; goals</span>')
+
+        with ui.card_section().classes('p-6'):
+            with ui.element('div').style('display:flex; flex-wrap:wrap; gap:1rem; width:100%;'):
+                for idx, rec in enumerate(recommendations[:6]):
+                    g_from, g_to = _gradients[idx % len(_gradients)]
+                    score        = rec['compatibility_score']
+
+                    if score >= 80:
+                        sc_color, sc_bg = "#059669", "#d1fae5"
+                    elif score >= 60:
+                        sc_color, sc_bg = "#d97706", "#fef3c7"
+                    else:
+                        sc_color, sc_bg = "#dc2626", "#fee2e2"
+
+                    growth_icon = "🚀" if rec['growth_potential'] == 'High' else "📈" if rec['growth_potential'] == 'Medium' else "➡️"
+                    cap_icon    = "✅" if rec['capacity_status'] == 'Available' else "⚠️"
+
+                    ui.html(f"""
+<div style="
+    flex: 1 1 160px;
+    min-width: 160px;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 18px -4px rgba(0,0,0,0.12);
+    background: #fff;
+    transition: transform .2s ease, box-shadow .2s ease;
+    cursor: default;
+" onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 14px 28px -6px rgba(0,0,0,0.18)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px -4px rgba(0,0,0,0.12)'">
+
+  <div style="height:6px;background:linear-gradient(90deg,{g_from},{g_to});"></div>
+
+  <div style="padding:.9rem 1rem 1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.4rem;margin-bottom:.7rem;">
+      <span style="font-weight:700;font-size:.85rem;color:#1e293b;line-height:1.3;">{rec['department']}</span>
+      <span style="flex-shrink:0;padding:.15rem .5rem;border-radius:9999px;
+                   font-size:.65rem;font-weight:700;
+                   background:linear-gradient(90deg,{g_from},{g_to});color:#fff;">
+        {rec['code']}
+      </span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.4rem;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.7rem;color:#94a3b8;font-weight:500;">🎯 Match</span>
+        <span style="font-size:.78rem;font-weight:700;padding:.1rem .4rem;border-radius:9999px;
+                     background:{sc_bg};color:{sc_color};">{score}%</span>
+      </div>
+
+      <div style="width:100%;height:4px;background:#e2e8f0;border-radius:9999px;overflow:hidden;">
+        <div style="height:4px;border-radius:9999px;
+                    background:linear-gradient(90deg,{g_from},{g_to});width:{score}%;"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.7rem;color:#94a3b8;font-weight:500;">{cap_icon} Capacity</span>
+        <span style="font-size:.72rem;font-weight:600;color:#475569;">{rec['capacity_status']}</span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.7rem;color:#94a3b8;font-weight:500;">{growth_icon} Growth</span>
+        <span style="font-size:.72rem;font-weight:600;color:#475569;">{rec['growth_potential']}</span>
+      </div>
+    </div>
+
+    <button onclick="" style="
+        width:100%;margin-top:.75rem;padding:.45rem .5rem;
+        background:linear-gradient(90deg,{g_from},{g_to});
+        color:#fff;font-size:.72rem;font-weight:700;
+        border:none;border-radius:.625rem;cursor:pointer;
+        box-shadow:0 2px 8px rgba(0,0,0,0.15);
+        transition:opacity .15s;
+    " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      Apply → {rec['code']}
+    </button>
+  </div>
+</div>
+""")
 
 def create_my_requests_section():
-    """Create my requests overview"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('My Transfer Requests').classes('text-xl font-semibold mb-4')
-        
-        # Mock current employee requests
-        my_requests = transfer_manager.get_my_requests("EMP-123")
-        
+    """Create my requests — styled table with gradient header, striped rows, status pills."""
+    my_requests = transfer_manager.get_my_requests("EMP-123")
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #4f46e5, #7c3aed);'
+            'padding: 1rem 1.5rem; display:flex; justify-content:space-between; align-items:center;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📂 My Transfer Requests</h2>')
+            ui.html(f'<span style="background:rgba(255,255,255,0.2);color:#fff;padding:.2rem .75rem;'
+                    f'border-radius:9999px;font-size:.72rem;font-weight:700;">{len(my_requests)} records</span>')
+
         if not my_requests:
-            with ui.column().classes('items-center py-8'):
-                ui.icon('folder_open').classes('text-gray-400 text-6xl mb-4')
-                ui.label('No transfer requests found').classes('text-gray-500 text-lg')
-                ui.label('Submit your first transfer request using the form above').classes('text-gray-400 text-sm')
+            with ui.card_section().classes('py-12'):
+                with ui.column().classes('items-center gap-3'):
+                    ui.html('<div style="font-size:3rem;">📭</div>')
+                    ui.html('<p class="text-gray-500 font-medium">No transfer requests found</p>')
+                    ui.html('<p class="text-gray-400 text-sm">Submit your first request using the New Request tab</p>')
         else:
-            # Requests table
-            with ui.row().classes('w-full p-4 bg-gray-50 rounded-t-lg font-semibold'):
-                ui.label('Request ID').classes('w-32')
-                ui.label('Department').classes('flex-1')
-                ui.label('Date').classes('w-32')
-                ui.label('Status').classes('w-32')
-                ui.label('Smart Score').classes('w-24 text-center')
-                ui.label('Actions').classes('w-32 text-center')
-            
-            for request in my_requests:
-                with ui.row().classes('w-full p-4 border-b border-gray-200 hover:bg-gray-50'):
-                    ui.label(request['id']).classes('w-32 font-mono text-sm')
-                    
-                    with ui.column().classes('flex-1'):
-                        ui.label(f'{request["current_department"]} → {request["requested_department"]}').classes('font-medium')
-                        ui.label(request['justification'][:50] + '...').classes('text-sm text-gray-500')
-                    
-                    ui.label(request['request_date']).classes('w-32 text-sm')
-                    
-                    status_color = 'green' if 'Approved' in request['status'] else 'yellow' if 'Pending' in request['status'] else 'red'
-                    ui.chip(request['status'], color=status_color).props('dense').classes('w-32')
-                    
-                    ui.label(f"{request['smart_score']}%").classes('w-24 text-center font-bold')
-                    
-                    with ui.row().classes('w-32 justify-center gap-1'):
-                        ui.button(icon='visibility', on_click=lambda r=request: view_request_details(r)).props('size=sm flat color=blue')
-                        if request['status'] == 'Pending Review':
-                            ui.button(icon='edit', on_click=lambda r=request: edit_request(r)).props('size=sm flat color=green')
+            with ui.element('div').classes('w-full overflow-x-auto'):
+                with ui.element('table').classes('w-full min-w-full border-collapse'):
+                    with ui.element('thead'):
+                        with ui.element('tr').classes(
+                            'bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm'
+                        ):
+                            th = 'px-4 py-3 text-left font-semibold tracking-wide uppercase whitespace-nowrap'
+                            for h in ['🆔 ID', '🔄 Transfer Route', '📅 Date',
+                                      '🔵 Status', '🎯 Smart Score', '⚙ Actions']:
+                                with ui.element('th').classes(th):
+                                    ui.html(h)
+
+                    with ui.element('tbody'):
+                        td = 'px-4 py-3 text-sm text-gray-700 whitespace-nowrap'
+                        for idx, req in enumerate(my_requests):
+                            stripe = 'bg-slate-50' if idx % 2 == 0 else 'bg-white'
+                            score  = req['smart_score']
+                            sc_cls = ('text-emerald-600 font-bold' if score >= 80
+                                      else 'text-amber-600 font-bold' if score >= 60
+                                      else 'text-rose-600 font-bold')
+
+                            if 'Approved' in req['status']:
+                                pill = 'bg-emerald-100 text-emerald-800'
+                            elif 'Pending' in req['status']:
+                                pill = 'bg-amber-100 text-amber-800'
+                            else:
+                                pill = 'bg-slate-100 text-slate-700'
+
+                            with ui.element('tr').classes(
+                                f'{stripe} border-b border-gray-100 '
+                                'hover:bg-indigo-50 transition-colors duration-150'
+                            ):
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="font-mono text-xs font-semibold text-indigo-700">{req["id"]}</span>')
+                                with ui.element('td').classes(td):
+                                    ui.html(
+                                        f'<div class="font-semibold text-gray-900">'
+                                        f'{req["current_department"]} → {req["requested_department"]}</div>'
+                                        f'<div class="text-xs text-gray-400">{req["justification"][:48]}…</div>'
+                                    )
+                                with ui.element('td').classes(td):
+                                    ui.label(req['request_date'])
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="px-2 py-0.5 rounded-full text-xs font-bold {pill}">{req["status"]}</span>')
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="{sc_cls}">{score}%</span>')
+                                with ui.element('td').classes(td):
+                                    with ui.row().classes('gap-1'):
+                                        ui.button(icon='visibility').props('flat round dense color=indigo size=sm') \
+                                            .on_click(lambda r=req: view_request_details(r))
+                                        if req['status'] == 'Pending Review':
+                                            ui.button(icon='edit').props('flat round dense color=green size=sm') \
+                                                .on_click(lambda r=req: edit_request(r))
 
 def create_guidelines_section():
     """Create transfer guidelines and policies"""
@@ -642,36 +775,65 @@ async def view_request_details(request):
     dialog.open()
 
 def create_smart_transfer_dashboard():
-    """Create modern transfer dashboard with AI insights"""
-    with ui.column().classes('w-full space-y-6'):
-        # Quick stats cards
-        with ui.row().classes('w-full gap-4 mb-6'):
-            with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-indigo-50 to-purple-100'):
-                ui.html('''
-                    <div class="text-center">
-                        <i class="material-icons text-4xl text-indigo-600 mb-2">trending_up</i>
-                        <div class="text-2xl font-bold text-indigo-800">89%</div>
-                        <div class="text-indigo-700">Success Rate</div>
-                    </div>
-                ''')
-            
-            with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-purple-50 to-pink-100'):
-                ui.html('''
-                    <div class="text-center">
-                        <i class="material-icons text-4xl text-purple-600 mb-2">groups</i>
-                        <div class="text-2xl font-bold text-purple-800">12</div>
-                        <div class="text-purple-700">Open Positions</div>
-                    </div>
-                ''')
-            
-            with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-pink-50 to-rose-100'):
-                ui.html('''
-                    <div class="text-center">
-                        <i class="material-icons text-4xl text-pink-600 mb-2">psychology</i>
-                        <div class="text-2xl font-bold text-pink-800">96%</div>
-                        <div class="text-pink-700">Match Accuracy</div>
-                    </div>
-                ''')
+    """Create modern transfer dashboard with AI insights — evenly distributed KPI cards."""
+    _kpis = [
+        {"icon": "📋", "label": "Total Requests",  "value": str(len(transfer_manager.transfer_requests)),
+         "sub": "All time", "from_": "#4f46e5", "to_": "#3730a3"},
+        {"icon": "⏳", "label": "Pending Review",
+         "value": str(sum(1 for r in transfer_manager.transfer_requests if r["status"] == "Pending Review")),
+         "sub": "Awaiting action", "from_": "#f59e0b", "to_": "#b45309"},
+        {"icon": "📈", "label": "Success Rate",    "value": "89%",
+         "sub": "Last 6 months",  "from_": "#10b981", "to_": "#065f46"},
+        {"icon": "🏢", "label": "Open Positions",  "value": "12",
+         "sub": "Across depts",   "from_": "#8b5cf6", "to_": "#6d28d9"},
+        {"icon": "🤖", "label": "Match Accuracy",  "value": "96%",
+         "sub": "AI precision",   "from_": "#ef4444", "to_": "#9f1239"},
+    ]
+
+    with ui.element('div').style('display:flex; flex-wrap:nowrap; gap:1rem; width:100%;'):
+        for c in _kpis:
+            ui.html(f"""
+<div style="
+    flex: 1 1 0%;
+    min-width: 0;
+    background: linear-gradient(135deg, {c['from_']}, {c['to_']});
+    border-radius: 1.25rem;
+    padding: 1.4rem 1.5rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px -6px rgba(0,0,0,0.28);
+    transition: transform .2s ease, box-shadow .2s ease;
+    cursor: default;
+" onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 18px 36px -8px rgba(0,0,0,0.32)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px -6px rgba(0,0,0,0.28)'">
+
+  <div style="position:absolute;top:-24px;right:-24px;width:90px;height:90px;
+              border-radius:50%;background:rgba(255,255,255,0.1);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-16px;left:-16px;width:64px;height:64px;
+              border-radius:50%;background:rgba(255,255,255,0.07);pointer-events:none;"></div>
+
+  <div style="display:inline-flex;align-items:center;justify-content:center;
+              width:48px;height:48px;border-radius:.75rem;
+              background:rgba(255,255,255,0.18);font-size:1.5rem;
+              margin-bottom:.85rem;box-shadow:inset 0 1px 1px rgba(255,255,255,0.25);">
+    {c['icon']}
+  </div>
+
+  <div style="font-size:2rem;font-weight:900;letter-spacing:-.03em;
+              line-height:1;margin-bottom:.35rem;
+              text-shadow:0 2px 8px rgba(0,0,0,0.15);">
+    {c['value']}
+  </div>
+  <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;
+              letter-spacing:.1em;opacity:.85;margin-bottom:.2rem;">
+    {c['label']}
+  </div>
+  <div style="font-size:.68rem;opacity:.6;font-weight:500;">
+    {c['sub']}
+  </div>
+</div>
+""")
 
 async def show_career_pathways():
     """Show AI-powered career pathways dialog"""

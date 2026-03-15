@@ -28,6 +28,8 @@ images = {
     # "document": imagePath('icons/document.png'),
     "reporting": 'addchart',
     "ai": 'psychology',
+    "billing": 'card_membership',
+    "connectivity": 'qr_code_2',
     "map": 'map',
 }
 linkData = {
@@ -119,6 +121,12 @@ linkData = {
   ],
   "ai": [
     { "id": 27, "label": 'AI Orchestrator', "route": route('/ai/orchestrator')},
+  ],
+  "billing": [
+    { "id": 28, "label": 'License & Pricing', "route": route('/billing/license-pricing')},
+  ],
+  "connectivity": [
+    { "id": 29, "label": 'QR Codes',           "route": route('/administration/connectivity')},
   ],
   # "map": [{ "id": 26, "label": 'View Interactive Map', "route": '/app/map'}],
 }

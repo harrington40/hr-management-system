@@ -248,137 +248,153 @@ def get_status_badge_color(status) -> str:
 def create_hr_administration_page():
     """Create HR Administration page"""
     manager = HRAdministrationManager()
-    
-    with ui.column().classes('w-full h-full bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen'):
-        # Header Section
-        with ui.row().classes('w-full p-6'):
-            with ui.card().classes('w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white'):
-                with ui.card_section().classes('p-6'):
-                    with ui.row().classes('w-full justify-between items-center'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">📋</span>HR Administration</h1>')
-                        with ui.row().classes('gap-4'):
-                            ui.button('📝 Create Policy', on_click=lambda: create_policy_dialog()).classes('bg-white text-blue-600 hover:bg-blue-50 font-semibold')
-                            ui.button('✅ Compliance Check', on_click=lambda: show_compliance_dialog()).classes('bg-white text-blue-600 hover:bg-blue-50 font-semibold')
-                            ui.button('📊 Reports', on_click=lambda: show_reports()).classes('bg-white text-blue-600 hover:bg-blue-50 font-semibold')
 
-        # KPI Dashboard
-        with ui.row().classes('w-full px-6 mb-6 gap-4'):
-            # Total Employees
-            with ui.card().classes('flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white'):
-                with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">👥</div>')
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["total_employees"]}</div>')
-                    ui.html('<div class="text-sm opacity-90">Total Employees</div>')
+    # ── KPI card helper ───────────────────────────────────────────────────────
+    def kpi_card(icon, label, value, gradient, sub=''):
+        with ui.card().classes(
+            f'flex-1 min-w-0 {gradient} text-white rounded-2xl shadow-lg '
+            'transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl'
+        ):
+            with ui.card_section().classes('p-5 flex flex-col items-center gap-2 text-center'):
+                ui.html(f'<div class="text-4xl mb-1">{icon}</div>')
+                ui.html(f'<div class="text-3xl font-extrabold tracking-tight">{value}</div>')
+                ui.html(f'<div class="text-sm font-semibold uppercase tracking-widest opacity-80">{label}</div>')
+                if sub:
+                    ui.html(f'<div class="text-xs opacity-60 mt-1">{sub}</div>')
 
-            # Active Policies
-            with ui.card().classes('flex-1 bg-gradient-to-br from-green-500 to-green-600 text-white'):
-                with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">📄</div>')
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["active_policies"]}</div>')
-                    ui.html('<div class="text-sm opacity-90">Active Policies</div>')
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-blue-50 min-h-screen p-6 gap-6'):
 
-            # Compliance Rate
-            with ui.card().classes('flex-1 bg-gradient-to-br from-orange-500 to-orange-600 text-white'):
-                with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">✅</div>')
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["compliance_rate"]}%</div>')
-                    ui.html('<div class="text-sm opacity-90">Compliance Rate</div>')
+        # ── Header ────────────────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-gradient-to-r from-blue-700 to-indigo-700 text-white'):
+            with ui.card_section().classes('px-8 py-6'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    with ui.column().classes('gap-1'):
+                        ui.html('<h1 class="text-3xl font-extrabold tracking-tight flex items-center gap-3">'
+                                '📋 HR Administration</h1>')
+                        ui.html('<p class="text-blue-100 text-sm">Policies, compliance tracking &amp; HR metrics</p>')
+                    with ui.row().classes('gap-3'):
+                        ui.button('📝 Create Policy',    on_click=lambda: create_policy_dialog()).props('outline color=white')
+                        ui.button('✅ Compliance Check', on_click=lambda: show_compliance_dialog()).props('outline color=white')
+                        ui.button('📊 Reports',          on_click=lambda: show_reports()).props('outline color=white')
 
-            # Employee Satisfaction
-            with ui.card().classes('flex-1 bg-gradient-to-br from-purple-500 to-purple-600 text-white'):
-                with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">😊</div>')
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["employee_satisfaction"]}/10</div>')
-                    ui.html('<div class="text-sm opacity-90">Employee Satisfaction</div>')
+        # ── KPI Cards ─────────────────────────────────────────────────────────
+        with ui.row().classes('w-full gap-4 flex-nowrap'):
+            kpi_card('👥', 'Total Employees',     str(manager.kpis['total_employees']),          'bg-gradient-to-br from-blue-500 to-blue-700')
+            kpi_card('📄', 'Active Policies',     str(manager.kpis['active_policies']),          'bg-gradient-to-br from-emerald-500 to-emerald-700')
+            kpi_card('✅', 'Compliance Rate',     f'{manager.kpis["compliance_rate"]}%',         'bg-gradient-to-br from-orange-500 to-orange-700')
+            kpi_card('😊', 'Satisfaction',        f'{manager.kpis["employee_satisfaction"]}/10', 'bg-gradient-to-br from-purple-500 to-purple-700')
+            kpi_card('📈', 'Retention Rate',      f'{manager.kpis["retention_rate"]}%',          'bg-gradient-to-br from-rose-500 to-rose-700')
 
-            # Retention Rate
-            with ui.card().classes('flex-1 bg-gradient-to-br from-red-500 to-red-600 text-white'):
-                with ui.card_section().classes('p-4 text-center'):
-                    ui.html('<div class="text-3xl font-bold">📈</div>')
-                    ui.html(f'<div class="text-2xl font-bold">{manager.kpis["retention_rate"]}%</div>')
-                    ui.html('<div class="text-sm opacity-90">Retention Rate</div>')
+        # ── Policies Section ──────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.card_section().classes('px-6 pt-6 pb-2'):
+                with ui.row().classes('w-full justify-between items-center mb-2'):
+                    ui.html('<h2 class="text-xl font-bold text-gray-800">📚 HR Policies</h2>')
+                    ui.html(f'<span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">'
+                            f'{len(manager.policies)} policies</span>')
 
-        # Policies Section
-        with ui.row().classes('w-full px-6 mb-6'):
-            with ui.card().classes('w-full'):
-                with ui.card_section().classes('p-6 border-b border-gray-200'):
-                    ui.html('<h2 class="text-2xl font-bold text-gray-800 mb-4">📚 HR Policies</h2>')
-                
-                with ui.card_section().classes('p-6'):
-                    # Policies Table
-                    with ui.column().classes('w-full'):
-                        for policy in manager.policies:
-                            with ui.card().classes('w-full mb-3 hover:shadow-lg transition-shadow'):
-                                with ui.card_section().classes('p-4'):
-                                    with ui.row().classes('w-full justify-between items-start'):
-                                        with ui.column().classes('flex-1 gap-2'):
-                                            with ui.row().classes('gap-2 items-center'):
-                                                ui.html(f'<h3 class="text-lg font-bold text-gray-800">{policy.title}</h3>')
-                                                status_color = get_status_badge_color(policy.status)
-                                                badge_colors = {
-                                                    'green': 'bg-green-100 text-green-800',
-                                                    'blue': 'bg-blue-100 text-blue-800',
-                                                    'orange': 'bg-orange-100 text-orange-800',
-                                                    'gray': 'bg-gray-100 text-gray-800'
-                                                }
-                                                ui.html(f'<span class="px-3 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{policy.status.value}</span>')
-                                            
-                                            ui.html(f'<p class="text-sm text-gray-600">{policy.description}</p>')
-                                            
-                                            with ui.row().classes('gap-4 text-sm text-gray-500 mt-2'):
-                                                ui.html(f'<span>📁 Category: {policy.category}</span>')
-                                                ui.html(f'<span>👥 Affects: {policy.affected_employees} employees</span>')
-                                                ui.html(f'<span>📅 v{policy.version} • Updated: {policy.last_updated}</span>')
-                                        
-                                        with ui.column().classes('gap-2'):
-                                            ui.button('👁️', on_click=lambda p=policy: view_policy(p)).classes('p-2 bg-blue-100 hover:bg-blue-200 text-blue-600')
-                                            ui.button('✏️', on_click=lambda p=policy: edit_policy(p)).classes('p-2 bg-green-100 hover:bg-green-200 text-green-600')
-                                            ui.button('⋮', on_click=lambda p=policy: show_policy_menu(p)).classes('p-2 bg-gray-100 hover:bg-gray-200 text-gray-600')
+            with ui.card_section().classes('px-6 pb-6'):
+                with ui.column().classes('w-full gap-3'):
+                    badge_map = {
+                        'green':  'bg-emerald-100 text-emerald-800',
+                        'blue':   'bg-blue-100 text-blue-800',
+                        'orange': 'bg-orange-100 text-orange-800',
+                        'gray':   'bg-slate-100 text-slate-700',
+                    }
+                    for policy in manager.policies:
+                        sc   = get_status_badge_color(policy.status)
+                        bcls = badge_map.get(sc, 'bg-slate-100 text-slate-700')
+                        with ui.card().classes(
+                            'w-full rounded-xl border border-gray-100 '
+                            'hover:shadow-md hover:-translate-y-0.5 transition-all duration-150'
+                        ):
+                            with ui.card_section().classes('p-4'):
+                                with ui.row().classes('w-full justify-between items-start gap-4'):
+                                    with ui.column().classes('flex-1 gap-2'):
+                                        with ui.row().classes('gap-2 items-center flex-wrap'):
+                                            ui.html(f'<h3 class="text-base font-bold text-gray-800">{policy.title}</h3>')
+                                            ui.html(f'<span class="px-3 py-0.5 rounded-full text-xs font-bold {bcls}">{policy.status.value}</span>')
+                                        ui.html(f'<p class="text-sm text-gray-500">{policy.description}</p>')
+                                        ui.html(
+                                            f'<div class="flex gap-4 text-xs text-gray-400 mt-1">'
+                                            f'<span>📁 {policy.category}</span>'
+                                            f'<span>👥 {policy.affected_employees} employees</span>'
+                                            f'<span>📅 v{policy.version} · {policy.last_updated}</span>'
+                                            f'</div>'
+                                        )
+                                    with ui.row().classes('gap-1 flex-shrink-0'):
+                                        ui.button(icon='visibility').props('flat round dense color=blue size=sm') \
+                                            .on_click(lambda p=policy: view_policy(p))
+                                        ui.button(icon='edit').props('flat round dense color=green size=sm') \
+                                            .on_click(lambda p=policy: edit_policy(p))
+                                        ui.button(icon='more_vert').props('flat round dense color=grey size=sm') \
+                                            .on_click(lambda p=policy: show_policy_menu(p))
 
-        # Compliance Section
-        with ui.row().classes('w-full px-6'):
-            with ui.card().classes('w-full'):
-                with ui.card_section().classes('p-6 border-b border-gray-200'):
-                    with ui.row().classes('justify-between items-center'):
-                        ui.html('<h2 class="text-2xl font-bold text-gray-800">✅ Compliance Checklist</h2>')
-                        ui.button('+ Add Item', on_click=lambda: add_compliance_item()).classes('bg-green-600 text-white hover:bg-green-700')
-                
-                with ui.card_section().classes('p-6'):
-                    with ui.column().classes('w-full gap-3'):
-                        for item in manager.compliance_items:
-                            status_color = get_status_badge_color(item.status)
-                            badge_colors = {
-                                'green': 'bg-green-100 text-green-800',
-                                'orange': 'bg-orange-100 text-orange-800',
-                                'red': 'bg-red-100 text-red-800',
-                                'blue': 'bg-blue-100 text-blue-800',
-                                'gray': 'bg-gray-100 text-gray-800'
-                            }
-                            
-                            with ui.card().classes('w-full bg-gray-50 hover:bg-gray-100 transition-colors'):
-                                with ui.card_section().classes('p-4'):
-                                    with ui.row().classes('w-full items-center gap-4'):
-                                        # Progress bar
-                                        with ui.column().classes('w-20'):
-                                            ui.html(f'<div class="text-center text-sm font-bold text-gray-700">{item.progress}%</div>')
-                                            with ui.linear_progress(value=item.progress / 100).classes('w-full'):
-                                                pass
-                                        
-                                        # Item details
-                                        with ui.column().classes('flex-1 gap-1'):
-                                            with ui.row().classes('gap-2 items-center'):
-                                                ui.html(f'<strong class="text-gray-800">{item.title}</strong>')
-                                                ui.html(f'<span class="px-2 py-1 rounded-full text-xs font-semibold {badge_colors.get(status_color, "")}">{item.status.value}</span>')
-                                            
-                                            with ui.row().classes('gap-4 text-xs text-gray-600'):
-                                                ui.html(f'<span>📂 {item.category}</span>')
-                                                ui.html(f'<span>👤 {item.responsible_person}</span>')
-                                                ui.html(f'<span>📅 Due: {item.due_date}</span>')
-                                        
-                                        # Actions
-                                        with ui.row().classes('gap-2'):
-                                            ui.button('📝', on_click=lambda i=item: edit_compliance_item(i)).classes('p-2 bg-blue-100 hover:bg-blue-200 text-blue-600')
-                                            ui.button('✓', on_click=lambda i=item: mark_compliance_done(i)).classes('p-2 bg-green-100 hover:bg-green-200 text-green-600')
+        # ── Compliance Section ────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.card_section().classes('px-6 pt-6 pb-2'):
+                with ui.row().classes('w-full justify-between items-center mb-2'):
+                    ui.html('<h2 class="text-xl font-bold text-gray-800">✅ Compliance Checklist</h2>')
+                    ui.button('+ Add Item', on_click=lambda: add_compliance_item()) \
+                        .props('color=green').classes('text-sm')
+
+            with ui.card_section().classes('px-6 pb-6'):
+                comp_badge = {
+                    'green':  'bg-emerald-100 text-emerald-800',
+                    'orange': 'bg-orange-100 text-orange-800',
+                    'red':    'bg-red-100 text-red-800',
+                    'blue':   'bg-blue-100 text-blue-800',
+                    'gray':   'bg-slate-100 text-slate-700',
+                }
+                with ui.column().classes('w-full gap-3'):
+                    for item in manager.compliance_items:
+                        sc   = get_status_badge_color(item.status)
+                        bcls = comp_badge.get(sc, 'bg-slate-100 text-slate-700')
+                        # colour the progress bar by completion level
+                        bar_col = ('bg-emerald-500' if item.progress >= 80
+                                   else 'bg-orange-400' if item.progress >= 40
+                                   else 'bg-rose-500')
+                        with ui.card().classes(
+                            'w-full rounded-xl border border-gray-100 '
+                            'hover:shadow-md transition-all duration-150'
+                        ):
+                            with ui.card_section().classes('p-4'):
+                                with ui.row().classes('w-full items-center gap-4'):
+                                    # Circular-style progress indicator
+                                    with ui.column().classes('items-center gap-1 w-16 flex-shrink-0'):
+                                        ui.html(
+                                            f'<div class="text-xl font-extrabold text-gray-700">{item.progress}%</div>'
+                                        )
+                                        ui.html(
+                                            f'<div class="w-full h-2 bg-gray-200 rounded-full">'
+                                            f'<div class="{bar_col} h-2 rounded-full" style="width:{item.progress}%"></div>'
+                                            f'</div>'
+                                        )
+                                    # Item details
+                                    with ui.column().classes('flex-1 gap-1'):
+                                        with ui.row().classes('gap-2 items-center flex-wrap'):
+                                            ui.html(f'<strong class="text-gray-800 text-sm">{item.title}</strong>')
+                                            ui.html(f'<span class="px-2 py-0.5 rounded-full text-xs font-bold {bcls}">{item.status.value}</span>')
+                                        ui.html(
+                                            f'<div class="flex gap-4 text-xs text-gray-400">'
+                                            f'<span>📂 {item.category}</span>'
+                                            f'<span>👤 {item.responsible_person}</span>'
+                                            f'<span>📅 Due: {item.due_date}</span>'
+                                            f'</div>'
+                                        )
+                                    # Actions
+                                    with ui.row().classes('gap-1 flex-shrink-0'):
+                                        ui.button(icon='edit').props('flat round dense color=blue size=sm') \
+                                            .on_click(lambda i=item: edit_compliance_item(i))
+                                        ui.button(icon='check_circle').props('flat round dense color=green size=sm') \
+                                            .on_click(lambda i=item: mark_compliance_done(i))
+
+        # ── Footer ────────────────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-sm bg-white'):
+            with ui.card_section().classes('px-6 py-4'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    ui.html('<p class="text-xs text-gray-400">📋 Policy and compliance data sourced from YAML backend.</p>')
+                    ui.html(f'<p class="text-xs text-gray-400">Updated: {datetime.now().strftime("%d %b %Y, %H:%M")}</p>')
 
 
 def create_policy_dialog():

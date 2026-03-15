@@ -149,366 +149,472 @@ class ModernShiftTimetableManager:
 def create_modern_shift_timetable_page():
     """Create a modern, comprehensive shift timetable management page"""
 
-    # Initialize manager
-    manager = ModernShiftTimetableManager()
+    manager          = ModernShiftTimetableManager()
+    optimization_data = manager.optimize_timetable()
 
-    # Main container with modern design
-    with ui.column().classes('w-full min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 gap-6'):
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-indigo-50 min-h-screen p-6 gap-6'):
 
-        # Header Section with Metrics
-        with ui.row().classes('w-full justify-between items-start mb-6'):
-            # Title and description
-            with ui.column().classes('gap-2'):
-                ui.html('<div class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">⏰ Shift Timetable</div>')
-                ui.html('<div class="text-lg text-slate-600 font-medium">Advanced visual shift planning and workforce optimization</div>')
+        # ── Header card ──────────────────────────────────────────────────────
+        with ui.card().classes(
+            'w-full rounded-2xl shadow-md text-white overflow-hidden'
+        ).style('background: linear-gradient(135deg, #4f46e5, #7c3aed, #a21caf);'):
+            with ui.card_section().classes('px-8 py-6'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    with ui.column().classes('gap-2'):
+                        with ui.row().classes('items-center gap-2 text-indigo-200 text-sm mb-1'):
+                            ui.html('<span>🏠 Dashboard</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span>Attendance</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span class="text-white font-medium">Shift Timetable</span>')
+                        with ui.row().classes('items-center gap-4'):
+                            ui.html(
+                                '<div style="background:rgba(255,255,255,0.18);border-radius:0.875rem;'
+                                'width:52px;height:52px;display:flex;align-items:center;'
+                                'justify-content:center;font-size:1.75rem;">⏰</div>'
+                            )
+                            with ui.column().classes('gap-0.5'):
+                                ui.html('<h1 class="text-3xl font-extrabold tracking-tight">Shift Timetable Management</h1>')
+                                ui.html('<p class="text-indigo-200 text-sm">Advanced visual shift planning and workforce optimisation</p>')
+                    with ui.row().classes('gap-3'):
+                        ui.button('🤖 AI Auto-Schedule',
+                                  on_click=lambda: ui.notify('AI auto-scheduling running…', type='info')
+                                  ).props('outline color=white')
+                        ui.button('📤 Export Timetable',
+                                  on_click=lambda: ui.notify('Export functionality', type='info')
+                                  ).props('outline color=white')
 
-            # Quick Stats Cards
-            with ui.row().classes('gap-4'):
-                # Efficiency Card
-                with ui.card().classes('bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
-                    with ui.card_section().classes('p-4'):
-                        with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">⚡</div>')
-                            with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.efficiency_score:.1f}%</div>')
-                                ui.html('<div class="text-sm opacity-90">Efficiency Score</div>')
+        # ── KPI dashboard ─────────────────────────────────────────────────────
+        create_shift_kpi_dashboard(manager)
 
-                # Coverage Gaps Card
-                with ui.card().classes('bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
-                    with ui.card_section().classes('p-4'):
-                        with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">⚠️</div>')
-                            with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.coverage_gaps}</div>')
-                                ui.html('<div class="text-sm opacity-90">Coverage Gaps</div>')
+        # ── Tabs ──────────────────────────────────────────────────────────────
+        with ui.tabs().classes('w-full') as tabs:
+            overview_tab    = ui.tab('Overview',         icon='dashboard')
+            templates_tab   = ui.tab('Shift Templates',  icon='schedule')
+            departments_tab = ui.tab('Departments',      icon='business')
+            analytics_tab   = ui.tab('Analytics',        icon='analytics')
 
-                # Active Shifts Card
-                with ui.card().classes('bg-gradient-to-r from-green-500 to-teal-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300'):
-                    with ui.card_section().classes('p-4'):
-                        with ui.row().classes('items-center gap-3'):
-                            ui.html('<div class="text-2xl">🔄</div>')
-                            with ui.column():
-                                ui.html(f'<div class="text-2xl font-bold">{manager.metrics.total_shifts}</div>')
-                                ui.html('<div class="text-sm opacity-90">Active Shifts</div>')
+        with ui.tab_panels(tabs, value=overview_tab).classes('w-full'):
+            with ui.tab_panel(overview_tab):
+                create_modern_timetable_overview(manager)
+            with ui.tab_panel(templates_tab):
+                create_modern_shift_templates(manager)
+            with ui.tab_panel(departments_tab):
+                create_modern_department_schedules(manager)
+            with ui.tab_panel(analytics_tab):
+                create_modern_timetable_analytics(manager, optimization_data)
 
-        # AI Optimization Banner
-        optimization_data = manager.optimize_timetable()
-        if optimization_data['recommendations']:
-            with ui.card().classes('w-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-md'):
-                with ui.card_section().classes('p-4'):
-                    with ui.row().classes('items-center gap-4 w-full'):
-                        ui.html('<div class="text-2xl">🤖</div>')
-                        with ui.column().classes('flex-1'):
-                            ui.html('<div class="text-lg font-semibold text-indigo-800">AI Timetable Optimization Available</div>')
-                            ui.html('<div class="text-sm text-indigo-600">Smart recommendations to improve efficiency and reduce costs</div>')
+def create_shift_kpi_dashboard(manager):
+    """5 evenly-distributed vivid gradient KPI cards."""
+    _kpis = [
+        {'icon': '⚡', 'value': f'{manager.metrics.efficiency_score:.0f}%',
+         'label': 'EFFICIENCY SCORE',     'sub': 'vs 85% target',
+         'from_': '#4f46e5', 'to_': '#3730a3'},
+        {'icon': '🔄', 'value': str(manager.metrics.total_shifts),
+         'label': 'ACTIVE SHIFTS',        'sub': 'shift templates',
+         'from_': '#0891b2', 'to_': '#0e7490'},
+        {'icon': '👥', 'value': str(manager.metrics.active_employees),
+         'label': 'ACTIVE EMPLOYEES',     'sub': 'scheduled today',
+         'from_': '#059669', 'to_': '#065f46'},
+        {'icon': '⚠️', 'value': str(manager.metrics.coverage_gaps),
+         'label': 'COVERAGE GAPS',        'sub': 'need attention',
+         'from_': '#dc2626', 'to_': '#9f1239'},
+        {'icon': '⏱️', 'value': f'{manager.metrics.overtime_hours}h',
+         'label': 'OVERTIME HOURS',       'sub': 'this week',
+         'from_': '#d97706', 'to_': '#b45309'},
+    ]
+    with ui.element('div').style('display:flex; flex-wrap:nowrap; gap:1rem; width:100%;'):
+        for c in _kpis:
+            ui.html(f"""
+<div style="
+  flex: 1 1 0%;
+  background: linear-gradient(135deg, {c['from_']}, {c['to_']});
+  border-radius: 1.25rem;
+  padding: 1.4rem 1.5rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px -6px rgba(0,0,0,0.28);
+  transition: transform .2s ease, box-shadow .2s ease;
+  cursor: default;
+"
+onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 16px 32px -8px rgba(0,0,0,0.35)'"
+onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px -6px rgba(0,0,0,0.28)'">
+  <div style="position:absolute;top:-18px;right:-18px;width:90px;height:90px;
+              background:rgba(255,255,255,0.12);border-radius:50%;"></div>
+  <div style="position:absolute;bottom:-16px;left:-12px;width:64px;height:64px;
+              background:rgba(255,255,255,0.08);border-radius:50%;"></div>
+  <div style="position:relative;z-index:1;">
+    <div style="background:rgba(255,255,255,0.18);border-radius:.75rem;
+                width:48px;height:48px;display:flex;align-items:center;
+                justify-content:center;font-size:1.35rem;margin-bottom:.75rem;">
+      {c['icon']}
+    </div>
+    <div style="font-size:2rem;font-weight:900;letter-spacing:-.02em;">{c['value']}</div>
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;
+                letter-spacing:.1em;opacity:.85;margin-top:.25rem;">{c['label']}</div>
+    <div style="font-size:.68rem;opacity:.6;margin-top:.15rem;">{c['sub']}</div>
+  </div>
+</div>
+""")
 
-                        with ui.row().classes('gap-2'):
-                            for rec in optimization_data['recommendations'][:2]:
-                                priority_color = 'bg-red-100 text-red-800' if rec['priority'] == 'high' else 'bg-yellow-100 text-yellow-800'
-                                ui.badge(rec['type'].title()).classes(f'{priority_color} text-xs')
-
-                            ui.button('View Recommendations',
-                                    on_click=lambda: ui.notify('Optimization recommendations would open here', type='info')
-                                    ).classes('bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium')
-
-        # Main Content Grid
-        with ui.grid(columns='1fr 350px').classes('w-full gap-6'):
-
-            # Left Panel - Timetable Views
-            with ui.card().classes('bg-white shadow-xl border-0 overflow-hidden'):
-                with ui.card_section().classes('p-0'):
-
-                    # View Selector Tabs
-                    timetable_tabs = ui.tabs().classes('w-full bg-slate-50 border-b border-slate-200')
-                    with timetable_tabs:
-                        overview_tab = ui.tab('Overview', icon='dashboard')
-                        templates_tab = ui.tab('Shift Templates', icon='schedule')
-                        departments_tab = ui.tab('Departments', icon='business')
-                        analytics_tab = ui.tab('Analytics', icon='analytics')
-
-                    # Tab Panels
-                    with ui.tab_panels(timetable_tabs, value=overview_tab).classes('p-0'):
-
-                        # Overview Panel
-                        with ui.tab_panel(overview_tab).classes('p-6'):
-                            create_modern_timetable_overview(manager)
-
-                        # Templates Panel
-                        with ui.tab_panel(templates_tab).classes('p-6'):
-                            create_modern_shift_templates(manager)
-
-                        # Departments Panel
-                        with ui.tab_panel(departments_tab).classes('p-6'):
-                            create_modern_department_schedules(manager)
-
-                        # Analytics Panel
-                        with ui.tab_panel(analytics_tab).classes('p-6'):
-                            create_modern_timetable_analytics(manager, optimization_data)
-
-            # Right Panel - Quick Actions & Tools
-            with ui.column().classes('gap-4'):
-
-                # Quick Actions Card
-                with ui.card().classes('bg-white shadow-lg border-0'):
-                    with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">⚡ Quick Actions</div>')
-
-                        with ui.column().classes('gap-3'):
-                            ui.button('➕ Create New Shift',
-                                    on_click=lambda: ui.notify('Create shift functionality', type='info')
-                                    ).classes('w-full justify-start bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200')
-
-                            ui.button('🔄 Auto-Schedule',
-                                    on_click=lambda: ui.notify('AI auto-scheduling would run here', type='info')
-                                    ).classes('w-full justify-start bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200')
-
-                            ui.button('📊 Coverage Report',
-                                    on_click=lambda: ui.notify('Coverage analysis report', type='info')
-                                    ).classes('w-full justify-start bg-green-50 hover:bg-green-100 text-green-700 border border-green-200')
-
-                            ui.button('📤 Export Timetable',
-                                    on_click=lambda: ui.notify('Export functionality', type='info')
-                                    ).classes('w-full justify-start bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200')
-
-                # Timetable Health Card
-                with ui.card().classes('bg-white shadow-lg border-0'):
-                    with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏥 Timetable Health</div>')
-
-                        # Health indicators
-                        health_items = [
-                            {'label': 'Shift Coverage', 'value': '92%', 'status': 'good' if 92 > 85 else 'warning'},
-                            {'label': 'Overtime Hours', 'value': f'{manager.metrics.overtime_hours}h', 'status': 'warning' if manager.metrics.overtime_hours > 40 else 'good'},
-                            {'label': 'Schedule Conflicts', 'value': '1', 'status': 'bad' if 1 > 0 else 'good'},
-                        ]
-
-                        for item in health_items:
-                            status_color = {
-                                'good': 'text-green-600 bg-green-50',
-                                'warning': 'text-yellow-600 bg-yellow-50',
-                                'bad': 'text-red-600 bg-red-50'
-                            }[item['status']]
-
-                            with ui.row().classes('justify-between items-center p-2 rounded-lg mb-2'):
-                                ui.html(f'<div class="text-sm font-medium text-slate-700">{item["label"]}</div>')
-                                ui.html(f'<div class="text-sm font-bold px-2 py-1 rounded {status_color}">{item["value"]}</div>')
-
-                # Active Shifts Summary Card
-                with ui.card().classes('bg-white shadow-lg border-0'):
-                    with ui.card_section().classes('p-4'):
-                        ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Active Shifts</div>')
-
-                        shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
-                        for shift_id, shift_data in list(shift_templates.items())[:3]:  # Show first 3
-                            with ui.row().classes('items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer'):
-                                # Color indicator
-                                color = shift_data.get('color', '#6B7280')
-                                ui.html(f'<div class="w-3 h-3 rounded-full" style="background-color: {color}"></div>')
-
-                                with ui.column().classes('flex-1'):
-                                    ui.html(f'<div class="text-sm font-medium text-slate-800">{shift_data.get("name", shift_id)}</div>')
-                                    ui.html(f'<div class="text-xs text-slate-500">{shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>')
 
 def create_modern_timetable_overview(manager):
-    """Create modern timetable overview with visual schedule grid"""
+    """Overview tab — full-width timetable grid, colour-blocked shift bands, legend."""
 
-    # Week navigation
-    with ui.row().classes('items-center justify-between mb-6'):
-        ui.button('⬅️ Previous Week',
-                 on_click=lambda: ui.notify('Previous week navigation', type='info')
-                 ).classes('bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg')
+    days       = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    days_short = ['Mon',    'Tue',     'Wed',       'Thu',      'Fri',     'Sat',      'Sun']
 
-        current_week = datetime.now().strftime('%B %d, %Y')
-        ui.html(f'<div class="text-xl font-bold text-slate-800">Week of {current_week}</div>')
+    # Each row = 1 hour  (06:00 → 23:00)
+    hours = list(range(6, 24))   # 06 … 23
 
-        ui.button('Next Week ➡️',
-                 on_click=lambda: ui.notify('Next week navigation', type='info')
-                 ).classes('bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg')
+    # Shift bands: (label, start_h, end_h, text_color, bg_color, border_color)
+    _bands = [
+        ('Morning',   8,  16, '#3730a3', '#e0e7ff', '#a5b4fc'),
+        ('Afternoon', 14, 22, '#92400e', '#fef3c7', '#fcd34d'),
+        ('Night',     22, 30, '#1e293b', '#e2e8f0', '#94a3b8'),   # wraps past midnight
+    ]
 
-    # Visual Timetable Grid
-    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    time_slots = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00']
+    def get_shift(hour, is_weekend):
+        if is_weekend:
+            if 8 <= hour < 16:
+                return ('Morning', '#3730a3', '#e0e7ff', '#a5b4fc')
+            return None
+        if 8 <= hour < 14:
+            return ('Morning',   '#3730a3', '#e0e7ff', '#a5b4fc')
+        if 14 <= hour < 22:
+            return ('Afternoon', '#92400e', '#fef3c7', '#fcd34d')
+        if hour >= 22:
+            return ('Night',     '#1e293b', '#e2e8f0', '#94a3b8')
+        return None
 
-    # Header row
-    with ui.grid(columns='100px repeat(7, 1fr)').classes('gap-2 mb-4'):
-        ui.html('<div class="font-bold text-slate-700 p-3"></div>')  # Empty corner
-        for day in days:
-            day_short = day[:3]
-            ui.html(f'<div class="font-bold text-slate-700 p-3 text-center bg-slate-100 rounded-lg">{day_short}</div>')
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
 
-        # Time slot rows
-        for time_slot in time_slots:
-            # Time column
-            ui.html(f'<div class="font-semibold text-slate-600 p-3 text-right bg-slate-50 rounded-lg">{time_slot}</div>')
+        # ── Header ────────────────────────────────────────────────────────────
+        with ui.element('div').style(
+            'background:linear-gradient(90deg,#4f46e5,#7c3aed);'
+            'padding:1rem 1.75rem;display:flex;justify-content:space-between;align-items:center;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📊 Weekly Schedule Overview</h2>')
+            with ui.row().classes('items-center gap-3'):
+                # Legend pills
+                for name, tc, bc, _ in [
+                    ('Morning',   '#3730a3', '#e0e7ff', ''),
+                    ('Afternoon', '#92400e', '#fef3c7', ''),
+                    ('Night',     '#1e293b', '#e2e8f0', ''),
+                ]:
+                    ui.html(
+                        f'<span style="background:{bc};color:{tc};font-size:.68rem;'
+                        f'font-weight:700;padding:.2rem .6rem;border-radius:9999px;">{name}</span>'
+                    )
+                ui.html('<span style="background:rgba(255,255,255,0.15);width:1px;height:20px;'
+                        'display:inline-block;margin:0 .25rem;"></span>')
+                ui.button('⬅', on_click=lambda: ui.notify('Previous week', type='info')).props('flat color=white dense')
+                ui.html(f'<span style="color:#fff;font-weight:600;font-size:.82rem;">'
+                        f'{datetime.now().strftime("%b %d, %Y")}</span>')
+                ui.button('➡', on_click=lambda: ui.notify('Next week', type='info')).props('flat color=white dense')
 
-            # Day columns with shift indicators
-            for day in days:
-                # Mock shift data - in real implementation this would come from the schedule
-                has_shift = (int(time_slot.split(':')[0]) >= 8 and int(time_slot.split(':')[0]) <= 16 and day not in ['Saturday', 'Sunday'])
-                shift_type = 'morning' if has_shift else None
+        # ── Grid ──────────────────────────────────────────────────────────────
+        with ui.element('div').style('padding:1.25rem 1.5rem 1.5rem;'):
 
-                if shift_type:
-                    shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
-                    shift_info = shift_templates.get(shift_type, {})
-                    color = shift_info.get('color', '#3B82F6')
-                    bg_color = f'bg-[{color}]'
-                    shift_name = shift_info.get('name', shift_type.title())[:4]  # First 4 chars
-                else:
-                    bg_color = 'bg-gray-50'
-                    shift_name = ''
+            # Day-name header row
+            ui.html(
+                '<div style="display:grid;grid-template-columns:52px repeat(7,1fr);'
+                'gap:.5rem;width:100%;margin-bottom:.4rem;">'
+                '<div></div>'
+                + ''.join(
+                    f'<div style="text-align:center;font-size:.75rem;font-weight:800;'
+                    f'color:{"#94a3b8" if i>=5 else "#4f46e5"};text-transform:uppercase;'
+                    f'letter-spacing:.07em;padding:.4rem .3rem;'
+                    f'background:{"#f8fafc" if i>=5 else "#eef2ff"};'
+                    f'border-radius:.5rem;">{d}</div>'
+                    for i, d in enumerate(days_short)
+                )
+                + '</div>'
+            )
 
-                ui.html(f'<div class="p-2 text-center text-xs font-medium rounded-lg {bg_color} border-2 border-white shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="console.log(\'{time_slot} {day}\')">{shift_name}</div>')
+            # Hour rows — build one big HTML block for performance
+            rows_html = (
+                '<div style="display:grid;grid-template-columns:52px repeat(7,1fr);'
+                'gap:.5rem .5rem;width:100%;row-gap:.3rem;">'
+            )
+            for hour in hours:
+                ts = f'{hour:02d}:00'
+                rows_html += (
+                    f'<div style="text-align:right;font-size:.68rem;font-weight:600;'
+                    f'color:#94a3b8;padding:.45rem .4rem;white-space:nowrap;'
+                    f'align-self:center;">{ts}</div>'
+                )
+                for i in range(7):
+                    is_wknd = i >= 5
+                    sh = get_shift(hour, is_wknd)
+                    if sh:
+                        lbl, tc, bc, bdr = sh
+                        rows_html += (
+                            f'<div style="text-align:center;font-size:.7rem;font-weight:700;'
+                            f'padding:.45rem .3rem;border-radius:.5rem;'
+                            f'color:{tc};background:{bc};border:1px solid {bdr};'
+                            f'cursor:pointer;transition:filter .15s;" '
+                            f'onmouseover="this.style.filter=\'brightness(.92)\'" '
+                            f'onmouseout="this.style.filter=\'none\'">{lbl[:3]}</div>'
+                        )
+                    else:
+                        rows_html += (
+                            '<div style="background:#f8fafc;border-radius:.5rem;'
+                            'height:100%;min-height:28px;border:1px solid #f1f5f9;"></div>'
+                        )
+            rows_html += '</div>'
+            ui.html(rows_html)
+
+    # ── Quick actions ─────────────────────────────────────────────────────────
+    with ui.row().classes('gap-3 mt-2'):
+        for label, color in [
+            ('➕ Create New Shift', '#4f46e5'),
+            ('👥 Assign Employees', '#059669'),
+            ('📊 Coverage Report',  '#7c3aed'),
+        ]:
+            ui.button(label, on_click=lambda l=label: ui.notify(f'{l} — coming soon', type='info')
+                      ).style(
+                f'background:{color};color:#fff;border-radius:.75rem;'
+                f'font-weight:700;padding:.45rem 1.1rem;'
+            )
 
 def create_modern_shift_templates(manager):
-    """Create modern shift templates management with visual cards"""
-
+    """Shift Templates tab — styled section card + horizontal flex cards."""
     shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
 
-    with ui.column().classes('gap-6'):
+    _grads = {
+        'morning':   ('#4f46e5', '#3730a3'),
+        'afternoon': ('#d97706', '#b45309'),
+        'night':     ('#1e293b', '#374151'),
+    }
 
-        # Header with add button
-        with ui.row().classes('items-center justify-between mb-4'):
-            ui.html('<div class="text-2xl font-bold text-slate-800">⚙️ Shift Templates</div>')
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background:linear-gradient(90deg,#4f46e5,#7c3aed);'
+            'padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">⚙️ Shift Templates</h2>')
             ui.button('➕ Add Template',
-                     on_click=lambda: ui.notify('Add template functionality', type='info')
-                     ).classes('bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-lg')
+                      on_click=lambda: ui.notify('Add template', type='info')
+                      ).props('outline color=white').classes('text-sm')
 
-        # Templates Grid
-        with ui.grid(columns='repeat(auto-fit, minmax(300px, 1fr))').classes('gap-4'):
+        with ui.card_section().classes('p-6'):
+            with ui.element('div').style('display:flex;flex-wrap:wrap;gap:1rem;width:100%;'):
+                for shift_id, shift_data in shift_templates.items():
+                    g_from, g_to  = _grads.get(shift_id, ('#4f46e5', '#3730a3'))
+                    color         = shift_data.get('color', g_from)
+                    name          = shift_data.get('name', shift_id.title())
+                    start         = shift_data.get('start_time', 'N/A')
+                    end           = shift_data.get('end_time',   'N/A')
+                    dur           = shift_data.get('duration',   shift_data.get('working_hours', 0))
+                    cap           = shift_data.get('capacity', '—')
+                    brk           = shift_data.get('break_duration', 0)
+                    skills        = ', '.join(shift_data.get('skills_required', [])[:2]) or '—'
 
-            for shift_id, shift_data in shift_templates.items():
-                with ui.card().classes('bg-white border border-slate-200 hover:shadow-lg transition-shadow cursor-pointer'):
-                    with ui.card_section().classes('p-4'):
+                    ui.html(f"""
+<div style="
+  flex: 1 1 220px; min-width: 220px;
+  border-radius: 1rem; overflow: hidden;
+  box-shadow: 0 4px 18px -4px rgba(0,0,0,0.13);
+  background: #fff;
+  transition: transform .18s ease, box-shadow .18s ease;
+" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 24px -6px rgba(0,0,0,0.17)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px -4px rgba(0,0,0,0.13)'">
 
-                        # Header with color indicator and name
-                        with ui.row().classes('items-center justify-between mb-3'):
-                            with ui.row().classes('items-center gap-3'):
-                                # Color indicator
-                                color = shift_data.get('color', '#6B7280')
-                                ui.html(f'<div class="w-4 h-4 rounded-full shadow-sm" style="background-color: {color}"></div>')
+  <div style="height:5px;background:linear-gradient(90deg,{g_from},{g_to});"></div>
 
-                                ui.html(f'<div class="text-lg font-semibold text-slate-800">{shift_data.get("name", shift_id)}</div>')
+  <div style="padding:.85rem 1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <div style="width:10px;height:10px;border-radius:50%;background:{color};box-shadow:0 0 0 3px {color}33;"></div>
+        <span style="font-weight:800;font-size:.85rem;color:#1e293b;">{name}</span>
+      </div>
+      <span style="font-size:.7rem;font-weight:700;padding:.15rem .5rem;
+                   border-radius:9999px;background:linear-gradient(90deg,{g_from},{g_to});
+                   color:#fff;">{dur}h</span>
+    </div>
 
-                            ui.button('⋯',
-                                     on_click=lambda s=shift_id: ui.notify(f'Options for {s}', type='info')
-                                     ).classes('text-slate-400 hover:text-slate-600')
+    <div style="font-size:.78rem;color:#64748b;margin-bottom:.75rem;">⏰ {start} → {end}</div>
 
-                        # Time information
-                        with ui.row().classes('items-center gap-4 mb-3'):
-                            ui.html(f'<div class="text-sm text-slate-600">🕐 {shift_data.get("start_time", "N/A")} - {shift_data.get("end_time", "N/A")}</div>')
-                            ui.html(f'<div class="text-sm text-slate-600">⏱️ {shift_data.get("duration", 0)}h</div>')
-
-                        # Capacity and skills
-                        with ui.row().classes('items-center justify-between'):
-                            with ui.row().classes('gap-2'):
-                                ui.badge(f'👥 {shift_data.get("capacity", 0)}').classes('bg-blue-100 text-blue-800 text-xs')
-                                for skill in shift_data.get('skills_required', [])[:2]:
-                                    ui.badge(skill.title()).classes('bg-green-100 text-green-800 text-xs')
-
-                            ui.button('Edit',
-                                     on_click=lambda s=shift_id: ui.notify(f'Edit {s} template', type='info')
-                                     ).classes('bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded text-sm')
+    <div style="display:flex;flex-direction:column;gap:.3rem;">
+      {''.join([
+          f'<div style="display:flex;justify-content:space-between;padding:.2rem 0;'
+          f'border-bottom:1px solid #f1f5f9;font-size:.74rem;">'
+          f'<span style="color:#94a3b8;">{lbl}</span>'
+          f'<span style="font-weight:700;color:#1e293b;">{val}</span></div>'
+          for lbl, val in [("Capacity", f"{cap} staff"), ("Break", f"{brk} min"), ("Skills", skills)]
+      ])}
+    </div>
+  </div>
+</div>
+""")
 
 def create_modern_department_schedules(manager):
-    """Create modern department schedules with visual timeline"""
-
+    """Departments tab — one styled card per department with day-pill schedule."""
     department_schedules = manager.timetable_data.get('shift_timetable', {}).get('department_schedules', {})
+    shift_templates      = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
 
-    with ui.column().classes('gap-6'):
+    _dept_grads = [
+        ('#4f46e5', '#3730a3'), ('#059669', '#065f46'),
+        ('#d97706', '#b45309'), ('#dc2626', '#9f1239'),
+    ]
+    _shift_pill = {
+        'morning':   ('#4f46e5', '#e0e7ff'),
+        'afternoon': ('#d97706', '#fef3c7'),
+        'night':     ('#374151', '#e2e8f0'),
+    }
 
-        ui.html('<div class="text-2xl font-bold text-slate-800 mb-4">🏢 Department Schedules</div>')
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background:linear-gradient(90deg,#4f46e5,#7c3aed);padding:1rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">🏢 Department Schedules</h2>')
 
-        for dept_name, dept_schedule in department_schedules.items():
+        with ui.card_section().classes('p-6'):
+            days      = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
+            day_abbr  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 
-            with ui.card().classes('bg-white border border-slate-200 shadow-md'):
-                with ui.card_section().classes('p-4'):
+            for d_idx, (dept_name, dept_schedule) in enumerate(department_schedules.items()):
+                g_from, g_to = _dept_grads[d_idx % len(_dept_grads)]
 
-                    # Department header
-                    ui.html(f'<div class="text-lg font-semibold text-slate-800 mb-4">{dept_name} Department</div>')
+                with ui.element('div').style(
+                    f'border-radius:1rem;overflow:hidden;'
+                    f'box-shadow:0 4px 16px -4px rgba(0,0,0,0.10);'
+                    f'background:#fff;margin-bottom:1rem;'
+                ):
+                    # Dept header
+                    with ui.element('div').style(
+                        f'background:linear-gradient(90deg,{g_from},{g_to});'
+                        f'padding:.65rem 1rem;display:flex;justify-content:space-between;align-items:center;'
+                    ):
+                        ui.html(f'<span style="font-weight:800;font-size:.85rem;color:#fff;">{dept_name} Department</span>')
+                        total_shifts = sum(len(v) for v in dept_schedule.values())
+                        ui.html(
+                            f'<span style="background:rgba(255,255,255,0.2);color:#fff;'
+                            f'font-size:.68rem;font-weight:700;padding:.15rem .55rem;border-radius:9999px;">'
+                            f'{total_shifts} slots/week</span>'
+                        )
 
-                    # Weekly schedule grid
-                    days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-                    day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
-                    with ui.grid(columns='60px repeat(7, 1fr)').classes('gap-1'):
-
-                        # Header
-                        ui.html('<div class="text-xs font-medium text-slate-500 p-2"></div>')
-                        for day_name in day_names:
-                            ui.html(f'<div class="text-xs font-medium text-slate-700 p-2 text-center bg-slate-100 rounded">{day_name}</div>')
-
-                        # Time slots (simplified)
-                        time_slots = ['8AM', '10AM', '12PM', '2PM', '4PM', '6PM', '8PM', '10PM']
-                        for i, time_slot in enumerate(time_slots[:4]):  # Show first 4 slots
-                            ui.html(f'<div class="text-xs text-slate-500 p-2 text-right">{time_slot}</div>')
-
-                            for day in days:
-                                shifts = dept_schedule.get(day.lower(), [])
-                                has_shift = len(shifts) > 0 and i < len(shifts)
-
-                                if has_shift:
-                                    shift_templates = manager.timetable_data.get('shift_timetable', {}).get('shift_templates', {})
-                                    shift_info = shift_templates.get(shifts[0], {})
-                                    color = shift_info.get('color', '#3B82F6')
-                                    bg_color = f'bg-[{color}]'
-                                else:
-                                    bg_color = 'bg-gray-50'
-
-                                ui.html(f'<div class="h-6 rounded-sm {bg_color} border border-white"></div>')
+                    # Day grid
+                    with ui.element('div').style(
+                        'display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;padding:.75rem 1rem;'
+                    ):
+                        # Day headers
+                        for abbr in day_abbr:
+                            is_wknd = abbr in ('Sat', 'Sun')
+                            ui.html(
+                                f'<div style="text-align:center;font-size:.68rem;font-weight:700;'
+                                f'color:{"#94a3b8" if is_wknd else "#4f46e5"};'
+                                f'text-transform:uppercase;letter-spacing:.06em;'
+                                f'padding:.25rem .2rem;background:{"#f8fafc" if is_wknd else "#eef2ff"};'
+                                f'border-radius:.4rem;">{abbr}</div>'
+                            )
+                        # Shift pills per day
+                        for day in days:
+                            shifts = dept_schedule.get(day, [])
+                            is_wknd = day in ('saturday', 'sunday')
+                            if shifts:
+                                html_parts = []
+                                for sh in shifts[:2]:
+                                    sh_fc, sh_bc = _shift_pill.get(sh, ('#4f46e5', '#eef2ff'))
+                                    html_parts.append(
+                                        f'<div style="font-size:.6rem;font-weight:700;text-align:center;'
+                                        f'padding:.2rem .25rem;border-radius:.35rem;'
+                                        f'color:{sh_fc};background:{sh_bc};margin-bottom:.15rem;">'
+                                        f'{sh[:3].title()}</div>'
+                                    )
+                                ui.html(''.join(html_parts))
+                            else:
+                                ui.html(
+                                    f'<div style="font-size:.6rem;color:#cbd5e1;text-align:center;'
+                                    f'padding:.4rem .2rem;background:#f8fafc;border-radius:.35rem;">—</div>'
+                                )
 
 def create_modern_timetable_analytics(manager, optimization_data):
-    """Create modern timetable analytics dashboard"""
+    """Analytics tab — KPI row + AI recommendations styled card."""
 
-    with ui.column().classes('gap-6'):
+    # ── Metric cards ──────────────────────────────────────────────────────────
+    _metrics = [
+        {'icon': '📈', 'value': f"{optimization_data.get('efficiency_gain', 0):.1f}%",
+         'label': 'SCHEDULE EFFICIENCY', 'from_': '#059669', 'to_': '#065f46'},
+        {'icon': '💰', 'value': f"${optimization_data.get('cost_savings', 0):.0f}",
+         'label': 'COST SAVINGS',        'from_': '#0891b2', 'to_': '#0e7490'},
+        {'icon': '⚠️', 'value': str(manager.metrics.coverage_gaps),
+         'label': 'COVERAGE ISSUES',     'from_': '#dc2626', 'to_': '#9f1239'},
+        {'icon': '🔄', 'value': str(manager.metrics.total_shifts),
+         'label': 'ACTIVE TEMPLATES',    'from_': '#7c3aed', 'to_': '#4c1d95'},
+    ]
+    with ui.element('div').style('display:flex;flex-wrap:nowrap;gap:1rem;width:100%;margin-bottom:1.25rem;'):
+        for c in _metrics:
+            ui.html(f"""
+<div style="flex:1 1 0%;background:linear-gradient(135deg,{c['from_']},{c['to_']});
+  border-radius:1.25rem;padding:1.2rem 1.4rem;color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 8px 24px -6px rgba(0,0,0,0.24);
+  transition:transform .18s ease;cursor:default;"
+onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+  <div style="position:absolute;top:-14px;right:-14px;width:70px;height:70px;
+              background:rgba(255,255,255,0.1);border-radius:50%;"></div>
+  <div style="font-size:1.65rem;margin-bottom:.5rem;">{c['icon']}</div>
+  <div style="font-size:1.75rem;font-weight:900;">{c['value']}</div>
+  <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;
+              letter-spacing:.1em;opacity:.8;margin-top:.2rem;">{c['label']}</div>
+</div>
+""")
 
-        # Key Metrics Row
-        with ui.grid(columns='repeat(auto-fit, minmax(200px, 1fr))').classes('gap-4 mb-6'):
-            metrics = [
-                {'title': 'Schedule Efficiency', 'value': f"{optimization_data.get('efficiency_gain', 0):.1f}%", 'icon': '📈', 'color': 'from-green-500 to-emerald-600'},
-                {'title': 'Cost Savings', 'value': f"${optimization_data.get('cost_savings', 0):.0f}", 'icon': '💰', 'color': 'from-blue-500 to-indigo-600'},
-                {'title': 'Coverage Issues', 'value': str(manager.metrics.coverage_gaps), 'icon': '⚠️', 'color': 'from-orange-500 to-red-500'},
-                {'title': 'Active Templates', 'value': str(manager.metrics.total_shifts), 'icon': '🔄', 'color': 'from-purple-500 to-pink-600'},
-            ]
+    # ── Charts placeholder ────────────────────────────────────────────────────
+    with ui.row().classes('w-full gap-4 mb-4'):
+        for title, desc in [
+            ('🔄 Shift Distribution', 'Morning / Afternoon / Night split across all departments'),
+            ('🏢 Department Coverage', 'Optimal ✔  Adequate ~  Understaffed ✖'),
+        ]:
+            with ui.card().classes('flex-1 rounded-2xl shadow-md bg-white overflow-hidden'):
+                with ui.element('div').style(
+                    'background:linear-gradient(90deg,#4f46e5,#7c3aed);padding:.8rem 1.2rem;'
+                ):
+                    ui.html(f'<h3 class="text-sm font-bold text-white">{title}</h3>')
+                with ui.card_section().classes('py-10'):
+                    ui.html(f'<p class="text-center text-gray-400 text-sm">{desc}</p>')
 
-            for metric in metrics:
-                with ui.card().classes(f'bg-gradient-to-r {metric["color"]} text-white shadow-lg'):
-                    with ui.card_section().classes('p-4'):
-                        with ui.row().classes('items-center justify-between'):
-                            ui.html(f'<div class="text-2xl">{metric["icon"]}</div>')
-                            ui.html(f'<div class="text-2xl font-bold">{metric["value"]}</div>')
-                        ui.html(f'<div class="text-sm opacity-90">{metric["title"]}</div>')
+    # ── AI recommendations ────────────────────────────────────────────────────
+    _priority_map = {
+        'high':   ('#dc2626', '#9f1239', '#fee2e2', '#7f1d1d'),
+        'medium': ('#d97706', '#b45309', '#fef3c7', '#78350f'),
+        'low':    ('#0891b2', '#0e7490', '#e0f2fe', '#0c4a6e'),
+    }
 
-        # Charts and Visualizations
-        with ui.grid(columns='1fr 1fr').classes('gap-6'):
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background:linear-gradient(90deg,#4f46e5,#7c3aed);padding:1rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">🤖 AI Optimization Recommendations</h2>')
 
-            # Shift Distribution Chart
-            with ui.card().classes('bg-white shadow-lg border-0'):
-                with ui.card_section().classes('p-4'):
-                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🔄 Shift Distribution</div>')
-                    ui.html('<div class="text-center text-slate-500 py-8">Interactive shift distribution chart would be displayed here showing morning/afternoon/night shift allocations.</div>')
-
-            # Department Coverage Chart
-            with ui.card().classes('bg-white shadow-lg border-0'):
-                with ui.card_section().classes('p-4'):
-                    ui.html('<div class="text-lg font-semibold text-slate-800 mb-4">🏢 Department Coverage</div>')
-                    ui.html('<div class="text-center text-slate-500 py-8">Coverage analysis by department showing optimal/adequate/understaffed status.</div>')
-
-        # AI Recommendations
-        with ui.card().classes('bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-md'):
-            with ui.card_section().classes('p-4'):
-                ui.html('<div class="text-lg font-semibold text-indigo-800 mb-4">🤖 AI Optimization Recommendations</div>')
-
-                recommendations = optimization_data.get('recommendations', [])
-                if recommendations:
-                    for rec in recommendations:
-                        with ui.row().classes('items-start gap-3 p-3 bg-white/50 rounded-lg mb-3'):
-                            priority_icon = '🔴' if rec['priority'] == 'high' else '🟡'
-                            ui.html(f'<div class="text-lg">{priority_icon}</div>')
-                            with ui.column().classes('flex-1'):
-                                ui.html(f'<div class="font-medium text-indigo-800">{rec["message"]}</div>')
-                                ui.html(f'<div class="text-sm text-indigo-600">Priority: {rec.get("priority", "medium").title()}</div>')
-                else:
-                    ui.html('<div class="text-indigo-600">✅ Timetable is optimally configured!</div>')
+        with ui.card_section().classes('p-6'):
+            recs = optimization_data.get('recommendations', [])
+            if not recs:
+                ui.html('<p class="text-center text-gray-400">✅ Timetable is optimally configured!</p>')
+            else:
+                with ui.element('div').style('display:flex;flex-wrap:wrap;gap:1rem;width:100%;'):
+                    for rec in recs:
+                        g_from, g_to, bg, txt = _priority_map.get(
+                            rec['priority'], ('#64748b','#475569','#f1f5f9','#1e293b')
+                        )
+                        ui.html(f"""
+<div style="flex:1 1 230px;min-width:230px;border-radius:1rem;overflow:hidden;
+  box-shadow:0 4px 16px -4px rgba(0,0,0,0.12);background:#fff;
+  transition:transform .18s ease;"
+onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+  <div style="height:5px;background:linear-gradient(90deg,{g_from},{g_to});"></div>
+  <div style="padding:.85rem 1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+      <span style="font-weight:700;font-size:.82rem;color:#1e293b;">{rec['type'].title()}</span>
+      <span style="padding:.15rem .5rem;border-radius:9999px;font-size:.65rem;font-weight:700;
+                   background:{bg};color:{txt};">{rec['priority'].title()}</span>
+    </div>
+    <p style="font-size:.75rem;color:#64748b;line-height:1.5;">{rec['message']}</p>
+  </div>
+</div>
+""")
 
 # Legacy function - redirects to modern implementation
 def ShiftTimetable():

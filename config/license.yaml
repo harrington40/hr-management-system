@@ -1,0 +1,12 @@
+# HRMkit License Configuration
+# Managed automatically by the License & Pricing page.
+# Do not edit manually unless you know what you are doing.
+
+license:
+  active: false
+  key: ""
+  plan: ""
+  expiry: ""
+  seats: 0
+  activated_at: ""
+  holder: ""

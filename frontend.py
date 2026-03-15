@@ -13,6 +13,8 @@ from components.employees.employee_management import create_employee_management_
 from components.timesheets.timesheet_management import create_modern_timesheet_management_page
 from components.administration.hr_administration import create_hr_administration_page
 from ai_orchestrator.ui import create_ai_orchestrator_page
+from components.administration.license_pricing import create_license_pricing_page
+from components.administration.connectivity import create_connectivity_page
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
@@ -326,6 +328,11 @@ def ai_orchestrator_page():
         return
     create_ai_orchestrator_page()
 
+def license_pricing_page():
+    if not ensure_authenticated():
+        return
+    create_license_pricing_page()
+
 def init(fastapi_app: FastAPI) -> None:
     @ui.page(mount_route('/{_:path}'))
     def page_layout():
@@ -362,6 +369,8 @@ def init(fastapi_app: FastAPI) -> None:
             mount_route('/reporting/leaves'): leave_report_page,
             mount_route('/reporting/assets'): assets_report_page,
             mount_route('/ai/orchestrator'): ai_orchestrator_page,
+            mount_route('/billing/license-pricing'): license_pricing_page,
+            mount_route('/administration/connectivity'): create_connectivity_page,
         })
     fastapi_app.include_router(router)
     

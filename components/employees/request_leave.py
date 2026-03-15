@@ -462,331 +462,613 @@ def RequestLeave():
     Modern Request Leave page with smart HR algorithms
     and intelligent leave management system
     """
-    
-    # Modern gradient header with AI-powered analytics
-    with ui.element('div').classes('w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-8 rounded-lg mb-8 shadow-xl'):
-        with ui.row().classes('w-full justify-between items-center'):
-            with ui.column():
-                ui.html('''
-                    <div class="flex items-center gap-4">
-                        <div class="bg-white bg-opacity-20 p-3 rounded-full">
-                            <i class="material-icons text-4xl">event_available</i>
-                        </div>
-                        <div>
-                            <h1 class="text-4xl font-bold mb-2">Smart Leave Management</h1>
-                            <p class="text-emerald-100 text-lg">AI-powered leave planning and intelligent work-life balance optimization</p>
-                        </div>
-                    </div>
-                ''')
-                
-                # Breadcrumb navigation
-                with ui.row().classes('items-center gap-2 text-sm text-emerald-200 mt-4'):
-                    ui.icon('home').classes('text-emerald-300')
-                    ui.label('Dashboard')
-                    ui.icon('chevron_right').classes('text-xs')
-                    ui.label('Employees')
-                    ui.icon('chevron_right').classes('text-xs')
-                    ui.label('Leave Management').classes('text-white font-medium')
-            
-            # Smart action buttons
-            with ui.column().classes('gap-3'):
-                ui.button('🤖 AI Leave Planner', on_click=show_ai_leave_planner).props('color=white text-color=emerald-700').classes('font-semibold')
-                ui.button('📊 Leave Analytics', on_click=show_leave_analytics).props('outlined color=white').classes('font-semibold')
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-emerald-50 min-h-screen p-6 gap-6'):
 
-    # Smart leave dashboard
-    create_smart_leave_dashboard()
+        # ── Header card ──────────────────────────────────────────────────────
+        with ui.card().classes(
+            'w-full rounded-2xl shadow-md text-white overflow-hidden'
+        ).style('background: linear-gradient(135deg, #059669, #0d9488, #0891b2);'):
+            with ui.card_section().classes('px-8 py-6'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    with ui.column().classes('gap-2'):
+                        with ui.row().classes('items-center gap-2 text-emerald-200 text-sm mb-1'):
+                            ui.html('<span>🏠 Dashboard</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span>Employees</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span class="text-white font-medium">Leave Management</span>')
+                        with ui.row().classes('items-center gap-4'):
+                            ui.html(
+                                '<div style="background:rgba(255,255,255,0.18);border-radius:0.875rem;'
+                                'width:52px;height:52px;display:flex;align-items:center;'
+                                'justify-content:center;font-size:1.75rem;">🌿</div>'
+                            )
+                            with ui.column().classes('gap-0.5'):
+                                ui.html('<h1 class="text-3xl font-extrabold tracking-tight">Smart Leave Management</h1>')
+                                ui.html('<p class="text-emerald-100 text-sm">AI-powered leave planning and intelligent work-life balance optimization</p>')
+                    with ui.row().classes('gap-3'):
+                        ui.button('🤖 AI Leave Planner', on_click=show_ai_leave_planner).props('outline color=white')
+                        ui.button('📊 Leave Analytics',  on_click=show_leave_analytics).props('outline color=white')
 
-    # Main content with tabs
-    with ui.tabs().classes('w-full mb-4') as tabs:
-        request_tab = ui.tab('New Request', icon='send')
-        recommendations_tab = ui.tab('Smart Recommendations', icon='psychology')
-        my_requests_tab = ui.tab('My Requests', icon='folder_shared')
-        calendar_tab = ui.tab('Leave Calendar', icon='calendar_month')
-        policies_tab = ui.tab('Leave Policies', icon='policy')
+        # ── KPI dashboard ─────────────────────────────────────────────────────
+        create_smart_leave_dashboard()
 
-    with ui.tab_panels(tabs, value=request_tab).classes('w-full'):
-        # New Request Panel
-        with ui.tab_panel(request_tab):
-            create_new_leave_request_section()
-        
-        # Smart Recommendations Panel
-        with ui.tab_panel(recommendations_tab):
-            create_leave_recommendations_section()
-        
-        # My Requests Panel
-        with ui.tab_panel(my_requests_tab):
-            create_my_leave_requests_section()
-        
-        # Calendar Panel
-        with ui.tab_panel(calendar_tab):
-            create_leave_calendar_section()
-        
-        # Policies Panel
-        with ui.tab_panel(policies_tab):
-            create_leave_policies_section()
+        # ── Leave balance cards ────────────────────────────────────────────────
+        create_leave_balance_overview()
+
+        # ── Tabs ──────────────────────────────────────────────────────────────
+        with ui.tabs().classes('w-full') as tabs:
+            request_tab         = ui.tab('New Request',           icon='send')
+            recommendations_tab = ui.tab('Smart Recommendations', icon='psychology')
+            my_requests_tab     = ui.tab('My Requests',           icon='folder_shared')
+            calendar_tab        = ui.tab('Leave Calendar',        icon='calendar_month')
+            policies_tab        = ui.tab('Leave Policies',        icon='policy')
+
+        with ui.tab_panels(tabs, value=request_tab).classes('w-full'):
+            with ui.tab_panel(request_tab):
+                create_new_leave_request_section()
+            with ui.tab_panel(recommendations_tab):
+                create_leave_recommendations_section()
+            with ui.tab_panel(my_requests_tab):
+                create_my_leave_requests_section()
+            with ui.tab_panel(calendar_tab):
+                create_leave_calendar_section()
+            with ui.tab_panel(policies_tab):
+                create_leave_policies_section()
 
 def create_leave_balance_overview():
-    """Create leave balance overview cards"""
-    employee_id = "EMP-123"  # Mock current user
+    """Leave balance cards — evenly distributed, vivid gradient design."""
+    employee_id = "EMP-123"
     employee_balance = leave_manager.get_employee_leave_balance(employee_id)
-    
-    with ui.row().classes('w-full gap-4 mb-6'):
-        for leave_type, balance in employee_balance.items():
-            leave_config = leave_manager.leave_types[leave_type]
-            color = leave_config["color"]
-            
-            with ui.card().classes(f'p-4 bg-gradient-to-r from-{color}-500 to-{color}-600 text-white min-w-48'):
-                with ui.row().classes('items-center justify-between'):
-                    with ui.column():
-                        ui.label(leave_type).classes(f'text-{color}-100 text-sm')
-                        ui.label(f'{balance["remaining"]} days').classes('text-2xl font-bold')
-                        if balance["pending"] > 0:
-                            ui.label(f'{balance["pending"]} pending').classes(f'text-{color}-200 text-xs')
-                    ui.icon('event_available').classes(f'text-3xl text-{color}-200')
+
+    _gradients = [
+        ("#059669", "#065f46"),  # emerald
+        ("#dc2626", "#9f1239"),  # rose/red
+        ("#10b981", "#047857"),  # green
+        ("#7c3aed", "#4c1d95"),  # violet
+        ("#f59e0b", "#b45309"),  # amber
+        ("#0891b2", "#0e7490"),  # cyan
+    ]
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #059669, #0d9488);'
+            'padding: .8rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-base font-bold text-white">📊 Leave Balances at a Glance</h2>')
+
+        with ui.card_section().classes('p-4'):
+            with ui.element('div').style('display:flex; flex-wrap:wrap; gap:.85rem; width:100%;'):
+                for i, (leave_type, balance) in enumerate(employee_balance.items()):
+                    g_from, g_to     = _gradients[i % len(_gradients)]
+                    alloc            = leave_manager.leave_types[leave_type]['allocation_per_year']
+                    pct              = int(balance['remaining'] / alloc * 100) if alloc else 0
+                    code             = leave_manager.leave_types[leave_type]['code']
+
+                    ui.html(f"""
+<div style="
+    flex: 1 1 130px; min-width: 130px;
+    border-radius:.875rem; overflow:hidden;
+    box-shadow: 0 4px 14px -4px rgba(0,0,0,0.14);
+    background: #fff;
+    transition: transform .18s ease, box-shadow .18s ease;
+    cursor: default;
+" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 24px -6px rgba(0,0,0,0.18)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 14px -4px rgba(0,0,0,0.14)'">
+
+  <div style="height:5px;background:linear-gradient(90deg,{g_from},{g_to});"></div>
+
+  <div style="padding:.75rem .9rem .85rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+      <span style="font-size:.68rem;font-weight:700;color:#64748b;
+                   text-transform:uppercase;letter-spacing:.08em;">{code}</span>
+      <span style="font-size:.68rem;font-weight:700;padding:.1rem .4rem;border-radius:9999px;
+                   background:linear-gradient(90deg,{g_from},{g_to});color:#fff;">
+        {balance['remaining']}d
+      </span>
+    </div>
+
+    <div style="font-size:.72rem;font-weight:600;color:#1e293b;margin-bottom:.5rem;line-height:1.3;">
+      {leave_type}
+    </div>
+
+    <div style="width:100%;height:5px;background:#e2e8f0;border-radius:9999px;overflow:hidden;margin-bottom:.4rem;">
+      <div style="height:5px;background:linear-gradient(90deg,{g_from},{g_to});
+                  border-radius:9999px;width:{pct}%;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;font-size:.65rem;color:#94a3b8;">
+      <span>{balance['used']} used</span>
+      <span>{alloc} total</span>
+    </div>
+    {'<div style="font-size:.62rem;color:#d97706;font-weight:600;margin-top:.25rem;">' + str(balance["pending"]) + ' pending</div>' if balance.get('pending') else ''}
+  </div>
+</div>
+""")
 
 def create_new_leave_request_section():
-    """Create new leave request form with smart validation"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('Submit New Leave Request').classes('text-xl font-semibold mb-4')
-        
-        with ui.row().classes('w-full gap-6'):
-            # Left column - Leave Details
-            with ui.column().classes('flex-1'):
-                ui.label('Leave Details').classes('font-semibold text-lg text-blue-600 mb-3')
-                
-                leave_types = list(leave_manager.leave_types.keys())
-                leave_type_select = ui.select(options=leave_types, label='Leave Type').props('outlined').classes('w-full mb-3')
-                
-                ui.label('Start Date').classes('text-sm font-medium text-gray-700 mb-1')
-                start_date_input = ui.date(value=date.today() + timedelta(days=7)).props('outlined').classes('w-full mb-3')
-                
-                ui.label('End Date').classes('text-sm font-medium text-gray-700 mb-1')
-                end_date_input = ui.date(value=date.today() + timedelta(days=7)).props('outlined').classes('w-full mb-3')
-                
-                # Dynamic days calculation
-                days_calculated = ui.label('Days: 1 business day').classes('text-blue-600 font-medium mb-3')
-                
-                reason_input = ui.textarea('Reason for Leave', 
-                    placeholder='Please provide detailed reason for this leave request...'
-                ).props('outlined rows=3').classes('w-full mb-3')
-                
-            # Right column - Work Coverage & Validation
-            with ui.column().classes('flex-1'):
-                ui.label('Work Coverage & Validation').classes('font-semibold text-lg text-blue-600 mb-3')
-                
-                coverage_input = ui.textarea('Work Coverage Plan', 
-                    placeholder='Describe how your work will be covered during absence...'
-                ).props('outlined rows=3').classes('w-full mb-3')
-                
-                emergency_contact = ui.input('Emergency Contact', 
-                    placeholder='Contact person during leave'
-                ).props('outlined').classes('w-full mb-3')
-                
-                # Real-time validation display
-                validation_display = ui.element('div').classes('p-3 border rounded-lg mb-3')
-                with validation_display:
-                    ui.label('🔍 Real-time Validation').classes('font-semibold text-gray-700 mb-2')
-                    validation_content = ui.column()
-        
-        # Smart score preview
-        with ui.row().classes('w-full p-4 bg-gray-50 rounded-lg mb-4'):
-            ui.label('🎯 Smart Approval Score').classes('font-semibold text-gray-700')
-            score_preview = ui.label('Score will be calculated automatically').classes('text-blue-600 ml-4 font-bold')
-        
-        # Update validation and score when dates change
-        def update_validation():
-            if start_date_input.value and end_date_input.value and leave_type_select.value:
-                # Calculate business days
-                business_days = leave_manager.calculate_business_days(start_date_input.value, end_date_input.value)
-                days_calculated.text = f'Days: {business_days} business day{"s" if business_days != 1 else ""}'
-                
-                # Validate request
-                validation = leave_manager.validate_leave_request(
-                    "EMP-123", leave_type_select.value, start_date_input.value, end_date_input.value, reason_input.value
+    """Create new leave request form with smart validation — styled fields and modern date picker."""
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #059669, #0d9488);'
+            'padding: 1rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📝 Submit New Leave Request</h2>')
+
+        with ui.card_section().classes('p-6'):
+            with ui.row().classes('w-full gap-6'):
+
+                # ── Left — Leave Details ─────────────────────────────────────────────
+                with ui.card().classes('flex-1 rounded-xl border border-emerald-100 bg-emerald-50/40'):
+                    with ui.card_section().classes('p-5'):
+                        ui.html(
+                            '<div class="flex items-center gap-2 mb-4">'
+                            '<span style="background:linear-gradient(135deg,#059669,#0d9488);'
+                            'color:#fff;padding:.25rem .65rem;border-radius:.5rem;'
+                            'font-size:.75rem;font-weight:700;">STEP 1</span>'
+                            '<span class="font-semibold text-emerald-800">Leave Details</span></div>'
+                        )
+
+                        leave_types        = list(leave_manager.leave_types.keys())
+                        leave_type_select  = ui.select(
+                            options=leave_types, label='Leave Type ✦'
+                        ).props('outlined bg-color=white').classes('w-full')
+
+                        ui.html('<div class="text-xs font-semibold text-gray-500 uppercase '
+                                'tracking-wider mt-3 mb-1">📅 Start Date</div>')
+                        start_date_input = ui.date(
+                            value=date.today() + timedelta(days=7)
+                        ).classes('w-full').props('minimal today-btn color=teal')
+
+                        ui.html('<div class="text-xs font-semibold text-gray-500 uppercase '
+                                'tracking-wider mt-3 mb-1">📅 End Date</div>')
+                        end_date_input = ui.date(
+                            value=date.today() + timedelta(days=7)
+                        ).classes('w-full').props('minimal today-btn color=teal')
+
+                        days_calculated = ui.html(
+                            '<div style="margin-top:.6rem;padding:.4rem .75rem;'
+                            'background:linear-gradient(90deg,#ecfdf5,#f0fdfa);'
+                            'border-radius:.5rem;border-left:3px solid #059669;'
+                            'font-size:.8rem;font-weight:600;color:#065f46;">'
+                            '🗓 1 business day</div>'
+                        )
+
+                        reason_input = ui.textarea(
+                            'Reason for Leave ✦',
+                            placeholder='Please provide detailed reason for this leave request...'
+                        ).props('outlined rows=3 bg-color=white').classes('w-full')
+
+                # ── Right — Work Coverage & Validation ──────────────────────
+                with ui.card().classes('flex-1 rounded-xl border border-teal-100 bg-teal-50/40'):
+                    with ui.card_section().classes('p-5'):
+                        ui.html(
+                            '<div class="flex items-center gap-2 mb-4">'
+                            '<span style="background:linear-gradient(135deg,#0d9488,#0891b2);'
+                            'color:#fff;padding:.25rem .65rem;border-radius:.5rem;'
+                            'font-size:.75rem;font-weight:700;">STEP 2</span>'
+                            '<span class="font-semibold text-teal-800">Coverage &amp; Validation</span></div>'
+                        )
+
+                        coverage_input = ui.textarea(
+                            'Work Coverage Plan',
+                            placeholder='Describe how your work will be covered during absence...'
+                        ).props('outlined rows=3 bg-color=white').classes('w-full')
+
+                        emergency_contact = ui.input(
+                            'Emergency Contact',
+                            placeholder='Contact person during leave'
+                        ).props('outlined bg-color=white').classes('w-full')
+
+                        # Real-time validation display
+                        with ui.element('div').style(
+                            'margin-top:.75rem;padding:.75rem;'
+                            'background:#f8fafc;border-radius:.625rem;'
+                            'border:1px solid #e2e8f0;'
+                        ):
+                            ui.html('<div class="text-xs font-bold text-gray-500 uppercase '
+                                    'tracking-wider mb-2">🔍 Real-time Validation</div>')
+                            validation_content = ui.column()
+
+            # ── Smart score preview ───────────────────────────────────────────
+            with ui.element('div').style(
+                'margin-top:1.25rem;padding:1rem 1.25rem;'
+                'background:linear-gradient(90deg,#ecfdf5,#f0fdfa);'
+                'border-radius:.875rem;border-left:4px solid #059669;'
+                'display:flex;justify-content:space-between;align-items:center;'
+            ):
+                ui.html('<span class="font-semibold text-emerald-800">🎯 Smart Approval Score</span>')
+                score_preview = ui.label('Score will be calculated automatically')
+                score_preview.style('color:#0d9488;font-weight:600;font-size:.9rem;')
+
+            def update_validation():
+                if start_date_input.value and end_date_input.value and leave_type_select.value:
+                    business_days = leave_manager.calculate_business_days(
+                        start_date_input.value, end_date_input.value
+                    )
+                    days_calculated.content = (
+                        f'<div style="margin-top:.6rem;padding:.4rem .75rem;'
+                        f'background:linear-gradient(90deg,#ecfdf5,#f0fdfa);'
+                        f'border-radius:.5rem;border-left:3px solid #059669;'
+                        f'font-size:.8rem;font-weight:600;color:#065f46;">'
+                        f'🗓 {business_days} business day{"s" if business_days != 1 else ""}</div>'
+                    )
+                    validation = leave_manager.validate_leave_request(
+                        "EMP-123", leave_type_select.value,
+                        start_date_input.value, end_date_input.value, reason_input.value
+                    )
+                    validation_content.clear()
+                    if validation["valid"]:
+                        with validation_content:
+                            ui.html('<span style="color:#059669;font-size:.8rem;font-weight:600;">✅ Request appears valid</span>')
+                    else:
+                        with validation_content:
+                            ui.html('<span style="color:#dc2626;font-size:.8rem;font-weight:600;">❌ Issues found:</span>')
+                            for error in validation["errors"]:
+                                ui.html(f'<div style="font-size:.75rem;color:#ef4444;margin-left:.75rem;">• {error}</div>')
+                    if validation["warnings"]:
+                        with validation_content:
+                            ui.html('<span style="color:#d97706;font-size:.8rem;font-weight:600;">⚠️ Warnings:</span>')
+                            for w in validation["warnings"]:
+                                ui.html(f'<div style="font-size:.75rem;color:#f59e0b;margin-left:.75rem;">• {w}</div>')
+                    if validation["valid"]:
+                        request_data = {
+                            "employee_id": "EMP-123",
+                            "leave_type": leave_type_select.value,
+                            "start_date": start_date_input.value.strftime("%Y-%m-%d"),
+                            "end_date":   end_date_input.value.strftime("%Y-%m-%d"),
+                            "reason":     reason_input.value,
+                            "work_coverage": coverage_input.value,
+                        }
+                        smart_score  = leave_manager.calculate_smart_score(request_data)
+                        sc_color     = ('#059669' if smart_score >= 80
+                                        else '#d97706' if smart_score >= 60
+                                        else '#dc2626')
+                        score_preview.text = f'Smart Score: {smart_score}%'
+                        score_preview.style(f'color:{sc_color};font-weight:700;font-size:.9rem;')
+
+            start_date_input.on('update:model-value', lambda: update_validation())
+            end_date_input.on('update:model-value',   lambda: update_validation())
+            leave_type_select.on('update:model-value', lambda: update_validation())
+            reason_input.on('update:model-value',     lambda: update_validation())
+            coverage_input.on('update:model-value',   lambda: update_validation())
+
+            # ── Actions ───────────────────────────────────────────────────────
+            with ui.row().classes('w-full justify-end gap-3 mt-4'):
+                ui.button('Save as Draft', on_click=save_leave_as_draft).props('flat color=teal')
+                ui.button('🚀 Submit Request', on_click=lambda: submit_leave_request(
+                    leave_type_select.value, start_date_input.value, end_date_input.value,
+                    reason_input.value, coverage_input.value, emergency_contact.value
+                )).props('color=positive').style(
+                    'background:linear-gradient(90deg,#059669,#0d9488);'
+                    'color:#fff;border-radius:.75rem;font-weight:700;padding:.5rem 1.5rem;'
                 )
-                
-                # Update validation display
-                validation_content.clear()
-                
-                if validation["valid"]:
-                    with validation_content:
-                        ui.icon('check_circle').classes('text-green-500 mr-2')
-                        ui.label('Request appears valid').classes('text-green-600 font-medium')
-                else:
-                    with validation_content:
-                        ui.icon('error').classes('text-red-500 mr-2')
-                        ui.label('Issues found:').classes('text-red-600 font-medium')
-                        for error in validation["errors"]:
-                            ui.label(f'• {error}').classes('text-red-500 text-sm ml-6')
-                
-                if validation["warnings"]:
-                    with validation_content:
-                        ui.icon('warning').classes('text-yellow-500 mr-2')
-                        ui.label('Warnings:').classes('text-yellow-600 font-medium')
-                        for warning in validation["warnings"]:
-                            ui.label(f'• {warning}').classes('text-yellow-500 text-sm ml-6')
-                
-                # Calculate and show smart score
-                if validation["valid"]:
-                    request_data = {
-                        "employee_id": "EMP-123",
-                        "leave_type": leave_type_select.value,
-                        "start_date": start_date_input.value.strftime("%Y-%m-%d"),
-                        "end_date": end_date_input.value.strftime("%Y-%m-%d"),
-                        "reason": reason_input.value,
-                        "work_coverage": coverage_input.value
-                    }
-                    smart_score = leave_manager.calculate_smart_score(request_data)
-                    score_color = 'text-green-600' if smart_score >= 80 else 'text-yellow-600' if smart_score >= 60 else 'text-red-600'
-                    score_preview.text = f'Smart Score: {smart_score}%'
-                    score_preview.classes(f'{score_color} ml-4 font-bold')
-        
-        # Bind validation updates
-        start_date_input.on('update:model-value', lambda: update_validation())
-        end_date_input.on('update:model-value', lambda: update_validation())
-        leave_type_select.on('update:model-value', lambda: update_validation())
-        reason_input.on('update:model-value', lambda: update_validation())
-        coverage_input.on('update:model-value', lambda: update_validation())
-        
-        # Action buttons
-        with ui.row().classes('w-full justify-end gap-2 mt-6'):
-            ui.button('Save as Draft', on_click=save_leave_as_draft).props('flat color=gray')
-            ui.button('Submit Request', on_click=lambda: submit_leave_request(
-                leave_type_select.value, start_date_input.value, end_date_input.value,
-                reason_input.value, coverage_input.value, emergency_contact.value
-            )).props('color=primary')
 
 def create_leave_recommendations_section():
-    """Create AI-powered leave recommendations"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('🤖 AI-Powered Leave Recommendations').classes('text-xl font-semibold mb-4')
-        
-        employee_id = "EMP-123"
-        recommendations = leave_manager.get_leave_recommendations(employee_id)
-        
-        if recommendations:
-            for rec in recommendations:
-                priority_color = 'border-red-500 bg-red-50' if rec['priority'] == 'High' else 'border-yellow-500 bg-yellow-50' if rec['priority'] == 'Medium' else 'border-blue-500 bg-blue-50'
-                
-                with ui.card().classes(f'p-4 border-l-4 {priority_color} mb-3'):
-                    with ui.row().classes('items-center justify-between'):
-                        with ui.column().classes('flex-1'):
-                            ui.label(rec['type']).classes('font-semibold text-lg')
-                            ui.label(rec['message']).classes('text-gray-700 text-sm')
-                        
-                        with ui.column().classes('items-end'):
-                            ui.chip(rec['priority'], color='gray').props('dense')
-                            ui.button(rec['action'], on_click=lambda a=rec['action']: handle_recommendation_action(a)).props('size=sm color=primary')
-        else:
-            with ui.column().classes('items-center py-8'):
-                ui.icon('recommend').classes('text-gray-400 text-6xl mb-4')
-                ui.label('No recommendations at this time').classes('text-gray-500 text-lg')
-                ui.label('All your leave balances are in good standing').classes('text-gray-400 text-sm')
+    """Create AI-powered leave recommendations — styled modern cards."""
+    employee_id = "EMP-123"
+    recommendations = leave_manager.get_leave_recommendations(employee_id)
+
+    _priority_map = {
+        'High':   ("#dc2626", "#9f1239",  "#fee2e2", "#7f1d1d"),
+        'Medium': ("#d97706", "#b45309",  "#fef3c7", "#78350f"),
+        'Low':    ("#0891b2", "#0e7490",  "#e0f2fe", "#0c4a6e"),
+    }
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #059669, #0d9488);'
+            'padding: 1rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">🤖 AI-Powered Leave Recommendations</h2>')
+
+        with ui.card_section().classes('p-6'):
+            if not recommendations:
+                with ui.column().classes('items-center py-8 gap-3'):
+                    ui.html('<div style="font-size:3rem;">🌟</div>')
+                    ui.html('<p class="text-gray-500 font-medium">No recommendations at this time</p>')
+                    ui.html('<p class="text-gray-400 text-sm">All your leave balances are in good standing</p>')
+            else:
+                with ui.element('div').style('display:flex; flex-wrap:wrap; gap:1rem; width:100%;'):
+                    for rec in recommendations:
+                        g_from, g_to, bg, txt = _priority_map.get(
+                            rec['priority'], ("#64748b", "#475569", "#f1f5f9", "#1e293b")
+                        )
+                        ui.html(f"""
+<div style="
+    flex: 1 1 240px; min-width: 240px;
+    border-radius: 1rem; overflow: hidden;
+    box-shadow: 0 4px 18px -4px rgba(0,0,0,0.12);
+    background: #fff;
+    transition: transform .18s ease, box-shadow .18s ease;
+" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 24px -6px rgba(0,0,0,0.16)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px -4px rgba(0,0,0,0.12)'">
+
+  <div style="height:5px;background:linear-gradient(90deg,{g_from},{g_to});"></div>
+
+  <div style="padding:.9rem 1rem 1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+      <span style="font-weight:700;font-size:.85rem;color:#1e293b;">{rec['type']}</span>
+      <span style="padding:.15rem .55rem;border-radius:9999px;font-size:.65rem;font-weight:700;
+                   background:{bg};color:{txt};">{rec['priority']}</span>
+    </div>
+    <p style="font-size:.75rem;color:#64748b;line-height:1.5;margin-bottom:.7rem;">{rec['message']}</p>
+    <button style="
+        width:100%;padding:.4rem;
+        background:linear-gradient(90deg,{g_from},{g_to});
+        color:#fff;font-size:.72rem;font-weight:700;
+        border:none;border-radius:.5rem;cursor:pointer;
+        transition:opacity .15s;
+    " onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+      {rec['action']}
+    </button>
+  </div>
+</div>
+""")
 
 def create_my_leave_requests_section():
-    """Create my leave requests overview"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('My Leave Requests').classes('text-xl font-semibold mb-4')
-        
-        employee_id = "EMP-123"
-        my_requests = leave_manager.get_my_leave_requests(employee_id)
-        
+    """My leave requests — styled gradient-header table with status pills and score colouring."""
+    employee_id = "EMP-123"
+    my_requests  = leave_manager.get_my_leave_requests(employee_id)
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #059669, #0d9488);'
+            'padding: 1rem 1.5rem; display:flex; justify-content:space-between; align-items:center;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📂 My Leave Requests</h2>')
+            ui.html(f'<span style="background:rgba(255,255,255,0.2);color:#fff;padding:.2rem .75rem;'
+                    f'border-radius:9999px;font-size:.72rem;font-weight:700;">{len(my_requests)} records</span>')
+
         if not my_requests:
-            with ui.column().classes('items-center py-8'):
-                ui.icon('event_busy').classes('text-gray-400 text-6xl mb-4')
-                ui.label('No leave requests found').classes('text-gray-500 text-lg')
-                ui.label('Submit your first leave request using the form above').classes('text-gray-400 text-sm')
+            with ui.card_section().classes('py-12'):
+                with ui.column().classes('items-center gap-3'):
+                    ui.html('<div style="font-size:3rem;">📅</div>')
+                    ui.html('<p class="text-gray-500 font-medium">No leave requests found</p>')
+                    ui.html('<p class="text-gray-400 text-sm">Submit your first leave request using the New Request tab</p>')
         else:
-            # Requests table
-            with ui.row().classes('w-full p-4 bg-gray-50 rounded-t-lg font-semibold'):
-                ui.label('Request ID').classes('w-28')
-                ui.label('Leave Type').classes('w-32')
-                ui.label('Dates').classes('flex-1')
-                ui.label('Days').classes('w-20 text-center')
-                ui.label('Status').classes('w-32')
-                ui.label('Score').classes('w-20 text-center')
-                ui.label('Actions').classes('w-32 text-center')
-            
-            for request in sorted(my_requests, key=lambda x: x['request_date'], reverse=True):
-                with ui.row().classes('w-full p-4 border-b border-gray-200 hover:bg-gray-50'):
-                    ui.label(request['id']).classes('w-28 font-mono text-sm')
-                    
-                    leave_config = leave_manager.leave_types[request['leave_type']]
-                    ui.chip(request['leave_type'], color=leave_config['color']).props('dense').classes('w-32')
-                    
-                    with ui.column().classes('flex-1'):
-                        ui.label(f"{request['start_date']} to {request['end_date']}").classes('font-medium')
-                        ui.label(request['reason'][:50] + '...' if len(request['reason']) > 50 else request['reason']).classes('text-sm text-gray-500')
-                    
-                    ui.label(f"{request['days_requested']}").classes('w-20 text-center font-bold')
-                    
-                    status_color = 'green' if 'Approved' in request['status'] else 'yellow' if 'Pending' in request['status'] else 'red'
-                    ui.chip(request['status'], color=status_color).props('dense').classes('w-32')
-                    
-                    score_color = 'text-green-600' if request['smart_score'] >= 80 else 'text-yellow-600' if request['smart_score'] >= 60 else 'text-red-600'
-                    ui.label(f"{request['smart_score']}%").classes(f'w-20 text-center font-bold {score_color}')
-                    
-                    with ui.row().classes('w-32 justify-center gap-1'):
-                        ui.button(icon='visibility', on_click=lambda r=request: view_leave_request_details(r)).props('size=sm flat color=blue')
-                        if request['status'] == 'Pending Approval':
-                            ui.button(icon='edit', on_click=lambda r=request: edit_leave_request(r)).props('size=sm flat color=green')
+            with ui.element('div').classes('w-full overflow-x-auto'):
+                with ui.element('table').classes('w-full min-w-full border-collapse'):
+                    with ui.element('thead'):
+                        with ui.element('tr').classes(
+                            'bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm'
+                        ):
+                            th = 'px-4 py-3 text-left font-semibold tracking-wide uppercase whitespace-nowrap'
+                            for h in ['🆔 ID', '🌿 Leave Type', '📅 Dates', '🗓 Days',
+                                      '🔵 Status', '🎯 Score', '⚙ Actions']:
+                                with ui.element('th').classes(th):
+                                    ui.html(h)
+
+                    with ui.element('tbody'):
+                        td = 'px-4 py-3 text-sm text-gray-700 whitespace-nowrap'
+                        sorted_requests = sorted(my_requests, key=lambda x: x['request_date'], reverse=True)
+                        for idx, req in enumerate(sorted_requests):
+                            stripe    = 'bg-slate-50' if idx % 2 == 0 else 'bg-white'
+                            score     = req['smart_score']
+                            sc_cls    = ('text-emerald-600 font-bold' if score >= 80
+                                         else 'text-amber-600 font-bold' if score >= 60
+                                         else 'text-rose-600 font-bold')
+
+                            if 'Approved' in req['status']:
+                                pill = 'bg-emerald-100 text-emerald-800'
+                            elif 'Pending' in req['status']:
+                                pill = 'bg-amber-100 text-amber-800'
+                            else:
+                                pill = 'bg-rose-100 text-rose-800'
+
+                            leave_cfg   = leave_manager.leave_types.get(req['leave_type'], {})
+                            _lt_colours = {
+                                'Annual Leave': ('#4f46e5', '#3730a3'),
+                                'Sick Leave':   ('#dc2626', '#9f1239'),
+                                'Personal Leave': ('#10b981', '#065f46'),
+                                'Maternity Leave': ('#7c3aed', '#4c1d95'),
+                                'Paternity Leave': ('#f59e0b', '#b45309'),
+                                'Study Leave':  ('#0891b2', '#0e7490'),
+                            }
+                            lc_f, lc_t  = _lt_colours.get(req['leave_type'], ('#64748b', '#475569'))
+
+                            with ui.element('tr').classes(
+                                f'{stripe} border-b border-gray-100 '
+                                'hover:bg-emerald-50 transition-colors duration-150'
+                            ):
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="font-mono text-xs font-semibold text-emerald-700">{req["id"]}</span>')
+                                with ui.element('td').classes(td):
+                                    ui.html(
+                                        f'<span style="padding:.15rem .55rem;border-radius:9999px;'
+                                        f'font-size:.7rem;font-weight:700;'
+                                        f'background:linear-gradient(90deg,{lc_f},{lc_t});color:#fff;">'
+                                        f'{req["leave_type"]}</span>'
+                                    )
+                                with ui.element('td').classes(td):
+                                    ui.html(
+                                        f'<div class="font-semibold text-gray-900">'
+                                        f'{req["start_date"]} → {req["end_date"]}</div>'
+                                        f'<div class="text-xs text-gray-400">'
+                                        f'{req["reason"][:46]}…</div>'
+                                    )
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="font-bold text-gray-900">{req["days_requested"]}d</span>')
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="px-2 py-0.5 rounded-full text-xs font-bold {pill}">{req["status"]}</span>')
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="{sc_cls}">{score}%</span>')
+                                with ui.element('td').classes(td):
+                                    with ui.row().classes('gap-1'):
+                                        ui.button(icon='visibility').props('flat round dense color=teal size=sm') \
+                                            .on_click(lambda r=req: view_leave_request_details(r))
+                                        if req['status'] == 'Pending Approval':
+                                            ui.button(icon='edit').props('flat round dense color=green size=sm') \
+                                                .on_click(lambda r=req: edit_leave_request(r))
 
 def create_leave_calendar_section():
-    """Create leave calendar visualization"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('📅 Leave Calendar').classes('text-xl font-semibold mb-4')
-        
-        # Year selector
-        current_year = datetime.now().year
-        with ui.row().classes('mb-4'):
-            year_select = ui.select(options=[current_year-1, current_year, current_year+1], label='Year', value=current_year).props('outlined')
-        
-        # Calendar grid (simplified monthly view)
-        employee_id = "EMP-123"
-        calendar_data = leave_manager.get_leave_calendar_data(employee_id, current_year)
-        
-        with ui.grid(columns=4).classes('gap-4 w-full'):
-            for month in range(1, 13):
-                month_name = calendar.month_name[month]
-                with ui.card().classes('p-3'):
-                    ui.label(f'{month_name} {current_year}').classes('font-semibold text-center mb-2')
-                    
-                    # Show days with leave
-                    month_leaves = [(date_str, data) for date_str, data in calendar_data.items() 
-                                   if datetime.strptime(date_str, "%Y-%m-%d").month == month]
-                    
-                    if month_leaves:
-                        for date_str, leave_data in month_leaves:
-                            day = datetime.strptime(date_str, "%Y-%m-%d").day
-                            leave_config = leave_manager.leave_types[leave_data['leave_type']]
-                            ui.chip(f'{day} - {leave_data["leave_type"][:2]}', color=leave_config['color']).props('dense').classes('mb-1')
-                    else:
-                        ui.label('No leave scheduled').classes('text-gray-400 text-sm text-center')
+    """Leave calendar — modern monthly grid with gradient top bars."""
+    current_year = datetime.now().year
+    employee_id  = "EMP-123"
+    calendar_data = leave_manager.get_leave_calendar_data(employee_id, current_year)
+
+    _lt_colours = {
+        'Annual Leave':   ('#4f46e5', '#3730a3'),
+        'Sick Leave':     ('#dc2626', '#9f1239'),
+        'Personal Leave': ('#10b981', '#065f46'),
+        'Maternity Leave':('#7c3aed', '#4c1d95'),
+        'Paternity Leave':('#f59e0b', '#b45309'),
+        'Study Leave':    ('#0891b2', '#0e7490'),
+    }
+    _month_grads = [
+        ('#059669','#0d9488'), ('#3b82f6','#6366f1'), ('#f59e0b','#ef4444'),
+        ('#10b981','#0891b2'), ('#a855f7','#ec4899'), ('#0284c7','#0891b2'),
+        ('#84cc16','#10b981'), ('#f97316','#ef4444'), ('#8b5cf6','#a855f7'),
+        ('#0d9488','#059669'), ('#e11d48','#f97316'), ('#0ea5e9','#6366f1'),
+    ]
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #059669, #0d9488);'
+            'padding: 1rem 1.5rem; display:flex; justify-content:space-between; align-items:center;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📅 Leave Calendar</h2>')
+            with ui.row().classes('items-center gap-2'):
+                ui.select(
+                    options=[current_year - 1, current_year, current_year + 1],
+                    value=current_year, label='Year'
+                ).props('outlined dense bg-color=white').classes('w-24')
+
+        with ui.card_section().classes('p-6'):
+            with ui.element('div').style(
+                'display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;width:100%;'
+            ):
+                for month in range(1, 13):
+                    month_nm     = calendar.month_name[month]
+                    g_from, g_to = _month_grads[month - 1]
+
+                    month_leaves = [
+                        (ds, d) for ds, d in calendar_data.items()
+                        if datetime.strptime(ds, "%Y-%m-%d").month == month
+                    ]
+
+                    with ui.element('div').style(
+                        'border-radius:1rem;overflow:hidden;'
+                        'box-shadow:0 4px 16px -4px rgba(0,0,0,0.13);background:#fff;'
+                        'transition:transform .18s ease,box-shadow .18s ease;'
+                    ).on('mouseover', None).on('mouseout', None):
+                        # Tall gradient top bar
+                        with ui.element('div').style(
+                            f'height:6px;background:linear-gradient(90deg,{g_from},{g_to});'
+                        ):
+                            pass
+                        with ui.element('div').style('padding:1rem 1.1rem 1rem;min-height:90px;'):
+                            # Month name with gradient text
+                            ui.html(
+                                f'<div style="font-weight:800;font-size:.85rem;'
+                                f'background:linear-gradient(90deg,{g_from},{g_to});'
+                                f'-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
+                                f'margin-bottom:.6rem;letter-spacing:.01em;">{month_nm} {current_year}</div>'
+                            )
+                            if month_leaves:
+                                for ds, leave_data in month_leaves:
+                                    day  = datetime.strptime(ds, "%Y-%m-%d").day
+                                    lc_f, lc_t = _lt_colours.get(
+                                        leave_data['leave_type'], ('#64748b', '#475569')
+                                    )
+                                    ui.html(
+                                        f'<div style="display:inline-flex;align-items:center;'
+                                        f'gap:.25rem;margin:.15rem .1rem;'
+                                        f'padding:.2rem .55rem;border-radius:9999px;'
+                                        f'background:linear-gradient(90deg,{lc_f},{lc_t});'
+                                        f'color:#fff;font-size:.68rem;font-weight:700;'
+                                        f'box-shadow:0 2px 6px -2px rgba(0,0,0,0.2);">'  
+                                        f'<span style="opacity:.85;">{day}</span>'
+                                        f'<span>{leave_data["leave_type"][:3]}</span>'
+                                        f'</div>'
+                                    )
+                            else:
+                                ui.html(
+                                    '<div style="color:#cbd5e1;font-size:.72rem;'
+                                    'padding:.3rem 0;font-style:italic;">No leave planned</div>'
+                                )
 
 def create_leave_policies_section():
-    """Create leave policies and guidelines"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('📋 Leave Policies & Guidelines').classes('text-xl font-semibold mb-4')
-        
-        for leave_type, config in leave_manager.leave_types.items():
-            with ui.expansion(leave_type, icon='info').classes('w-full mb-2'):
-                with ui.column().classes('p-4'):
-                    with ui.grid(columns=2).classes('gap-4'):
-                        # Left column
-                        with ui.column():
-                            ui.label('Allocation & Limits').classes('font-semibold text-blue-600 mb-2')
-                            ui.label(f'Annual Allocation: {config["allocation_per_year"]} days').classes('text-sm mb-1')
-                            ui.label(f'Max Consecutive: {config["max_consecutive_days"]} days').classes('text-sm mb-1')
-                            ui.label(f'Advance Notice: {config["advance_notice_days"]} days').classes('text-sm mb-1')
-                        
-                        # Right column
-                        with ui.column():
-                            ui.label('Rules & Conditions').classes('font-semibold text-green-600 mb-2')
-                            carry_forward = 'Yes' if config["can_carry_forward"] else 'No'
-                            ui.label(f'Carry Forward: {carry_forward}').classes('text-sm mb-1')
-                            if config["can_carry_forward"]:
-                                ui.label(f'Max Carry Forward: {config["max_carry_forward"]} days').classes('text-sm mb-1')
-                            ui.label(f'Code: {config["code"]}').classes('text-sm mb-1')
+    """Leave policies — styled outer card with expansion items."""
+    _type_pal = {
+        'Annual Leave':   ('#059669','#065f46'),
+        'Sick Leave':     ('#dc2626','#9f1239'),
+        'Personal Leave': ('#10b981','#047857'),
+        'Maternity Leave':('#7c3aed','#4c1d95'),
+        'Paternity Leave':('#f59e0b','#b45309'),
+        'Study Leave':    ('#0891b2','#0e7490'),
+    }
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style(
+            'background: linear-gradient(90deg, #059669, #0d9488);'
+            'padding: 1rem 1.5rem;'
+        ):
+            ui.html('<h2 class="text-lg font-bold text-white">📋 Leave Policies &amp; Guidelines</h2>')
+
+        with ui.card_section().classes('p-6'):
+            with ui.element('div').style('display:flex;flex-wrap:wrap;gap:1rem;width:100%;'):
+                for leave_type, config in leave_manager.leave_types.items():
+                    g_from, g_to = _type_pal.get(leave_type, ('#059669','#0d9488'))
+                    carry        = 'Yes' if config['can_carry_forward'] else 'No'
+                    cf_max       = f'  ·  Max carry: {config["max_carry_forward"]}d' if config['can_carry_forward'] else ''
+
+                    ui.html(f"""
+<div style="
+  flex: 1 1 280px; min-width: 260px;
+  border-radius: 1rem; overflow: hidden;
+  box-shadow: 0 4px 16px -4px rgba(0,0,0,0.12);
+  background: #fff;
+  transition: transform .18s ease, box-shadow .18s ease;
+" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 24px -6px rgba(0,0,0,0.17)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px -4px rgba(0,0,0,0.12)'">
+
+  <!-- Gradient top bar -->
+  <div style="height:5px;background:linear-gradient(90deg,{g_from},{g_to});"></div>
+
+  <!-- Header row -->
+  <div style="display:flex;align-items:center;gap:.65rem;
+              padding:.75rem 1rem .6rem;
+              border-bottom:1px solid #f1f5f9;">
+    <div style="background:linear-gradient(135deg,{g_from},{g_to});
+                width:36px;height:36px;border-radius:.6rem;flex-shrink:0;
+                display:flex;align-items:center;justify-content:center;
+                font-size:1rem;color:#fff;font-weight:800;">
+      {config['code'][0]}
+    </div>
+    <div>
+      <div style="font-weight:800;font-size:.82rem;color:#1e293b;">{leave_type}</div>
+      <div style="font-size:.66rem;color:#94a3b8;">Code: {config['code']}</div>
+    </div>
+    <div style="margin-left:auto;background:linear-gradient(90deg,{g_from},{g_to});
+                color:#fff;font-size:.7rem;font-weight:700;
+                padding:.2rem .6rem;border-radius:9999px;white-space:nowrap;">
+      {config['allocation_per_year']}d / yr
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div style="display:flex;justify-content:space-between;
+              padding:.6rem 1rem .75rem;gap:.5rem;">
+    <div style="text-align:center;flex:1;">
+      <div style="font-size:.95rem;font-weight:800;color:#1e293b;">{config['max_consecutive_days']}</div>
+      <div style="font-size:.62rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-top:.1rem;">Max consec.</div>
+    </div>
+    <div style="width:1px;background:#f1f5f9;"></div>
+    <div style="text-align:center;flex:1;">
+      <div style="font-size:.95rem;font-weight:800;color:#1e293b;">{config['advance_notice_days']}</div>
+      <div style="font-size:.62rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-top:.1rem;">Notice days</div>
+    </div>
+    <div style="width:1px;background:#f1f5f9;"></div>
+    <div style="text-align:center;flex:1;">
+      <div style="font-size:.95rem;font-weight:800;
+                  color:{'#059669' if config['can_carry_forward'] else '#dc2626'}">{carry}</div>
+      <div style="font-size:.62rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-top:.1rem;">Carry fwd</div>
+    </div>
+    {'<div style="width:1px;background:#f1f5f9;"></div><div style="text-align:center;flex:1;"><div style="font-size:.95rem;font-weight:800;color:#1e293b;">' + str(config["max_carry_forward"]) + '</div><div style="font-size:.62rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-top:.1rem;">Max carry</div></div>' if config['can_carry_forward'] else ''}
+  </div>
+</div>
+""")
 
 # Action functions
 async def submit_leave_request(leave_type, start_date, end_date, reason, coverage, emergency_contact):
@@ -930,36 +1212,53 @@ def get_leave_requests_for_approval(manager_id):
     return [req for req in leave_manager.leave_requests if req["approval_stage"] == "Manager Review"]
 
 def create_smart_leave_dashboard():
-    """Create modern leave dashboard with AI insights"""
-    with ui.column().classes('w-full space-y-6'):
-        # Quick stats cards
-        with ui.row().classes('w-full gap-4 mb-6'):
-            with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-emerald-50 to-green-100'):
-                ui.html('''
-                    <div class="text-center">
-                        <i class="material-icons text-4xl text-emerald-600 mb-2">event_available</i>
-                        <div class="text-2xl font-bold text-emerald-800">18</div>
-                        <div class="text-emerald-700">Available Days</div>
-                    </div>
-                ''')
-            
-            with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-blue-50 to-blue-100'):
-                ui.html('''
-                    <div class="text-center">
-                        <i class="material-icons text-4xl text-blue-600 mb-2">pending_actions</i>
-                        <div class="text-2xl font-bold text-blue-800">3</div>
-                        <div class="text-blue-700">Pending Requests</div>
-                    </div>
-                ''')
-            
-            with ui.card().classes('p-6 flex-1 bg-gradient-to-br from-purple-50 to-purple-100'):
-                ui.html('''
-                    <div class="text-center">
-                        <i class="material-icons text-4xl text-purple-600 mb-2">psychology</i>
-                        <div class="text-2xl font-bold text-purple-800">94%</div>
-                        <div class="text-purple-700">AI Accuracy</div>
-                    </div>
-                ''')
+    """KPI dashboard — 5 evenly distributed vivid gradient cards."""
+    _kpis = [
+        {'icon':'🌿', 'value':'18',  'label':'AVAILABLE DAYS',     'sub':'annual leave pool',
+         'from_':'#059669','to_':'#065f46'},
+        {'icon':'⏳',   'value':'3',   'label':'PENDING REQUESTS',   'sub':'awaiting manager',
+         'from_':'#d97706','to_':'#b45309'},
+        {'icon':'✅',   'value':'86%', 'label':'APPROVAL RATE',       'sub':'last 12 months',
+         'from_':'#0891b2','to_':'#0e7490'},
+        {'icon':'🤖',  'value':'94%', 'label':'AI ACCURACY',         'sub':'smart score model',
+         'from_':'#7c3aed','to_':'#4c1d95'},
+        {'icon':'🏖',  'value':'12',  'label':'DAYS TAKEN THIS YEAR', 'sub':'vs 18 planned',
+         'from_':'#0d9488','to_':'#0f766e'},
+    ]
+    with ui.element('div').style('display:flex; flex-wrap:nowrap; gap:1rem; width:100%;'):
+        for c in _kpis:
+            ui.html(f"""
+<div style="
+  flex: 1 1 0%;
+  background: linear-gradient(135deg, {c['from_']}, {c['to_']});
+  border-radius: 1.25rem;
+  padding: 1.4rem 1.5rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px -6px rgba(0,0,0,0.28);
+  transition: transform .2s ease, box-shadow .2s ease;
+  cursor: default;
+"
+onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 16px 32px -8px rgba(0,0,0,0.35)'"
+onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px -6px rgba(0,0,0,0.28)'">
+  <div style="position:absolute;top:-18px;right:-18px;width:90px;height:90px;
+              background:rgba(255,255,255,0.12);border-radius:50%;"></div>
+  <div style="position:absolute;bottom:-16px;left:-12px;width:64px;height:64px;
+              background:rgba(255,255,255,0.08);border-radius:50%;"></div>
+  <div style="position:relative;z-index:1;">
+    <div style="background:rgba(255,255,255,0.18);border-radius:.75rem;
+                width:48px;height:48px;display:flex;align-items:center;
+                justify-content:center;font-size:1.35rem;margin-bottom:.75rem;">
+      {c['icon']}
+    </div>
+    <div style="font-size:2rem;font-weight:900;letter-spacing:-.02em;">{c['value']}</div>
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;
+                letter-spacing:.1em;opacity:.85;margin-top:.25rem;">{c['label']}</div>
+    <div style="font-size:.68rem;opacity:.6;margin-top:.15rem;">{c['sub']}</div>
+  </div>
+</div>
+""")
 
 async def show_ai_leave_planner():
     """Show AI-powered leave planner dialog"""

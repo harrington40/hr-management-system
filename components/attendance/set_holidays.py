@@ -321,88 +321,71 @@ def SetHolidays() -> None:
     """Enterprise HR Holiday and Vacation Management System"""
     manager = HolidaysManager()
 
-    # Header with gradient background
-    with ui.row().classes('w-full mb-6'):
-        with ui.card().classes('w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white'):
-            with ui.card_section().classes('p-6'):
-                with ui.row().classes('items-center justify-between w-full'):
-                    with ui.column().classes('gap-2'):
-                        ui.html('<h1 class="text-3xl font-bold flex items-center gap-3"><span class="text-4xl">�</span>HR Holiday & Vacation Management</h1>').classes('mb-2')
-                        ui.label('Comprehensive employee vacation tracking, holiday calendar, and HR policy management').classes('text-indigo-100 text-lg')
-                        ui.label(f'System Status: Active • Last Sync: {datetime.now().strftime("%B %d, %Y at %I:%M %p")}').classes('text-indigo-200 text-sm')
-                    
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-red-50 min-h-screen p-6 gap-6'):
+
+        # ── Gradient Header ─────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md text-white overflow-hidden') \
+                .style('background: linear-gradient(135deg, #dc2626, #e11d48, #f59e0b);'):
+            with ui.card_section().classes('px-8 py-6'):
+                ui.html('<p style="font-size:.75rem;opacity:.75;letter-spacing:.08em;'
+                        'text-transform:uppercase;margin-bottom:.5rem;">Attendance &#8250; Holiday &amp; Vacation</p>')
+                with ui.row().classes('items-center gap-5 w-full justify-between'):
+                    with ui.row().classes('items-center gap-5'):
+                        ui.html('<div style="width:52px;height:52px;border-radius:.75rem;'
+                                'background:rgba(255,255,255,.18);display:flex;align-items:center;'
+                                'justify-content:center;font-size:1.6rem;flex-shrink:0;">&#128197;</div>')
+                        with ui.column().classes('gap-1'):
+                            ui.html('<h1 style="font-size:1.6rem;font-weight:900;margin:0;'
+                                    'letter-spacing:-.02em;">HR Holiday &amp; Vacation Management</h1>')
+                            ui.html('<p style="font-size:.9rem;opacity:.82;margin:0;">'
+                                    'Comprehensive employee vacation tracking, holiday calendar &amp; HR policy management</p>')
                     with ui.row().classes('gap-3'):
-                        ui.button('💾 Save All Changes', 
-                                 on_click=lambda: save_all_hr_data(manager)
-                        ).classes('bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold')
-                        ui.button('� Generate Report', 
-                                 on_click=lambda: generate_hr_report(manager)
-                        ).classes('bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold')
-                        ui.button('⚙️ Policy Builder', 
-                                 on_click=lambda: show_policy_builder(manager)
-                        ).classes('bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold')
+                        ui.button('\U0001f4be Save All', on_click=lambda: save_all_hr_data(manager)) \
+                            .style('background:rgba(255,255,255,.18);color:#fff;'
+                                   'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                                   'padding:.45rem 1.1rem;font-size:.85rem;font-weight:600;')
+                        ui.button('\U0001f4ca Report', on_click=lambda: generate_hr_report(manager)) \
+                            .style('background:rgba(255,255,255,.18);color:#fff;'
+                                   'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                                   'padding:.45rem 1.1rem;font-size:.85rem;font-weight:600;')
+                        ui.button('\u2699\ufe0f Policy Builder', on_click=lambda: show_policy_builder(manager)) \
+                            .style('background:rgba(255,255,255,.18);color:#fff;'
+                                   'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                                   'padding:.45rem 1.1rem;font-size:.85rem;font-weight:600;')
 
-    # Main content area with HR modules
-    with ui.row().classes('w-full gap-6'):
-        # Left panel - HR Navigation
-        with ui.column().classes('w-1/4'):
-            with ui.card().classes('w-full'):
-                with ui.card_section().classes('p-4'):
-                    ui.label('HR Management Modules').classes('text-xl font-bold text-gray-700 mb-4')
-                    
-                    # Current active view state
-                    current_view = ui.state({'view': 'dashboard'})
-                    
-                    # HR Navigation categories
-                    hr_modules = [
-                        {'id': 'dashboard', 'name': 'HR Dashboard', 'icon': '📊', 'color': 'blue'},
-                        {'id': 'vacation_tracking', 'name': 'Vacation Tracking', 'icon': '🏖️', 'color': 'green'},
-                        {'id': 'holiday_calendar', 'name': 'Holiday Calendar', 'icon': '📅', 'color': 'red'},
-                        {'id': 'vacation_policies', 'name': 'Vacation Policies', 'icon': '📋', 'color': 'purple'},
-                        {'id': 'employee_balances', 'name': 'Employee Balances', 'icon': '⚖️', 'color': 'orange'},
-                        {'id': 'blackout_periods', 'name': 'Blackout Periods', 'icon': '🚫', 'color': 'gray'},
-                        {'id': 'payroll_integration', 'name': 'Payroll Integration', 'icon': '💰', 'color': 'yellow'},
-                        {'id': 'compliance', 'name': 'Compliance Reports', 'icon': '📑', 'color': 'indigo'},
-                        {'id': 'settings', 'name': 'System Settings', 'icon': '⚙️', 'color': 'gray'},
-                    ]
-                    
-                    for module in hr_modules:
-                        ui.button(
-                            f"{module['icon']} {module['name']}",
-                            on_click=lambda mod=module['id']: switch_view(mod)
-                        ).classes(f'w-full justify-start text-left p-3 rounded-lg mb-2 bg-{module["color"]}-50 hover:bg-{module["color"]}-100 text-gray-700 border-l-4 border-{module["color"]}-400')
+        # ── Module Tabs ─────────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+            tabs = ui.tabs().classes('w-full border-b border-slate-200')
+            with tabs:
+                t_dash       = ui.tab('Dashboard',         icon='dashboard')
+                t_vacation   = ui.tab('Vacation Tracking', icon='beach_access')
+                t_calendar   = ui.tab('Holiday Calendar',  icon='event')
+                t_policies   = ui.tab('Policies',          icon='policy')
+                t_balances   = ui.tab('Balances',          icon='balance')
+                t_blackout   = ui.tab('Blackout Periods',  icon='block')
+                t_payroll    = ui.tab('Payroll',           icon='payments')
+                t_compliance = ui.tab('Compliance',        icon='verified')
+                t_settings   = ui.tab('Settings',          icon='settings')
 
-        # Right panel - HR Content Area
-        with ui.column().classes('w-3/4'):
-            with ui.card().classes('w-full'):
-                with ui.card_section().classes('p-6'):
-                    @ui.refreshable
-                    def content_area():
-                        if current_view['view'] == 'dashboard':
-                            create_hr_dashboard(manager)
-                        elif current_view['view'] == 'vacation_tracking':
-                            create_vacation_tracking(manager)
-                        elif current_view['view'] == 'holiday_calendar':
-                            create_holiday_calendar(manager)
-                        elif current_view['view'] == 'vacation_policies':
-                            create_vacation_policies(manager)
-                        elif current_view['view'] == 'employee_balances':
-                            create_employee_balances(manager)
-                        elif current_view['view'] == 'blackout_periods':
-                            create_blackout_periods(manager)
-                        elif current_view['view'] == 'payroll_integration':
-                            create_payroll_integration(manager)
-                        elif current_view['view'] == 'compliance':
-                            create_compliance_reports(manager)
-                        elif current_view['view'] == 'settings':
-                            create_hr_settings(manager)
-                    
-                    content_area()
-
-    def switch_view(view_id):
-        """Switch between different HR module views"""
-        current_view['view'] = view_id
-        content_area.refresh()
+            with ui.tab_panels(tabs, value=t_dash).classes('w-full'):
+                with ui.tab_panel(t_dash).classes('p-6'):
+                    create_hr_dashboard(manager)
+                with ui.tab_panel(t_vacation).classes('p-6'):
+                    create_vacation_tracking(manager)
+                with ui.tab_panel(t_calendar).classes('p-6'):
+                    create_holiday_calendar(manager)
+                with ui.tab_panel(t_policies).classes('p-6'):
+                    create_vacation_policies(manager)
+                with ui.tab_panel(t_balances).classes('p-6'):
+                    create_employee_balances(manager)
+                with ui.tab_panel(t_blackout).classes('p-6'):
+                    create_blackout_periods(manager)
+                with ui.tab_panel(t_payroll).classes('p-6'):
+                    create_payroll_integration(manager)
+                with ui.tab_panel(t_compliance).classes('p-6'):
+                    create_compliance_reports(manager)
+                with ui.tab_panel(t_settings).classes('p-6'):
+                    create_hr_settings(manager)
 
     def save_all_hr_data(manager):
         """Save all HR data including holidays and vacation policies"""
@@ -480,7 +463,6 @@ def SetHolidays() -> None:
             if manager.save_vacation_policies(manager.vacation_policies):
                 ui.notify(f'✅ Vacation policy "{name}" created successfully!', type='positive')
                 dialog.close()
-                content_area.refresh()
             else:
                 ui.notify('❌ Failed to save vacation policy', type='negative')
                 
@@ -545,7 +527,6 @@ def SetHolidays() -> None:
             if manager.save_holidays(manager.holidays_data):
                 ui.notify(f'Holiday "{name}" added successfully!', type='positive')
                 dialog.close()
-                content_area.refresh()
             else:
                 ui.notify('Failed to save holiday', type='negative')
                 
@@ -555,359 +536,394 @@ def SetHolidays() -> None:
 
 def create_hr_dashboard(manager):
     """Create comprehensive HR dashboard with key metrics"""
-    ui.label('� HR Dashboard Overview').classes('text-3xl font-bold mb-6')
-    
-    # Key HR Metrics Row
-    with ui.row().classes('w-full gap-4 mb-8'):
-        # Holiday Statistics
-        holidays_data = manager.holidays_data.get('holidays_calendar', {})
-        fixed_holidays = holidays_data.get('fixed_holidays_2025', [])
-        company_holidays = holidays_data.get('company_holidays', [])
-        religious_holidays = holidays_data.get('religious_holidays', [])
-        
-        with ui.card().classes('flex-1 bg-gradient-to-br from-blue-50 to-blue-100'):
-            with ui.card_section().classes('text-center p-6'):
-                total_holidays = len(fixed_holidays) + len(company_holidays) + len(religious_holidays)
-                ui.label(str(total_holidays)).classes('text-4xl font-bold text-blue-600 mb-2')
-                ui.label('Total Holidays').classes('text-gray-700 font-semibold')
-                ui.label('Across all categories').classes('text-gray-500 text-sm')
-        
-        # Vacation Policies Count
-        vacation_policies = manager.vacation_policies.get('vacation_policies', {}).get('policies', {})
-        with ui.card().classes('flex-1 bg-gradient-to-br from-green-50 to-green-100'):
-            with ui.card_section().classes('text-center p-6'):
-                ui.label(str(len(vacation_policies))).classes('text-4xl font-bold text-green-600 mb-2')
-                ui.label('Vacation Policies').classes('text-gray-700 font-semibold')
-                ui.label('Active policies').classes('text-gray-500 text-sm')
-        
-        # Pending Requests (Simulated)
-        with ui.card().classes('flex-1 bg-gradient-to-br from-orange-50 to-orange-100'):
-            with ui.card_section().classes('text-center p-6'):
-                ui.label('12').classes('text-4xl font-bold text-orange-600 mb-2')
-                ui.label('Pending Requests').classes('text-gray-700 font-semibold')
-                ui.label('Awaiting approval').classes('text-gray-500 text-sm')
-        
-        # Compliance Score (Simulated)
-        with ui.card().classes('flex-1 bg-gradient-to-br from-purple-50 to-purple-100'):
-            with ui.card_section().classes('text-center p-6'):
-                ui.label('98%').classes('text-4xl font-bold text-purple-600 mb-2')
-                ui.label('Compliance Score').classes('text-gray-700 font-semibold')
-                ui.label('Policy adherence').classes('text-gray-500 text-sm')
+    holidays_data      = manager.holidays_data.get('holidays_calendar', {})
+    fixed_holidays     = holidays_data.get('fixed_holidays_2025', [])
+    company_holidays   = holidays_data.get('company_holidays', [])
+    religious_holidays = holidays_data.get('religious_holidays', [])
+    vacation_policies  = manager.vacation_policies.get('vacation_policies', {}).get('policies', {})
+    total_holidays     = len(fixed_holidays) + len(company_holidays) + len(religious_holidays)
 
-    # Quick Actions Section
-    with ui.row().classes('w-full gap-6 mb-8'):
-        with ui.column().classes('w-1/2'):
-            ui.label('🚀 Quick Actions').classes('text-xl font-bold text-gray-700 mb-4')
-            with ui.column().classes('gap-3'):
-                ui.button('➕ Add New Holiday', 
-                         on_click=lambda: show_add_holiday_dialog(manager)
-                ).classes('w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600')
-                ui.button('📋 Create Vacation Policy', 
-                         on_click=lambda: show_policy_builder(manager)
-                ).classes('w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600')
-                ui.button('📊 Generate Reports', 
-                         on_click=lambda: generate_hr_report(manager)
-                ).classes('w-full bg-purple-500 text-white p-3 rounded-lg hover:bg-purple-600')
-        
-        with ui.column().classes('w-1/2'):
-            ui.label('📅 Upcoming Important Dates').classes('text-xl font-bold text-gray-700 mb-4')
-            
-            # Get next 5 holidays
-            all_holidays = []
-            for category in ['fixed_holidays_2025', 'company_holidays']:
-                if category in holidays_data:
-                    all_holidays.extend(holidays_data[category])
-            
-            # Sort by date and get upcoming ones
-            today = date.today()
-            upcoming_holidays = []
-            for holiday in all_holidays:
-                try:
-                    holiday_date = datetime.strptime(holiday['date'], '%Y-%m-%d').date()
-                    if holiday_date >= today:
-                        upcoming_holidays.append((holiday, holiday_date))
-                except:
-                    continue
-            
-            upcoming_holidays.sort(key=lambda x: x[1])
-            
-            if upcoming_holidays:
-                for holiday, holiday_date in upcoming_holidays[:5]:
-                    days_until = (holiday_date - today).days
-                    with ui.row().classes('w-full p-3 bg-gray-50 rounded-lg mb-2 border-l-4 border-indigo-400'):
-                        with ui.column().classes('flex-1'):
-                            ui.label(holiday['name']).classes('font-semibold')
-                            ui.label(f"{holiday_date.strftime('%B %d, %Y')} ({days_until} days)").classes('text-gray-600 text-sm')
-                        ui.badge(holiday.get('type', 'company').title()).classes('bg-indigo-100 text-indigo-800')
-            else:
-                ui.label('No upcoming holidays configured').classes('text-gray-500 italic')
+    # ── KPI flex cards ──────────────────────────────────────────────────────
+    _kpis = [
+        {'icon': '\U0001f5d3', 'value': str(total_holidays), 'label': 'TOTAL HOLIDAYS',
+         'sub': 'Across all categories', 'f': '#dc2626', 't': '#ef4444'},
+        {'icon': '\U0001f4cb', 'value': str(len(vacation_policies)), 'label': 'VACATION POLICIES',
+         'sub': 'Active policies', 'f': '#e11d48', 't': '#f43f5e'},
+        {'icon': '\u23f3', 'value': '12', 'label': 'PENDING REQUESTS',
+         'sub': 'Awaiting approval', 'f': '#f59e0b', 't': '#f97316'},
+        {'icon': '\u2696\ufe0f', 'value': '14.2', 'label': 'AVG BALANCE (DAYS)',
+         'sub': 'Per employee', 'f': '#0891b2', 't': '#0d9488'},
+        {'icon': '\u2705', 'value': '98%', 'label': 'COMPLIANCE SCORE',
+         'sub': 'Policy adherence', 'f': '#059669', 't': '#10b981'},
+    ]
+    with ui.element('div').style('display:flex;flex-wrap:nowrap;gap:1rem;width:100%;margin-bottom:1.5rem;'):
+        for c in _kpis:
+            ui.html(f'<div style="flex:1 1 0%;background:linear-gradient(135deg,{c["f"]},{c["t"]});'
+                    'border-radius:1.25rem;padding:1.4rem 1.5rem;color:#fff;position:relative;overflow:hidden;'
+                    'box-shadow:0 8px 24px -6px rgba(0,0,0,0.28);transition:transform .2s,box-shadow .2s;"'
+                    ' onmouseover="this.style.transform=\'translateY(-5px)\';this.style.boxShadow=\'0 14px 32px -6px rgba(0,0,0,0.35)\'"'
+                    ' onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 8px 24px -6px rgba(0,0,0,0.28)\'">'
+                    '<div style="position:absolute;top:-18px;right:-18px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.12);"></div>'
+                    '<div style="position:absolute;bottom:-12px;left:-12px;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.08);"></div>'
+                    f'<div style="width:48px;height:48px;border-radius:.75rem;background:rgba(255,255,255,.18);'
+                    f'display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:.75rem;">{c["icon"]}</div>'
+                    f'<div style="font-size:2rem;font-weight:900;letter-spacing:-.03em;line-height:1;">{c["value"]}</div>'
+                    f'<div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;opacity:.8;margin-top:.3rem;">{c["label"]}</div>'
+                    f'<div style="font-size:.68rem;opacity:.6;margin-top:.15rem;">{c["sub"]}</div></div>')
 
-    # Recent Activity Timeline (Simulated)
-    ui.label('📋 Recent HR Activity').classes('text-xl font-bold text-gray-700 mb-4')
-    with ui.card().classes('w-full'):
-        with ui.card_section().classes('p-4'):
+    # ── Two-column: Upcoming Dates | Quick Actions ───────────────────────────
+    with ui.element('div').style('display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;'):
+        # Upcoming Important Dates
+        with ui.card().classes('rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.element('div').style('background:linear-gradient(90deg,#dc2626,#e11d48);padding:1rem 1.5rem;'):
+                ui.html('<h2 style="font-size:1rem;font-weight:700;color:#fff;margin:0;">\U0001f4c5 Upcoming Important Dates</h2>')
+            with ui.element('div').classes('p-4'):
+                all_holidays = []
+                for cat in ['fixed_holidays_2025', 'company_holidays']:
+                    all_holidays.extend(holidays_data.get(cat, []))
+                today = date.today()
+                upcoming = []
+                for h in all_holidays:
+                    try:
+                        hd = datetime.strptime(h['date'], '%Y-%m-%d').date()
+                        if hd >= today:
+                            upcoming.append((h, hd))
+                    except Exception:
+                        pass
+                upcoming.sort(key=lambda x: x[1])
+                if upcoming:
+                    for h, hd in upcoming[:5]:
+                        days_until = (hd - today).days
+                        badge_bg  = '#fef3c7' if h.get('type') == 'company' else '#fee2e2'
+                        badge_col = '#92400e' if h.get('type') == 'company' else '#991b1b'
+                        ui.html(f'<div style="display:flex;align-items:center;justify-content:space-between;'
+                                f'padding:.55rem .75rem;border-radius:.75rem;margin-bottom:.45rem;'
+                                f'background:#fafafa;border-left:3px solid #dc2626;">'
+                                f'<div><div style="font-weight:600;font-size:.85rem;color:#1e293b;">{h["name"]}</div>'
+                                f'<div style="font-size:.72rem;color:#64748b;">{hd.strftime("%b %d, %Y")} &bull; {days_until} days</div></div>'
+                                f'<span style="font-size:.7rem;font-weight:700;padding:.2rem .55rem;border-radius:9999px;'
+                                f'background:{badge_bg};color:{badge_col};">{h.get("type","company").title()}</span></div>')
+                else:
+                    ui.html('<p style="color:#94a3b8;font-style:italic;text-align:center;padding:1.5rem;">No upcoming holidays configured</p>')
+
+        # Quick Actions
+        with ui.card().classes('rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.element('div').style('background:linear-gradient(90deg,#e11d48,#f59e0b);padding:1rem 1.5rem;'):
+                ui.html('<h2 style="font-size:1rem;font-weight:700;color:#fff;margin:0;">\U0001f680 Quick Actions</h2>')
+            with ui.element('div').classes('p-4 flex flex-col gap-3'):
+                ui.button('\u2795 Add New Holiday',
+                         on_click=lambda: ui.notify('Use the Holiday Calendar tab to add holidays', type='info')
+                         ).classes('w-full justify-start text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 font-semibold')
+                ui.button('\U0001f4cb Create Vacation Policy',
+                         on_click=lambda: ui.notify('Use the Policies tab to manage vacation policies', type='info')
+                         ).classes('w-full justify-start text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200 font-semibold')
+                ui.button('\U0001f4ca Generate Reports',
+                         on_click=lambda: ui.notify('Generating HR compliance report...', type='info')
+                         ).classes('w-full justify-start text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl border border-purple-200 font-semibold')
+                ui.button('\U0001f4be Export Calendar',
+                         on_click=lambda: ui.notify('Exporting holiday calendar...', type='info')
+                         ).classes('w-full justify-start text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 font-semibold')
+
+    # ── Recent HR Activity ───────────────────────────────────────────────────
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style('background:linear-gradient(90deg,#dc2626,#f59e0b);padding:1rem 1.5rem;'):
+            ui.html('<h2 style="font-size:1rem;font-weight:700;color:#fff;margin:0;">\U0001f4cb Recent HR Activity</h2>')
+        with ui.element('div').classes('p-4'):
             activities = [
-                {'action': 'Holiday Added', 'details': 'Martin Luther King Jr. Day added to public holidays', 'time': '2 hours ago', 'type': 'holiday'},
-                {'action': 'Policy Updated', 'details': 'Senior employee vacation policy modified - increased carryover days', 'time': '1 day ago', 'type': 'policy'},
-                {'action': 'Report Generated', 'details': 'Q4 vacation utilization report generated', 'time': '2 days ago', 'type': 'report'},
-                {'action': 'Blackout Period Set', 'details': 'Year-end processing blackout period configured', 'time': '3 days ago', 'type': 'blackout'},
+                {'action': 'Holiday Added', 'details': 'Martin Luther King Jr. Day added to public holidays',
+                 'time': '2h ago', 'icon': '\U0001f389', 'bg': '#fee2e2'},
+                {'action': 'Policy Updated', 'details': 'Senior employee vacation policy \u2014 increased carryover days',
+                 'time': '1d ago', 'icon': '\U0001f4cb', 'bg': '#dbeafe'},
+                {'action': 'Report Generated', 'details': 'Q4 vacation utilization report generated',
+                 'time': '2d ago', 'icon': '\U0001f4ca', 'bg': '#d1fae5'},
+                {'action': 'Blackout Period Set', 'details': 'Year-end processing blackout period configured',
+                 'time': '3d ago', 'icon': '\U0001f6ab', 'bg': '#fef3c7'},
             ]
-            
-            for activity in activities:
-                icon_map = {
-                    'holiday': '🎉',
-                    'policy': '📋',
-                    'report': '📊',
-                    'blackout': '🚫'
-                }
-                
-                with ui.row().classes('w-full p-3 border-b border-gray-200 last:border-b-0'):
-                    ui.label(icon_map.get(activity['type'], '📝')).classes('text-2xl mr-3')
-                    with ui.column().classes('flex-1'):
-                        ui.label(activity['action']).classes('font-semibold text-gray-800')
-                        ui.label(activity['details']).classes('text-gray-600 text-sm')
-                    ui.label(activity['time']).classes('text-gray-500 text-sm')
-
-
+            for a in activities:
+                ui.html(f'<div style="display:flex;align-items:center;gap:1rem;padding:.65rem .9rem;'
+                        f'border-radius:.75rem;margin-bottom:.45rem;background:{a["bg"]}55;">'
+                        f'<div style="width:36px;height:36px;border-radius:.5rem;background:{a["bg"]};'
+                        f'display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">{a["icon"]}</div>'
+                        f'<div style="flex:1;"><div style="font-weight:600;font-size:.85rem;color:#1e293b;">{a["action"]}</div>'
+                        f'<div style="font-size:.75rem;color:#64748b;">{a["details"]}</div></div>'
+                        f'<div style="font-size:.72rem;color:#94a3b8;white-space:nowrap;">{a["time"]}</div></div>')
 def create_vacation_tracking(manager):
     """Create vacation tracking interface"""
-    ui.label('�️ Employee Vacation Tracking').classes('text-3xl font-bold mb-6')
-    
-    # Search and filter bar
-    with ui.row().classes('w-full gap-4 mb-6'):
-        search_input = ui.input('Search employees...', placeholder='Enter employee name or ID').classes('flex-1')
-        department_filter = ui.select(['All Departments', 'Engineering', 'HR', 'Sales', 'Marketing'], 
-                                    value='All Departments').classes('w-48')
-        ui.button('🔍 Search', on_click=lambda: search_employees()).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('📥 Import Data', on_click=lambda: show_import_dialog()).classes('bg-green-500 text-white px-4 py-2 rounded')
+    # ── Search bar ──────────────────────────────────────────────────────────
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden mb-4'):
+        with ui.element('div').style('background:linear-gradient(90deg,#dc2626,#e11d48);padding:1rem 1.5rem;'):
+            ui.html('<h2 style="font-size:1rem;font-weight:700;color:#fff;margin:0;">🏖️ Employee Vacation Tracking</h2>')
+        with ui.element('div').classes('p-4'):
+            with ui.row().classes('gap-3 items-center'):
+                ui.input('Search employees...', placeholder='Name or ID').classes('flex-1')
+                ui.select(['All Departments', 'Engineering', 'HR', 'Sales', 'Marketing'],
+                          value='All Departments').classes('w-48')
+                ui.button('🔍 Search',
+                         on_click=lambda: ui.notify('Searching employees...', type='info')
+                         ).classes('bg-red-600 text-white px-4 py-2 rounded-lg font-semibold')
+                ui.button('📥 Import',
+                         on_click=lambda: ui.notify('Import dialog would open here', type='info')
+                         ).classes('bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold')
 
-    # Vacation Balance Summary Cards
-    with ui.row().classes('w-full gap-4 mb-8'):
-        with ui.card().classes('flex-1 bg-gradient-to-r from-green-400 to-green-600 text-white'):
-            with ui.card_section().classes('p-6'):
-                ui.label('Available Days').classes('text-lg font-semibold mb-2')
-                ui.label('1,247').classes('text-3xl font-bold')
-                ui.label('Total across all employees').classes('text-green-100 text-sm')
-        
-        with ui.card().classes('flex-1 bg-gradient-to-r from-blue-400 to-blue-600 text-white'):
-            with ui.card_section().classes('p-6'):
-                ui.label('Used This Year').classes('text-lg font-semibold mb-2')
-                ui.label('832').classes('text-3xl font-bold')
-                ui.label('Days taken so far').classes('text-blue-100 text-sm')
-        
-        with ui.card().classes('flex-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white'):
-            with ui.card_section().classes('p-6'):
-                ui.label('Pending Requests').classes('text-lg font-semibold mb-2')
-                ui.label('47').classes('text-3xl font-bold')
-                ui.label('Awaiting approval').classes('text-yellow-100 text-sm')
-        
-        with ui.card().classes('flex-1 bg-gradient-to-r from-red-400 to-red-600 text-white'):
-            with ui.card_section().classes('p-6'):
-                ui.label('At-Risk Employees').classes('text-lg font-semibold mb-2')
-                ui.label('8').classes('text-3xl font-bold')
-                ui.label('May lose vacation days').classes('text-red-100 text-sm')
-
-    # Employee Vacation Table
-    ui.label('Employee Vacation Balances').classes('text-xl font-bold mb-4')
-    
-    # Sample employee data (in a real system, this would come from database)
-    sample_employees = [
-        {'id': 'EMP001', 'name': 'John Smith', 'department': 'Engineering', 'policy': 'Senior', 
-         'available': 18.5, 'used': 6.5, 'pending': 3.0, 'accrued': 20.0, 'start_date': '2020-03-15'},
-        {'id': 'EMP002', 'name': 'Sarah Johnson', 'department': 'HR', 'policy': 'Standard', 
-         'available': 12.0, 'used': 8.0, 'pending': 0.0, 'accrued': 15.0, 'start_date': '2022-01-10'},
-        {'id': 'EMP003', 'name': 'Mike Davis', 'department': 'Sales', 'policy': 'Executive', 
-         'available': 22.0, 'used': 3.0, 'pending': 5.0, 'accrued': 25.0, 'start_date': '2018-06-01'},
-        {'id': 'EMP004', 'name': 'Lisa Chen', 'department': 'Marketing', 'policy': 'New Hire', 
-         'available': 5.5, 'used': 2.5, 'pending': 0.0, 'accrued': 8.0, 'start_date': '2024-09-01'},
-        {'id': 'EMP005', 'name': 'Robert Wilson', 'department': 'Engineering', 'policy': 'Senior', 
-         'available': 0.5, 'used': 19.5, 'pending': 0.0, 'accrued': 20.0, 'start_date': '2019-11-20'},
+    # ── KPI summary strip ────────────────────────────────────────────────────
+    _vcards = [
+        {'label': 'Available Days',    'value': '1,247', 'sub': 'Total across all employees', 'f': '#059669', 't': '#10b981', 'icon': '📅'},
+        {'label': 'Used This Year',    'value': '832',   'sub': 'Days taken so far',           'f': '#0891b2', 't': '#0284c7', 'icon': '✅'},
+        {'label': 'Pending Requests',  'value': '47',    'sub': 'Awaiting approval',           'f': '#f59e0b', 't': '#f97316', 'icon': '⏳'},
+        {'label': 'At-Risk Employees', 'value': '8',     'sub': 'May lose vacation days',      'f': '#dc2626', 't': '#e11d48', 'icon': '⚠️'},
     ]
-    
-    with ui.card().classes('w-full'):
-        with ui.card_section().classes('p-0'):
-            # Table header
-            with ui.row().classes('w-full bg-gray-50 p-4 font-bold text-gray-700'):
-                ui.label('Employee').classes('w-48')
-                ui.label('Department').classes('w-32')
-                ui.label('Policy').classes('w-32')
-                ui.label('Available').classes('w-24 text-center')
-                ui.label('Used').classes('w-24 text-center')
-                ui.label('Pending').classes('w-24 text-center')
-                ui.label('Total Accrued').classes('w-32 text-center')
-                ui.label('Actions').classes('w-32 text-center')
-            
-            # Table rows
-            for emp in sample_employees:
-                with ui.row().classes('w-full p-4 border-b border-gray-200 hover:bg-gray-50'):
-                    # Employee info
-                    with ui.column().classes('w-48'):
-                        ui.label(emp['name']).classes('font-semibold')
-                        ui.label(emp['id']).classes('text-gray-600 text-sm')
-                    
-                    ui.label(emp['department']).classes('w-32')
-                    ui.badge(emp['policy']).classes('w-32 bg-blue-100 text-blue-800')
-                    
-                    # Vacation numbers with color coding
-                    available_color = 'text-green-600' if emp['available'] > 10 else 'text-red-600' if emp['available'] < 5 else 'text-yellow-600'
-                    ui.label(f"{emp['available']:.1f}").classes(f'w-24 text-center font-bold {available_color}')
-                    ui.label(f"{emp['used']:.1f}").classes('w-24 text-center')
-                    ui.label(f"{emp['pending']:.1f}").classes('w-24 text-center text-orange-600')
-                    ui.label(f"{emp['accrued']:.1f}").classes('w-32 text-center')
-                    
-                    # Action buttons
-                    with ui.row().classes('w-32 gap-1'):
-                        ui.button('📝', on_click=lambda e=emp: show_employee_details(e)).classes('bg-blue-500 text-white px-2 py-1 rounded text-xs')
-                        ui.button('📊', on_click=lambda e=emp: show_vacation_history(e)).classes('bg-green-500 text-white px-2 py-1 rounded text-xs')
+    with ui.element('div').style('display:flex;flex-wrap:nowrap;gap:1rem;width:100%;margin-bottom:1.5rem;'):
+        for c in _vcards:
+            ui.html(
+                f'<div style="flex:1 1 0%;background:linear-gradient(135deg,{c["f"]},{c["t"]});'
+                'border-radius:1.25rem;padding:1.3rem 1.4rem;color:#fff;position:relative;overflow:hidden;'
+                'box-shadow:0 6px 20px -5px rgba(0,0,0,0.25);">'
+                '<div style="position:absolute;top:-14px;right:-14px;width:70px;height:70px;'
+                'border-radius:50%;background:rgba(255,255,255,.12);"></div>'
+                f'<div style="font-size:1.5rem;margin-bottom:.4rem;">{c["icon"]}</div>'
+                f'<div style="font-size:1.9rem;font-weight:900;line-height:1;">{c["value"]}</div>'
+                f'<div style="font-size:.8rem;font-weight:600;opacity:.9;margin-top:.25rem;">{c["label"]}</div>'
+                f'<div style="font-size:.68rem;opacity:.65;margin-top:.1rem;">{c["sub"]}</div></div>'
+            )
 
-    def search_employees():
-        ui.notify('🔍 Searching employees...', type='info')
-        
-    def show_import_dialog():
-        with ui.dialog() as dialog, ui.card().classes('w-96'):
-            ui.label('Import Employee Data').classes('text-xl font-bold mb-4')
-            ui.label('Upload CSV file with employee vacation data').classes('text-gray-600 mb-4')
-            
-            ui.upload(on_upload=lambda e: handle_file_upload(e, dialog)).classes('w-full mb-4')
-            
-            with ui.row().classes('gap-3 w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close).classes('bg-gray-500 text-white')
-                ui.button('Import', on_click=lambda: process_import(dialog)).classes('bg-blue-500 text-white')
-        
-        dialog.open()
-    
-    def handle_file_upload(event, dialog):
-        ui.notify(f'File uploaded: {event.name}', type='positive')
-    
-    def process_import(dialog):
-        ui.notify('📥 Processing import...', type='info')
-        dialog.close()
-    
-    def show_employee_details(employee):
-        ui.notify(f'📝 Viewing details for {employee["name"]}', type='info')
-    
-    def show_vacation_history(employee):
-        ui.notify(f'📊 Loading vacation history for {employee["name"]}', type='info')
-
+    # ── Employee balance table ───────────────────────────────────────────────
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.element('div').style('background:linear-gradient(90deg,#dc2626,#e11d48);padding:1rem 1.5rem;'):
+            ui.html('<h2 style="font-size:1rem;font-weight:700;color:#fff;margin:0;">📊 Employee Vacation Balances</h2>')
+        with ui.element('div').classes('p-4'):
+            sample_employees = [
+                {'id': 'EMP001', 'name': 'John Smith',    'dept': 'Engineering', 'policy': 'Senior',
+                 'available': 18.5, 'used': 6.5,  'pending': 3.0, 'accrued': 20.0},
+                {'id': 'EMP002', 'name': 'Sarah Johnson', 'dept': 'HR',          'policy': 'Standard',
+                 'available': 12.0, 'used': 8.0,  'pending': 0.0, 'accrued': 15.0},
+                {'id': 'EMP003', 'name': 'Mike Davis',    'dept': 'Sales',       'policy': 'Executive',
+                 'available': 22.0, 'used': 3.0,  'pending': 5.0, 'accrued': 25.0},
+                {'id': 'EMP004', 'name': 'Lisa Chen',     'dept': 'Marketing',   'policy': 'New Hire',
+                 'available':  5.5, 'used': 2.5,  'pending': 0.0, 'accrued':  8.0},
+                {'id': 'EMP005', 'name': 'Robert Wilson', 'dept': 'Engineering', 'policy': 'Senior',
+                 'available':  0.5, 'used': 19.5, 'pending': 0.0, 'accrued': 20.0},
+            ]
+            thead = (
+                '<thead><tr style="background:linear-gradient(90deg,#dc2626,#e11d48);color:#fff;">'
+                '<th style="padding:.75rem 1rem;text-align:left;">Employee</th>'
+                '<th style="padding:.75rem 1rem;text-align:left;">Department</th>'
+                '<th style="padding:.75rem 1rem;text-align:left;">Policy</th>'
+                '<th style="padding:.75rem 1rem;text-align:center;">Available</th>'
+                '<th style="padding:.75rem 1rem;text-align:center;">Used</th>'
+                '<th style="padding:.75rem 1rem;text-align:center;">Pending</th>'
+                '<th style="padding:.75rem 1rem;text-align:center;">Total Accrued</th>'
+                '<th style="padding:.75rem 1rem;text-align:center;">Actions</th>'
+                '</tr></thead>'
+            )
+            tbody = '<tbody>'
+            for i, emp in enumerate(sample_employees):
+                row_bg = '#f8fafc' if i % 2 == 0 else '#ffffff'
+                if emp['available'] > 10:
+                    avail_style = 'background:#d1fae5;color:#065f46'
+                elif emp['available'] < 5:
+                    avail_style = 'background:#fee2e2;color:#991b1b'
+                else:
+                    avail_style = 'background:#fef3c7;color:#92400e'
+                tbody += (
+                    f'<tr style="background:{row_bg};">'
+                    f'<td style="padding:.65rem 1rem;font-weight:600;color:#1e293b;">{emp["name"]}'
+                    f'<br><span style="font-size:.72rem;color:#94a3b8;font-weight:400;">{emp["id"]}</span></td>'
+                    f'<td style="padding:.65rem 1rem;color:#475569;">{emp["dept"]}</td>'
+                    f'<td style="padding:.65rem 1rem;">'
+                    f'<span style="padding:.2rem .6rem;border-radius:9999px;background:#dbeafe;color:#1d4ed8;font-size:.75rem;font-weight:700;">{emp["policy"]}</span></td>'
+                    f'<td style="padding:.65rem 1rem;text-align:center;">'
+                    f'<span style="padding:.2rem .55rem;border-radius:9999px;font-size:.8rem;font-weight:700;{avail_style};">{emp["available"]:.1f}</span></td>'
+                    f'<td style="padding:.65rem 1rem;text-align:center;color:#475569;font-weight:600;">{emp["used"]:.1f}</td>'
+                    f'<td style="padding:.65rem 1rem;text-align:center;">'
+                    f'<span style="color:#f97316;font-weight:700;">{emp["pending"]:.1f}</span></td>'
+                    f'<td style="padding:.65rem 1rem;text-align:center;color:#475569;">{emp["accrued"]:.1f}</td>'
+                    f'<td style="padding:.65rem 1rem;text-align:center;">'
+                    f'<span style="display:inline-flex;gap:.3rem;">'
+                    f'<span style="padding:.25rem .5rem;border-radius:.35rem;background:#3b82f6;color:#fff;font-size:.75rem;cursor:pointer;">📝</span>'
+                    f'<span style="padding:.25rem .5rem;border-radius:.35rem;background:#10b981;color:#fff;font-size:.75rem;cursor:pointer;">📊</span>'
+                    f'</span></td></tr>'
+                )
+            tbody += '</tbody>'
+            ui.html(
+                '<table style="width:100%;border-collapse:collapse;font-size:.85rem;">'
+                + thead + tbody + '</table>'
+            )
 
 def create_holiday_calendar(manager):
     """Create comprehensive holiday calendar interface"""
-    ui.label('📅 Holiday Calendar Management').classes('text-3xl font-bold mb-6')
-    
-    # Calendar control toolbar
-    with ui.row().classes('w-full gap-4 mb-6'):
-        ui.button('➕ Add Holiday', on_click=lambda: show_add_holiday_dialog(manager)).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('📥 Import Holidays', on_click=lambda: show_import_holidays_dialog()).classes('bg-green-500 text-white px-4 py-2 rounded')
-        ui.button('📤 Export Calendar', on_click=lambda: export_holiday_calendar()).classes('bg-purple-500 text-white px-4 py-2 rounded')
-        ui.button('🔄 Sync with National Calendar', on_click=lambda: sync_national_holidays()).classes('bg-orange-500 text-white px-4 py-2 rounded')
-    
-    # Holiday categories with counts
     holidays_data = manager.holidays_data.get('holidays_calendar', {})
-    
-    with ui.row().classes('w-full gap-4 mb-8'):
-        # Public Holidays
-        public_holidays = holidays_data.get('fixed_holidays_2025', [])
-        public_count = len([h for h in public_holidays if h.get('type') == 'public'])
-        with ui.card().classes('flex-1 bg-red-50 border-l-4 border-red-400'):
-            with ui.card_section().classes('p-4'):
-                with ui.row().classes('items-center'):
-                    ui.label('�️').classes('text-3xl mr-3')
-                    with ui.column():
-                        ui.label(f'{public_count} Public Holidays').classes('font-bold text-red-700')
-                        ui.label('Government mandated').classes('text-red-600 text-sm')
+    public_holidays = holidays_data.get('fixed_holidays_2025', [])
+    company_holidays = holidays_data.get('company_holidays', [])
+    religious_holidays = holidays_data.get('religious_holidays', [])
+    floating_holidays = holidays_data.get('floating_holidays', [])
+    public_count = len([h for h in public_holidays if h.get('type') == 'public'])
 
-        # Company Holidays
-        company_holidays = holidays_data.get('company_holidays', [])
-        with ui.card().classes('flex-1 bg-blue-50 border-l-4 border-blue-400'):
-            with ui.card_section().classes('p-4'):
-                with ui.row().classes('items-center'):
-                    ui.label('🏢').classes('text-3xl mr-3')
-                    with ui.column():
-                        ui.label(f'{len(company_holidays)} Company Holidays').classes('font-bold text-blue-700')
-                        ui.label('Company specific').classes('text-blue-600 text-sm')
+    # ── Section Header ────────────────────────────────────────────────────
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden mb-4'):
+        with ui.element('div').style(
+            'background:linear-gradient(90deg,#dc2626,#b91c1c);padding:1rem 1.5rem;'
+        ):
+            with ui.row().classes('items-center justify-between w-full'):
+                ui.html('<h2 style="font-size:1.05rem;font-weight:700;color:#fff;margin:0;">'
+                        '&#128197; Holiday Calendar Management</h2>')
+                with ui.row().classes('gap-2'):
+                    ui.button('+ Add Holiday',
+                              on_click=lambda: show_add_holiday_dialog(manager)) \
+                        .style('background:rgba(255,255,255,.18);color:#fff;'
+                               'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                               'padding:.4rem 1rem;font-size:.82rem;font-weight:600;')
+                    ui.button('\U0001f4e5 Import',
+                              on_click=lambda: show_import_holidays_dialog()) \
+                        .style('background:rgba(255,255,255,.18);color:#fff;'
+                               'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                               'padding:.4rem 1rem;font-size:.82rem;font-weight:600;')
+                    ui.button('\U0001f4e4 Export',
+                              on_click=lambda: export_holiday_calendar()) \
+                        .style('background:rgba(255,255,255,.18);color:#fff;'
+                               'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                               'padding:.4rem 1rem;font-size:.82rem;font-weight:600;')
+                    ui.button('\U0001f504 Sync',
+                              on_click=lambda: sync_national_holidays()) \
+                        .style('background:rgba(255,255,255,.18);color:#fff;'
+                               'border:1px solid rgba(255,255,255,.35);border-radius:.75rem;'
+                               'padding:.4rem 1rem;font-size:.82rem;font-weight:600;')
 
-        # Religious Holidays
-        religious_holidays = holidays_data.get('religious_holidays', [])
-        with ui.card().classes('flex-1 bg-purple-50 border-l-4 border-purple-400'):
-            with ui.card_section().classes('p-4'):
-                with ui.row().classes('items-center'):
-                    ui.label('🕊️').classes('text-3xl mr-3')
-                    with ui.column():
-                        ui.label(f'{len(religious_holidays)} Religious Holidays').classes('font-bold text-purple-700')
-                        ui.label('Optional observances').classes('text-purple-600 text-sm')
+    # ── KPI cards ─────────────────────────────────────────────────────────
+    _kpis = [
+        {'icon': '\U0001f3db\ufe0f', 'value': str(public_count), 'label': 'Public Holidays',
+         'sub': 'Federal mandated', 'f': '#dc2626', 't': '#b91c1c'},
+        {'icon': '\U0001f3e2', 'value': str(len(company_holidays)), 'label': 'Company Holidays',
+         'sub': 'Company specific', 'f': '#2563eb', 't': '#1d4ed8'},
+        {'icon': '\U0001f54a\ufe0f', 'value': str(len(religious_holidays)), 'label': 'Religious',
+         'sub': 'Optional observances', 'f': '#7c3aed', 't': '#6d28d9'},
+        {'icon': '\U0001f388', 'value': str(len(floating_holidays)), 'label': 'Floating',
+         'sub': 'Employee choice', 'f': '#059669', 't': '#047857'},
+    ]
+    with ui.element('div').style(
+        'display:flex;flex-wrap:nowrap;gap:1rem;width:100%;margin-bottom:1.5rem;'
+    ):
+        for c in _kpis:
+            ui.html(
+                f'<div style="flex:1 1 0%;background:linear-gradient(135deg,{c["f"]},{c["t"]});'
+                'border-radius:1.25rem;padding:1.3rem 1.4rem;color:#fff;position:relative;'
+                'overflow:hidden;box-shadow:0 6px 20px -5px rgba(0,0,0,0.25);">'
+                '<div style="position:absolute;top:-18px;right:-18px;width:80px;height:80px;'
+                'border-radius:50%;background:rgba(255,255,255,.1);"></div>'
+                f'<div style="font-size:1.6rem;margin-bottom:.35rem;">{c["icon"]}</div>'
+                f'<div style="font-size:2rem;font-weight:900;line-height:1;">{c["value"]}</div>'
+                f'<div style="font-size:.82rem;font-weight:700;opacity:.95;margin-top:.2rem;">{c["label"]}</div>'
+                f'<div style="font-size:.75rem;opacity:.75;margin-top:.1rem;">{c["sub"]}</div>'
+                '</div>'
+            )
 
-        # Floating Holidays
-        floating_holidays = holidays_data.get('floating_holidays', [])
-        with ui.card().classes('flex-1 bg-green-50 border-l-4 border-green-400'):
-            with ui.card_section().classes('p-4'):
-                with ui.row().classes('items-center'):
-                    ui.label('🎈').classes('text-3xl mr-3')
-                    with ui.column():
-                        ui.label(f'{len(floating_holidays)} Floating Holidays').classes('font-bold text-green-700')
-                        ui.label('Employee choice').classes('text-green-600 text-sm')
+    # ── Category tabs ─────────────────────────────────────────────────────
+    with ui.card().classes('w-full rounded-2xl shadow-sm bg-white overflow-hidden'):
+        with ui.element('div').style('border-bottom:2px solid #f1f5f9;padding:.75rem 1.25rem .0rem;'):
+            tabs = ui.tabs().classes('w-full')
+            with tabs:
+                public_tab   = ui.tab('Public Holidays')
+                company_tab  = ui.tab('Company Holidays')
+                religious_tab= ui.tab('Religious Holidays')
+                floating_tab = ui.tab('Floating Holidays')
 
-    # Holiday list by category with enhanced details
-    ui.label('Holiday Details by Category').classes('text-xl font-bold mb-4')
-    
-    # Tabbed interface for different holiday categories
-    with ui.tabs().classes('w-full') as tabs:
-        public_tab = ui.tab('Public Holidays')
-        company_tab = ui.tab('Company Holidays') 
-        religious_tab = ui.tab('Religious Holidays')
-        floating_tab = ui.tab('Floating Holidays')
-
-    with ui.tab_panels(tabs, value=public_tab).classes('w-full'):
-        # Public Holidays Panel
-        with ui.tab_panel(public_tab):
-            create_holiday_category_panel(manager, 'fixed_holidays_2025', 'public', 'Public')
-        
-        # Company Holidays Panel  
-        with ui.tab_panel(company_tab):
-            create_holiday_category_panel(manager, 'company_holidays', 'company', 'Company')
-            
-        # Religious Holidays Panel
-        with ui.tab_panel(religious_tab):
-            create_holiday_category_panel(manager, 'religious_holidays', 'religious', 'Religious')
-            
-        # Floating Holidays Panel
-        with ui.tab_panel(floating_tab):
-            create_floating_holidays_panel(manager)
-
-    def show_import_holidays_dialog():
-        with ui.dialog() as dialog, ui.card().classes('w-[600px]'):
-            ui.label('Import Holiday Calendar').classes('text-xl font-bold mb-4')
-            ui.label('Import holidays from various sources').classes('text-gray-600 mb-4')
-            
-            with ui.column().classes('w-full gap-4'):
-                ui.select(['US Federal Holidays', 'UK Bank Holidays', 'Canadian Holidays', 'Custom CSV'], 
-                         label='Holiday Source').classes('w-full')
-                ui.number('Year', value=2025, min=2024, max=2030).classes('w-full')
-                ui.upload(on_upload=lambda e: ui.notify(f'File uploaded: {e.name}')).classes('w-full')
-                
-            with ui.row().classes('gap-3 w-full justify-end mt-4'):
-                ui.button('Cancel', on_click=dialog.close).classes('bg-gray-500 text-white')
-                ui.button('Import', on_click=lambda: [ui.notify('📥 Importing holidays...'), dialog.close()]).classes('bg-blue-500 text-white')
-        
-        dialog.open()
-    
-    def export_holiday_calendar():
-        ui.notify('📤 Exporting holiday calendar to CSV...', type='info')
-        
-    def sync_national_holidays():
-        ui.notify('🔄 Syncing with national holiday database...', type='info')
+        with ui.tab_panels(tabs, value=public_tab).classes('w-full p-4'):
+            with ui.tab_panel(public_tab):
+                create_holiday_category_panel(manager, 'fixed_holidays_2025', 'public', 'Public')
+            with ui.tab_panel(company_tab):
+                create_holiday_category_panel(manager, 'company_holidays', 'company', 'Company')
+            with ui.tab_panel(religious_tab):
+                create_holiday_category_panel(manager, 'religious_holidays', 'religious', 'Religious')
+            with ui.tab_panel(floating_tab):
+                create_floating_holidays_panel(manager)
 
 def create_holiday_category_panel(manager, category_key, holiday_type, category_name):
     """Create a panel for a specific holiday category"""
     holidays_data = manager.holidays_data.get('holidays_calendar', {})
     holidays = holidays_data.get(category_key, [])
-    
+
     if holiday_type != 'all':
         holidays = [h for h in holidays if h.get('type') == holiday_type]
-    
-    with ui.row().classes('w-full gap-4 mb-4'):
-        ui.button(f'➕ Add {category_name} Holiday', 
-                 on_click=lambda: show_add_specific_holiday_dialog(manager, holiday_type)
-        ).classes('bg-blue-500 text-white px-4 py-2 rounded')
+
+    with ui.row().classes('w-full gap-3 mb-4 items-center justify-between'):
+        with ui.row().classes('gap-2'):
+            ui.button(f'+ Add {category_name} Holiday',
+                      on_click=lambda: show_add_specific_holiday_dialog(manager, holiday_type)) \
+                .classes('bg-red-600 text-white px-4 py-2 rounded-xl font-semibold text-sm')
+            if holidays:
+                ui.button(f'\U0001f4ca Analyze Impact',
+                          on_click=lambda: analyze_holiday_impact(holidays)) \
+                    .classes('bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 '
+                             'rounded-xl font-semibold text-sm px-4 py-2')
+
+    if holidays:
+        try:
+            holidays.sort(key=lambda x: x.get('date', '2025-01-01'))
+        except Exception:
+            pass
+
+        # Color scheme per type
+        _pal = {
+            'public':   {'from': '#dc2626', 'to': '#ef4444', 'badge_bg': '#fee2e2', 'badge_fg': '#991b1b'},
+            'company':  {'from': '#2563eb', 'to': '#3b82f6', 'badge_bg': '#dbeafe', 'badge_fg': '#1e40af'},
+            'religious':{'from': '#7c3aed', 'to': '#8b5cf6', 'badge_bg': '#ede9fe', 'badge_fg': '#5b21b6'},
+        }
+        pal = _pal.get(holiday_type, _pal['company'])
+
+        thead = (
+            '<thead><tr style="background:linear-gradient(90deg,#dc2626,#b91c1c);color:#fff;">'
+            '<th style="padding:.75rem 1rem;text-align:left;font-size:.82rem;">Holiday</th>'
+            '<th style="padding:.75rem 1rem;text-align:left;font-size:.82rem;">Date</th>'
+            '<th style="padding:.75rem 1rem;text-align:center;font-size:.82rem;">Type</th>'
+            '<th style="padding:.75rem 1rem;text-align:center;font-size:.82rem;">Paid</th>'
+            '<th style="padding:.75rem 1rem;text-align:center;font-size:.82rem;">Mandatory</th>'
+            '<th style="padding:.75rem 1rem;text-align:center;font-size:.82rem;">Pay Rate</th>'
+            '</tr></thead>'
+        )
+        tbody = '<tbody>'
+        for i, h in enumerate(holidays):
+            bg = '#f8fafc' if i % 2 == 0 else '#ffffff'
+            type_label = h.get('type', holiday_type).title()
+            paid_html   = ('<span style="padding:.2rem .65rem;border-radius:9999px;background:#dcfce7;color:#166534;font-size:.75rem;font-weight:700;">Paid</span>'
+                          if h.get('affects_payroll', True) else
+                          '<span style="padding:.2rem .65rem;border-radius:9999px;background:#f1f5f9;color:#64748b;font-size:.75rem;font-weight:700;">Unpaid</span>')
+            mand_html   = ('<span style="padding:.2rem .65rem;border-radius:9999px;background:#ffedd5;color:#9a3412;font-size:.75rem;font-weight:700;">Required</span>'
+                          if h.get('is_mandatory', True) else
+                          '<span style="padding:.2rem .65rem;border-radius:9999px;background:#f8fafc;color:#64748b;font-size:.75rem;font-weight:700;">Optional</span>')
+            mult = h.get('compensation_multiplier', 1.5)
+            tbody += (
+                f'<tr style="background:{bg};border-bottom:1px solid #e2e8f0;">'
+                f'<td style="padding:.7rem 1rem;font-weight:600;color:#1e293b;font-size:.88rem;">{h.get("name","—")}</td>'
+                f'<td style="padding:.7rem 1rem;color:#475569;font-size:.85rem;">{h.get("date","—")}</td>'
+                f'<td style="padding:.7rem 1rem;text-align:center;">'
+                f'<span style="padding:.2rem .65rem;border-radius:9999px;background:{pal["badge_bg"]};color:{pal["badge_fg"]};font-size:.75rem;font-weight:700;">{type_label}</span>'
+                f'</td>'
+                f'<td style="padding:.7rem 1rem;text-align:center;">{paid_html}</td>'
+                f'<td style="padding:.7rem 1rem;text-align:center;">{mand_html}</td>'
+                f'<td style="padding:.7rem 1rem;text-align:center;color:#475569;font-size:.85rem;">{mult}x</td>'
+                '</tr>'
+            )
+        tbody += '</tbody>'
+        ui.html(
+            '<div style="overflow-x:auto;border-radius:1rem;box-shadow:0 2px 12px -3px rgba(0,0,0,.1);">'
+            f'<table style="width:100%;border-collapse:collapse;">{thead}{tbody}</table></div>'
+        )
+
+        # Action buttons row
+        with ui.row().classes('gap-2 mt-3 justify-end'):
+            ui.button('\u270f\ufe0f Edit Selected',
+                      on_click=lambda: ui.notify('Select a holiday to edit', type='info')) \
+                .classes('bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-4 py-2 rounded-xl text-sm font-semibold')
+            ui.button('\U0001f5d1\ufe0f Remove Selected',
+                      on_click=lambda: ui.notify('Select a holiday to remove', type='warning')) \
+                .classes('bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-4 py-2 rounded-xl text-sm font-semibold')
+    else:
+        ui.html(
+            '<div style="padding:3rem 2rem;text-align:center;color:#94a3b8;">'
+            f'<div style="font-size:2.5rem;margin-bottom:.75rem;">\U0001f4c5</div>'
+            f'<div style="font-size:1rem;font-weight:600;">No {category_name.lower()} holidays configured yet.</div>'
+            '<div style="font-size:.875rem;margin-top:.4rem;">Use the button above to add holidays.</div>'
+            '</div>'
+        )
         
         if holidays:
             ui.button(f'📊 Analyze {category_name} Impact', 
@@ -968,31 +984,41 @@ def create_floating_holidays_panel(manager):
     """Create panel for floating holidays management"""
     holidays_data = manager.holidays_data.get('holidays_calendar', {})
     floating_holidays = holidays_data.get('floating_holidays', [])
-    
-    ui.label('Floating holidays allow employees to choose when to take specific days off.').classes('text-gray-600 mb-4')
-    
-    with ui.row().classes('w-full gap-4 mb-4'):
-        ui.button('➕ Add Floating Holiday Policy', 
-                 on_click=lambda: show_add_floating_holiday_dialog(manager)
-        ).classes('bg-blue-500 text-white px-4 py-2 rounded')
-    
-    if floating_holidays:
-        for floating in floating_holidays:
-            with ui.card().classes('w-full mb-3'):
-                with ui.card_section().classes('p-4'):
-                    with ui.row().classes('items-center justify-between'):
-                        with ui.column().classes('flex-1'):
-                            ui.label(floating.get('name', 'Unnamed Floating Holiday')).classes('text-lg font-semibold')
-                            with ui.row().classes('gap-4 text-sm text-gray-600'):
-                                ui.label(f"📅 {floating.get('days_available', 1)} day(s) available")
-                                ui.label(f"⏰ Expires: {floating.get('expiry_date', 'No expiry')}")
-                        
-                        ui.button('🗑️ Remove', 
-                                 on_click=lambda f=floating: remove_floating_holiday(manager, f)
-                        ).classes('bg-red-500 text-white px-3 py-1 rounded text-sm')
-    else:
-        ui.label('No floating holiday policies configured yet.').classes('text-gray-500 italic text-center p-8')
 
+    ui.html(
+        '<p style="color:#64748b;font-size:.9rem;margin-bottom:1rem;">'
+        'Floating holidays allow employees to choose when to take specific days off.</p>'
+    )
+
+    with ui.row().classes('w-full gap-2 mb-4'):
+        ui.button('+ Add Floating Holiday',
+                  on_click=lambda: show_add_floating_holiday_dialog(manager)) \
+            .classes('bg-red-600 text-white px-4 py-2 rounded-xl font-semibold text-sm')
+
+    if floating_holidays:
+        with ui.element('div').style('display:flex;flex-wrap:wrap;gap:1rem;width:100%;'):
+            for fh in floating_holidays:
+                ui.html(
+                    '<div style="flex:1 1 220px;border-radius:1rem;overflow:hidden;'
+                    'box-shadow:0 4px 18px -4px rgba(0,0,0,0.12);background:#fff;"'
+                    ' onmouseover="this.style.transform=\'translateY(-3px)\'"'
+                    ' onmouseout="this.style.transform=\'\'">'
+                    '<div style="height:5px;background:linear-gradient(90deg,#059669,#047857);"></div>'
+                    '<div style="padding:1.1rem 1.2rem;">'
+                    f'<div style="font-size:1.6rem;margin-bottom:.5rem;">\U0001f388</div>'
+                    f'<div style="font-weight:700;font-size:.95rem;color:#1e293b;margin-bottom:.4rem;">{fh.get("name","—")}</div>'
+                    f'<div style="font-size:.82rem;color:#64748b;">\U0001f4c5 {fh.get("days_available",1)} day(s) available</div>'
+                    f'<div style="font-size:.82rem;color:#64748b;margin-top:.2rem;">\u23f0 Expires: {fh.get("expiry_date","No expiry")}</div>'
+                    '</div></div>'
+                )
+    else:
+        ui.html(
+            '<div style="padding:3rem 2rem;text-align:center;color:#94a3b8;">'
+            '<div style="font-size:2.5rem;margin-bottom:.75rem;">\U0001f388</div>'
+            '<div style="font-size:1rem;font-weight:600;">No floating holiday policies configured yet.</div>'
+            '</div>'
+        )
+    
 def show_add_specific_holiday_dialog(manager, holiday_type):
     """Show dialog to add holiday of specific type"""
     with ui.dialog() as dialog, ui.card().classes('w-[600px]'):
@@ -1130,586 +1156,6 @@ def create_settings_content(manager):
     with ui.card().classes('w-full mb-4'):
         with ui.card_section().classes('p-4'):
             ui.label('General Settings').classes('text-lg font-semibold mb-3')
-            
-            general_settings = manager.holidays_data.get('holidays_calendar', {}).get('general_settings', {})
-            
-            with ui.row().classes('items-center gap-4 mb-3'):
-                ui.label('Default Country:').classes('w-32')
-                country_input = ui.input(value=general_settings.get('default_country', 'United States')).classes('flex-1')
-            
-            with ui.row().classes('items-center gap-4 mb-3'):
-                ui.label('Timezone:').classes('w-32')
-                timezone_input = ui.input(value=general_settings.get('timezone', 'UTC+0')).classes('flex-1')
-    
-    with ui.row().classes('gap-4'):
-        ui.button('Save Settings', 
-                 on_click=lambda: save_settings(manager, country_input.value, timezone_input.value)
-        ).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('Reset to Default', 
-                 on_click=lambda: reset_settings(manager)
-        ).classes('bg-gray-500 text-white px-4 py-2 rounded')
-
-
-def show_add_public_holiday_dialog(manager):
-    """Show add public holiday dialog"""
-    with ui.dialog() as dialog, ui.card().classes('w-96'):
-        ui.label('Add Public Holiday').classes('text-xl font-bold mb-4')
-        
-        holiday_name = ui.input('Holiday Name').classes('w-full mb-3')
-        holiday_date = ui.input('Date').classes('w-full mb-3')
-        description = ui.textarea('Description').classes('w-full mb-4')
-        
-        with ui.row().classes('gap-3 w-full justify-end'):
-            ui.button('Cancel', on_click=dialog.close).classes('bg-gray-500 text-white')
-            ui.button('Add Holiday', on_click=lambda: add_specific_holiday(
-                manager, holiday_name.value, holiday_date.value, 'public', description.value, dialog
-            )).classes('bg-blue-500 text-white')
-    
-    dialog.open()
-
-
-def show_add_company_holiday_dialog(manager):
-    """Show add company holiday dialog"""
-    with ui.dialog() as dialog, ui.card().classes('w-96'):
-        ui.label('Add Company Holiday').classes('text-xl font-bold mb-4')
-        
-        holiday_name = ui.input('Holiday Name').classes('w-full mb-3')
-        holiday_date = ui.input('Date').classes('w-full mb-3')
-        description = ui.textarea('Description').classes('w-full mb-4')
-        
-        with ui.row().classes('gap-3 w-full justify-end'):
-            ui.button('Cancel', on_click=dialog.close).classes('bg-gray-500 text-white')
-            ui.button('Add Holiday', on_click=lambda: add_specific_holiday(
-                manager, holiday_name.value, holiday_date.value, 'company', description.value, dialog
-            )).classes('bg-green-500 text-white')
-    
-    dialog.open()
-
-
-def add_specific_holiday(manager, name, date_str, holiday_type, description, dialog):
-    """Add a specific type of holiday"""
-    if not name or not date_str:
-        ui.notify('Please fill in required fields', type='negative')
-        return
-    
-    try:
-        datetime.strptime(date_str, '%Y-%m-%d')
-        
-        new_holiday = {
-            'name': name,
-            'date': date_str,
-            'type': holiday_type,
-            'description': description
-        }
-        
-        if 'holidays_calendar' not in manager.holidays_data:
-            manager.holidays_data['holidays_calendar'] = {}
-        
-        if holiday_type == 'public':
-            if 'fixed_holidays_2025' not in manager.holidays_data['holidays_calendar']:
-                manager.holidays_data['holidays_calendar']['fixed_holidays_2025'] = []
-            manager.holidays_data['holidays_calendar']['fixed_holidays_2025'].append(new_holiday)
-        elif holiday_type == 'company':
-            if 'company_holidays' not in manager.holidays_data['holidays_calendar']:
-                manager.holidays_data['holidays_calendar']['company_holidays'] = []
-            manager.holidays_data['holidays_calendar']['company_holidays'].append(new_holiday)
-        
-        if manager.save_holidays(manager.holidays_data):
-            ui.notify(f'{holiday_type.title()} holiday "{name}" added successfully!', type='positive')
-            dialog.close()
-            SetHolidays.content_area.refresh() if hasattr(SetHolidays, 'content_area') else None
-        else:
-            ui.notify('Failed to save holiday', type='negative')
-            
-    except ValueError:
-        ui.notify('Invalid date format. Please use YYYY-MM-DD', type='negative')
-
-
-def remove_holiday(manager, holiday, category):
-    """Remove a holiday from the specified category"""
-    try:
-        if category in manager.holidays_data.get('holidays_calendar', {}):
-            holidays_list = manager.holidays_data['holidays_calendar'][category]
-            if holiday in holidays_list:
-                holidays_list.remove(holiday)
-                if manager.save_holidays(manager.holidays_data):
-                    ui.notify(f'Removed holiday: {holiday.get("name", "Unknown")}', type='positive')
-                    SetHolidays.content_area.refresh() if hasattr(SetHolidays, 'content_area') else None
-                else:
-                    ui.notify('Error removing holiday', type='negative')
-    except Exception as e:
-        ui.notify(f'Error removing holiday: {str(e)}', type='negative')
-
-
-def save_settings(manager, country, timezone):
-    """Save general settings"""
-    if 'holidays_calendar' not in manager.holidays_data:
-        manager.holidays_data['holidays_calendar'] = {}
-    if 'general_settings' not in manager.holidays_data['holidays_calendar']:
-        manager.holidays_data['holidays_calendar']['general_settings'] = {}
-    
-    manager.holidays_data['holidays_calendar']['general_settings']['default_country'] = country
-    manager.holidays_data['holidays_calendar']['general_settings']['timezone'] = timezone
-    
-    if manager.save_holidays(manager.holidays_data):
-        ui.notify('Settings saved successfully!', type='positive')
-    else:
-        ui.notify('Error saving settings', type='negative')
-
-
-def create_vacation_policies(manager):
-    """Create vacation policies management interface"""
-    ui.label('📋 Vacation Policy Management').classes('text-3xl font-bold mb-6')
-    
-    with ui.row().classes('w-full gap-4 mb-6'):
-        ui.button('➕ Create New Policy', on_click=lambda: show_policy_builder(manager)).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('📊 Policy Analytics', on_click=lambda: show_policy_analytics()).classes('bg-green-500 text-white px-4 py-2 rounded')
-        ui.button('📋 Policy Templates', on_click=lambda: show_policy_templates()).classes('bg-purple-500 text-white px-4 py-2 rounded')
-    
-    # Policy overview cards
-    policies_data = manager.vacation_policies.get('vacation_policies', {}).get('policies', {})
-    
-    ui.label('Current Vacation Policies').classes('text-xl font-bold mb-4')
-    
-    if policies_data:
-        for policy_id, policy in policies_data.items():
-            with ui.card().classes('w-full mb-4 border-l-4 border-blue-400'):
-                with ui.card_section().classes('p-6'):
-                    with ui.row().classes('items-start justify-between'):
-                        with ui.column().classes('flex-1'):
-                            ui.label(policy.get('name', 'Unnamed Policy')).classes('text-xl font-bold text-gray-800 mb-2')
-                            
-                            with ui.row().classes('gap-8 mb-4'):
-                                with ui.column():
-                                    ui.label('📅 Accrual Details').classes('font-semibold text-gray-700 mb-2')
-                                    ui.label(f"Method: {policy.get('accrual_method', 'monthly').title()}").classes('text-gray-600')
-                                    ui.label(f"Days/Year: {policy.get('days_per_year', 0)}").classes('text-gray-600')
-                                    ui.label(f"Accrual Cap: {policy.get('accrual_cap', 'Unlimited')}").classes('text-gray-600')
-                                
-                                with ui.column():
-                                    ui.label('⏰ Service Requirements').classes('font-semibold text-gray-700 mb-2')
-                                    ui.label(f"Probation: {policy.get('probation_period_days', 0)} days").classes('text-gray-600')
-                                    ui.label(f"Min Service: {policy.get('min_service_months', 0)} months").classes('text-gray-600')
-                                    ui.label(f"Max Carryover: {policy.get('max_carryover', 0)} days").classes('text-gray-600')
-                                
-                                with ui.column():
-                                    ui.label('👥 Eligibility').classes('font-semibold text-gray-700 mb-2')
-                                    eligible_types = policy.get('eligible_employee_types', [])
-                                    if eligible_types:
-                                        for emp_type in eligible_types:
-                                            ui.badge(emp_type.title()).classes('bg-blue-100 text-blue-800 mb-1')
-                                    else:
-                                        ui.label('All employees').classes('text-gray-600')
-                        
-                        with ui.column().classes('gap-2'):
-                            ui.button('✏️ Edit Policy', on_click=lambda p=policy: edit_policy(p)).classes('bg-blue-500 text-white px-3 py-1 rounded')
-                            ui.button('📋 Duplicate', on_click=lambda p=policy: duplicate_policy(p)).classes('bg-green-500 text-white px-3 py-1 rounded') 
-                            ui.button('🗑️ Delete', on_click=lambda p=policy: delete_policy(policy_id)).classes('bg-red-500 text-white px-3 py-1 rounded')
-    else:
-        ui.label('No vacation policies configured yet. Create your first policy to get started.').classes('text-gray-500 italic text-center p-8')
-    
-    def show_policy_analytics():
-        ui.notify('📊 Loading policy utilization analytics...', type='info')
-    
-    def show_policy_templates():
-        ui.notify('📋 Opening policy template library...', type='info')
-    
-    def edit_policy(policy):
-        ui.notify(f'✏️ Editing policy: {policy.get("name")}', type='info')
-    
-    def duplicate_policy(policy):
-        ui.notify(f'📋 Duplicating policy: {policy.get("name")}', type='info')
-    
-    def delete_policy(policy_id):
-        ui.notify(f'🗑️ Deleting policy: {policy_id}', type='info')
-
-
-def create_employee_balances(manager):
-    """Create employee vacation balances interface"""
-    ui.label('⚖️ Employee Vacation Balances').classes('text-3xl font-bold mb-6')
-    
-    # Balance calculation tools
-    with ui.row().classes('w-full gap-4 mb-6'):
-        ui.button('🔄 Recalculate All Balances', on_click=lambda: recalculate_all_balances()).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('📊 Balance Report', on_click=lambda: generate_balance_report()).classes('bg-green-500 text-white px-4 py-2 rounded')
-        ui.button('⚠️ Find At-Risk Employees', on_click=lambda: find_at_risk_employees()).classes('bg-orange-500 text-white px-4 py-2 rounded')
-        ui.button('💰 Calculate Payouts', on_click=lambda: calculate_termination_payouts()).classes('bg-purple-500 text-white px-4 py-2 rounded')
-    
-    # Balance calculation demo
-    ui.label('Vacation Balance Calculator').classes('text-xl font-bold mb-4')
-    
-    with ui.card().classes('w-full mb-6'):
-        with ui.card_section().classes('p-6'):
-            ui.label('Calculate vacation balance for an employee').classes('text-gray-600 mb-4')
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                employee_start_date = ui.input('Start Date (YYYY-MM-DD)', value='2022-01-15').classes('flex-1')
-                policy_select = ui.select(['new_hire', 'standard', 'senior', 'executive'], 
-                                        label='Vacation Policy', value='standard').classes('flex-1')
-                calculation_date = ui.input('Calculation Date (YYYY-MM-DD)', 
-                                          value=date.today().strftime('%Y-%m-%d')).classes('flex-1')
-            
-            with ui.row().classes('gap-4'):
-                ui.button('Calculate Balance', on_click=lambda: calculate_demo_balance(
-                    manager, employee_start_date.value, policy_select.value, calculation_date.value
-                )).classes('bg-blue-500 text-white px-4 py-2 rounded')
-                
-                # Results area
-                result_area = ui.column().classes('flex-1 ml-4')
-    
-    def calculate_demo_balance(manager, start_date_str, policy_id, calc_date_str):
-        """Calculate and display vacation balance for demo"""
-        try:
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            calc_date = datetime.strptime(calc_date_str, '%Y-%m-%d').date()
-            
-            # Get policy
-            policies = manager.vacation_policies.get('vacation_policies', {}).get('policies', {})
-            if policy_id not in policies:
-                ui.notify('Policy not found', type='negative')
-                return
-            
-            policy_data = policies[policy_id]
-            policy = VacationPolicy(
-                name=policy_data['name'],
-                accrual_method=VacationAccrualMethod(policy_data['accrual_method']),
-                days_per_year=policy_data['days_per_year'],
-                max_carryover=policy_data['max_carryover'],
-                probation_period_days=policy_data['probation_period_days'],
-                min_service_months=policy_data['min_service_months'],
-                accrual_cap=policy_data.get('accrual_cap')
-            )
-            
-            # Calculate balance
-            accrued_days = manager.calculate_vacation_accrual(start_date, policy, calc_date)
-            
-            result_area.clear()
-            with result_area:
-                ui.label('Calculation Results').classes('font-bold text-green-700 mb-2')
-                ui.label(f'Total Accrued: {accrued_days:.2f} days').classes('text-gray-700')
-                ui.label(f'Service Period: {(calc_date - start_date).days} days').classes('text-gray-700')
-                ui.label(f'Policy: {policy.name}').classes('text-gray-700')
-                
-        except Exception as e:
-            ui.notify(f'Calculation error: {str(e)}', type='negative')
-    
-    def recalculate_all_balances():
-        ui.notify('🔄 Recalculating vacation balances for all employees...', type='info')
-    
-    def generate_balance_report():
-        ui.notify('📊 Generating comprehensive balance report...', type='info')
-    
-    def find_at_risk_employees():
-        ui.notify('⚠️ Identifying employees at risk of losing vacation days...', type='info')
-    
-    def calculate_termination_payouts():
-        ui.notify('💰 Calculating vacation payouts for terminated employees...', type='info')
-
-
-def create_blackout_periods(manager):
-    """Create blackout periods management interface"""
-    ui.label('🚫 Blackout Period Management').classes('text-3xl font-bold mb-6')
-    
-    ui.label('Blackout periods are times when vacation requests are restricted due to business needs.').classes('text-gray-600 mb-6')
-    
-    with ui.row().classes('w-full gap-4 mb-6'):
-        ui.button('➕ Add Blackout Period', on_click=lambda: show_add_blackout_dialog()).classes('bg-red-500 text-white px-4 py-2 rounded')
-        ui.button('📅 Import from Calendar', on_click=lambda: import_blackout_calendar()).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('📊 Impact Analysis', on_click=lambda: analyze_blackout_impact()).classes('bg-green-500 text-white px-4 py-2 rounded')
-    
-    # Display existing blackout periods
-    holidays_data = manager.holidays_data.get('holidays_calendar', {})
-    blackout_periods = holidays_data.get('blackout_periods', [])
-    
-    if blackout_periods:
-        ui.label('Active Blackout Periods').classes('text-xl font-bold mb-4')
-        
-        for period in blackout_periods:
-            with ui.card().classes('w-full mb-3 border-l-4 border-red-400'):
-                with ui.card_section().classes('p-4'):
-                    with ui.row().classes('items-center justify-between'):
-                        with ui.column().classes('flex-1'):
-                            ui.label(period.get('name', 'Unnamed Blackout Period')).classes('text-lg font-semibold text-gray-800')
-                            ui.label(f"📅 {period.get('start_date')} to {period.get('end_date')}").classes('text-gray-600')
-                            ui.label(f"ℹ️ {period.get('reason', 'No reason specified')}").classes('text-gray-600 text-sm')
-                        
-                        with ui.row().classes('gap-2'):
-                            ui.button('✏️ Edit', on_click=lambda p=period: edit_blackout_period(p)).classes('bg-blue-500 text-white px-3 py-1 rounded text-sm')
-                            ui.button('🗑️ Remove', on_click=lambda p=period: remove_blackout_period(p)).classes('bg-red-500 text-white px-3 py-1 rounded text-sm')
-    else:
-        ui.label('No blackout periods configured.').classes('text-gray-500 italic text-center p-8')
-    
-    def show_add_blackout_dialog():
-        with ui.dialog() as dialog, ui.card().classes('w-96'):
-            ui.label('Add Blackout Period').classes('text-xl font-bold mb-4')
-            
-            period_name = ui.input('Period Name', placeholder='e.g., Year-end Processing').classes('w-full mb-3')
-            start_date = ui.input('Start Date (YYYY-MM-DD)').classes('w-full mb-3') 
-            end_date = ui.input('End Date (YYYY-MM-DD)').classes('w-full mb-3')
-            reason = ui.textarea('Reason', placeholder='Why is vacation restricted during this time?').classes('w-full mb-4')
-            
-            with ui.row().classes('gap-3 w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close).classes('bg-gray-500 text-white')
-                ui.button('Add Blackout Period', on_click=lambda: add_blackout_period(
-                    period_name.value, start_date.value, end_date.value, reason.value, dialog
-                )).classes('bg-red-500 text-white')
-        
-        dialog.open()
-    
-    def add_blackout_period(name, start, end, reason, dialog):
-        if not all([name, start, end]):
-            ui.notify('Please fill in all required fields', type='negative')
-            return
-        
-        new_period = {
-            'name': name,
-            'start_date': start,
-            'end_date': end,
-            'reason': reason
-        }
-        
-        if 'holidays_calendar' not in manager.holidays_data:
-            manager.holidays_data['holidays_calendar'] = {}
-        
-        if 'blackout_periods' not in manager.holidays_data['holidays_calendar']:
-            manager.holidays_data['holidays_calendar']['blackout_periods'] = []
-        
-        manager.holidays_data['holidays_calendar']['blackout_periods'].append(new_period)
-        
-        if manager.save_holidays(manager.holidays_data):
-            ui.notify(f'✅ Blackout period "{name}" added successfully!', type='positive')
-            dialog.close()
-        else:
-            ui.notify('❌ Failed to save blackout period', type='negative')
-    
-    def import_blackout_calendar():
-        ui.notify('📅 Importing blackout periods from external calendar...', type='info')
-    
-    def analyze_blackout_impact():
-        ui.notify('📊 Analyzing impact of blackout periods on vacation requests...', type='info')
-    
-    def edit_blackout_period(period):
-        ui.notify(f'✏️ Editing blackout period: {period.get("name")}', type='info')
-    
-    def remove_blackout_period(period):
-        ui.notify(f'🗑️ Removing blackout period: {period.get("name")}', type='info')
-
-
-def create_payroll_integration(manager):
-    """Create payroll integration interface"""
-    ui.label('💰 Payroll Integration').classes('text-3xl font-bold mb-6')
-    
-    ui.label('Integrate vacation and holiday data with payroll systems for accurate compensation calculations.').classes('text-gray-600 mb-6')
-    
-    # Integration status cards
-    with ui.row().classes('w-full gap-4 mb-8'):
-        with ui.card().classes('flex-1 bg-green-50 border-l-4 border-green-400'):
-            with ui.card_section().classes('p-6 text-center'):
-                ui.label('✅ Connected').classes('text-2xl font-bold text-green-600 mb-2')
-                ui.label('Payroll System').classes('text-gray-700 font-semibold')
-                ui.label('Last sync: 2 hours ago').classes('text-green-600 text-sm')
-        
-        with ui.card().classes('flex-1 bg-blue-50 border-l-4 border-blue-400'):
-            with ui.card_section().classes('p-6 text-center'):
-                ui.label('847').classes('text-2xl font-bold text-blue-600 mb-2')
-                ui.label('Records Synced').classes('text-gray-700 font-semibold')
-                ui.label('This month').classes('text-blue-600 text-sm')
-        
-        with ui.card().classes('flex-1 bg-yellow-50 border-l-4 border-yellow-400'):
-            with ui.card_section().classes('p-6 text-center'):
-                ui.label('3').classes('text-2xl font-bold text-yellow-600 mb-2')
-                ui.label('Pending Reviews').classes('text-gray-700 font-semibold')
-                ui.label('Require attention').classes('text-yellow-600 text-sm')
-    
-    # Payroll actions
-    with ui.row().classes('w-full gap-4 mb-6'):
-        ui.button('🔄 Sync Now', on_click=lambda: sync_payroll_data()).classes('bg-blue-500 text-white px-4 py-2 rounded')
-        ui.button('📊 Payroll Report', on_click=lambda: generate_payroll_report()).classes('bg-green-500 text-white px-4 py-2 rounded')
-        ui.button('💰 Calculate Holiday Pay', on_click=lambda: calculate_holiday_pay_bulk()).classes('bg-purple-500 text-white px-4 py-2 rounded')
-        ui.button('⚙️ Integration Settings', on_click=lambda: show_payroll_settings()).classes('bg-gray-500 text-white px-4 py-2 rounded')
-    
-    # Holiday pay calculation demo
-    ui.label('Holiday Pay Calculator').classes('text-xl font-bold mb-4')
-    
-    with ui.card().classes('w-full'):
-        with ui.card_section().classes('p-6'):
-            ui.label('Calculate holiday pay for employees who worked on holidays').classes('text-gray-600 mb-4')
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                base_salary = ui.number('Base Daily Salary ($)', value=200.0, min=0).classes('flex-1')
-                hours_worked = ui.number('Hours Worked on Holiday', value=8.0, min=0, max=24).classes('flex-1')
-                holiday_multiplier = ui.number('Holiday Pay Multiplier', value=1.5, min=1.0, max=3.0, step=0.1).classes('flex-1')
-            
-            with ui.row().classes('gap-4 items-center'):
-                ui.button('Calculate Pay', on_click=lambda: calculate_demo_holiday_pay(
-                    base_salary.value, hours_worked.value, holiday_multiplier.value
-                )).classes('bg-blue-500 text-white px-4 py-2 rounded')
-                
-                pay_result = ui.label('').classes('text-lg font-semibold text-green-600')
-    
-    def calculate_demo_holiday_pay(base, hours, multiplier):
-        """Calculate holiday pay demonstration"""
-        if hours > 0:
-            regular_pay = base
-            overtime_pay = (base / 8) * hours * multiplier
-            total_pay = regular_pay + overtime_pay
-            pay_result.text = f'Total Pay: ${total_pay:.2f} (Regular: ${regular_pay:.2f} + Holiday OT: ${overtime_pay:.2f})'
-        else:
-            pay_result.text = f'Holiday Pay: ${base:.2f}'
-    
-    def sync_payroll_data():
-        ui.notify('🔄 Synchronizing vacation and holiday data with payroll system...', type='info')
-    
-    def generate_payroll_report():
-        ui.notify('📊 Generating payroll integration report...', type='info')
-    
-    def calculate_holiday_pay_bulk():
-        ui.notify('💰 Calculating holiday pay for all employees...', type='info')
-    
-    def show_payroll_settings():
-        ui.notify('⚙️ Opening payroll integration settings...', type='info')
-
-
-def create_compliance_reports(manager):
-    """Create compliance reporting interface"""
-    ui.label('📑 Compliance & Reporting').classes('text-3xl font-bold mb-6')
-    
-    ui.label('Generate comprehensive reports for legal compliance, audits, and management review.').classes('text-gray-600 mb-6')
-    
-    # Compliance status overview
-    with ui.row().classes('w-full gap-4 mb-8'):
-        with ui.card().classes('flex-1 bg-green-50 border-l-4 border-green-400'):
-            with ui.card_section().classes('p-6'):
-                ui.label('✅ Labor Law Compliance').classes('text-lg font-bold text-green-700 mb-2')
-                ui.label('98% Compliant').classes('text-2xl font-bold text-green-600')
-                ui.label('2 minor issues to address').classes('text-green-600 text-sm')
-        
-        with ui.card().classes('flex-1 bg-blue-50 border-l-4 border-blue-400'):
-            with ui.card_section().classes('p-6'):
-                ui.label('📊 Audit Readiness').classes('text-lg font-bold text-blue-700 mb-2')
-                ui.label('Ready').classes('text-2xl font-bold text-blue-600')
-                ui.label('All documentation current').classes('text-blue-600 text-sm')
-        
-        with ui.card().classes('flex-1 bg-yellow-50 border-l-4 border-yellow-400'):
-            with ui.card_section().classes('p-6'):
-                ui.label('📋 Policy Updates').classes('text-lg font-bold text-yellow-700 mb-2')
-                ui.label('3 Pending').classes('text-2xl font-bold text-yellow-600')
-                ui.label('Review required').classes('text-yellow-600 text-sm')
-    
-    # Report generation tools
-    ui.label('Available Reports').classes('text-xl font-bold mb-4')
-    
-    reports = [
-        {'name': 'Vacation Utilization Report', 'desc': 'Employee vacation usage patterns and trends', 'icon': '📈'},
-        {'name': 'Holiday Compliance Report', 'desc': 'Adherence to holiday policies and regulations', 'icon': '📅'},
-        {'name': 'Payroll Audit Trail', 'desc': 'Vacation and holiday pay calculations for audit', 'icon': '💰'},
-        {'name': 'Employee Balance Summary', 'desc': 'Current vacation balances across all employees', 'icon': '⚖️'},
-        {'name': 'Policy Effectiveness Report', 'desc': 'Analysis of vacation policy performance', 'icon': '📊'},
-        {'name': 'Compliance Checklist', 'desc': 'Legal and regulatory compliance status', 'icon': '✅'},
-    ]
-    
-    with ui.row().classes('w-full gap-4 flex-wrap'):
-        for report in reports:
-            with ui.card().classes('w-80 hover:shadow-lg transition-shadow cursor-pointer'):
-                with ui.card_section().classes('p-4'):
-                    with ui.row().classes('items-center mb-3'):
-                        ui.label(report['icon']).classes('text-3xl mr-3')
-                        ui.label(report['name']).classes('text-lg font-semibold text-gray-800')
-                    
-                    ui.label(report['desc']).classes('text-gray-600 text-sm mb-4')
-                    
-                    with ui.row().classes('gap-2 w-full'):
-                        ui.button('📄 Generate', on_click=lambda r=report: generate_report(r)).classes('bg-blue-500 text-white px-3 py-1 rounded text-sm flex-1')
-                        ui.button('📅 Schedule', on_click=lambda r=report: schedule_report(r)).classes('bg-green-500 text-white px-3 py-1 rounded text-sm flex-1')
-    
-    def generate_report(report):
-        ui.notify(f'📄 Generating {report["name"]}...', type='info')
-    
-    def schedule_report(report):
-        ui.notify(f'📅 Scheduling {report["name"]}...', type='info')
-
-
-def create_hr_settings(manager):
-    """Create HR system settings interface"""
-    ui.label('⚙️ HR System Settings').classes('text-3xl font-bold mb-6')
-    
-    # General settings section
-    with ui.card().classes('w-full mb-6'):
-        with ui.card_section().classes('p-6'):
-            ui.label('🏢 Company Information').classes('text-xl font-bold text-gray-700 mb-4')
-            
-            general_settings = manager.holidays_data.get('holidays_calendar', {}).get('general_settings', {})
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                company_name = ui.input('Company Name', value='ACME Corporation').classes('flex-1')
-                country = ui.input('Default Country', value=general_settings.get('default_country', 'United States')).classes('flex-1')
-                timezone = ui.input('Timezone', value=general_settings.get('timezone', 'UTC+0')).classes('flex-1')
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                fiscal_year_start = ui.input('Fiscal Year Start (MM-DD)', 
-                                           value=general_settings.get('fiscal_year_start', '01-01')).classes('flex-1')
-                weekend_days = ui.input('Weekend Days', 
-                                      value=', '.join(general_settings.get('weekend_days', ['Saturday', 'Sunday']))).classes('flex-1')
-                holiday_pay_multiplier = ui.number('Default Holiday Pay Multiplier', 
-                                                 value=general_settings.get('holiday_pay_multiplier', 1.5), 
-                                                 min=1.0, max=3.0, step=0.1).classes('flex-1')
-    
-    # Vacation policy settings
-    with ui.card().classes('w-full mb-6'):
-        with ui.card_section().classes('p-6'):
-            ui.label('🏖️ Vacation Policy Settings').classes('text-xl font-bold text-gray-700 mb-4')
-            
-            general_rules = manager.vacation_policies.get('vacation_policies', {}).get('general_rules', {})
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                min_request_days = ui.number('Min Vacation Request (Days)', 
-                                           value=general_rules.get('min_vacation_request_days', 1),
-                                           min=0.5, max=5, step=0.5).classes('flex-1')
-                max_consecutive = ui.number('Max Consecutive Days', 
-                                          value=general_rules.get('max_consecutive_days', 15),
-                                          min=1, max=30).classes('flex-1')
-                advance_notice = ui.number('Required Advance Notice (Days)', 
-                                         value=general_rules.get('advance_notice_required_days', 14),
-                                         min=1, max=60).classes('flex-1')
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                approval_threshold = ui.number('Approval Required Threshold (Days)', 
-                                             value=general_rules.get('approval_required_threshold', 5),
-                                             min=1, max=10).classes('flex-1')
-                
-                use_or_lose = ui.checkbox('Use-or-Lose Policy', 
-                                        value=general_rules.get('use_or_lose_policy', True)).classes('flex-1')
-                
-                payout_on_termination = ui.checkbox('Payout on Termination', 
-                                                  value=general_rules.get('payout_on_termination', True)).classes('flex-1')
-    
-    # System settings
-    with ui.card().classes('w-full mb-6'):
-        with ui.card_section().classes('p-6'):
-            ui.label('🔧 System Configuration').classes('text-xl font-bold text-gray-700 mb-4')
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                auto_backup = ui.checkbox('Enable Automatic Backups', value=True).classes('flex-1')
-                email_notifications = ui.checkbox('Email Notifications', value=True).classes('flex-1')
-                audit_logging = ui.checkbox('Audit Logging', value=True).classes('flex-1')
-            
-            with ui.row().classes('w-full gap-4 mb-4'):
-                backup_frequency = ui.select(['Daily', 'Weekly', 'Monthly'], value='Daily').classes('flex-1')
-                notification_email = ui.input('Notification Email', value='hr@company.com').classes('flex-1')
-                log_retention = ui.number('Log Retention (Days)', value=365, min=30, max=2555).classes('flex-1')
-    
-    # Save settings
-    with ui.row().classes('gap-4 mt-6'):
-        ui.button('💾 Save All Settings', on_click=lambda: save_hr_settings(
-            manager, company_name.value, country.value, timezone.value,
-            fiscal_year_start.value, weekend_days.value, holiday_pay_multiplier.value,
-            min_request_days.value, max_consecutive.value, advance_notice.value,
-            approval_threshold.value, use_or_lose.value, payout_on_termination.value
-        )).classes('bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold')
-        
-        ui.button('🔄 Reset to Defaults', on_click=lambda: reset_hr_settings(manager)).classes('bg-gray-500 text-white px-6 py-3 rounded-lg')
-        ui.button('📤 Export Configuration', on_click=lambda: export_hr_config()).classes('bg-green-500 text-white px-6 py-3 rounded-lg')
-        ui.button('📥 Import Configuration', on_click=lambda: import_hr_config()).classes('bg-purple-500 text-white px-6 py-3 rounded-lg')
 
 def save_hr_settings(manager, company, country, timezone, fiscal_start, weekends, pay_multiplier,
                      min_req, max_consec, advance_notice, approval_threshold, use_lose, payout_term):

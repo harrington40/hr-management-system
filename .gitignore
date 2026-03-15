@@ -340,6 +340,18 @@ package-lock.json
 yarn.lock
 
 # ============================================
+# LICENSE KEYS & KEY GENERATOR
+# ============================================
+license_engine/
+layout/license_guard.py
+generate_license.py
+issued_licenses/
+config/license.json
+config/activation.json
+*.lic
+*.license
+
+# ============================================
 # MISC
 # ============================================
 # Compiled source

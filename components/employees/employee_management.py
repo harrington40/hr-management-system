@@ -110,150 +110,177 @@ def create_modern_employee_interface():
     """Modern, refactored employee management UI for NiceGUI v2.23"""
     manager = EmployeeManager()
     employees = manager.get_employees()
-    
+
     # Calculate statistics
-    total = len(employees)
-    active = sum(1 for e in employees if e.status == EmployeeStatus.ACTIVE)
+    total    = len(employees)
+    active   = sum(1 for e in employees if e.status == EmployeeStatus.ACTIVE)
     on_leave = sum(1 for e in employees if e.status == EmployeeStatus.ON_LEAVE)
-    remote = sum(1 for e in employees if e.location == 'Remote')
-    
+    remote   = sum(1 for e in employees if e.location == 'Remote')
+    pending  = sum(1 for e in employees if e.status == EmployeeStatus.PENDING)
+
     # State for filtering and search
     selected_employee = {'data': None}
-    
-    # Main layout
-    with ui.column().classes('w-full bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen p-6'):
-        
-        # Header with navigation buttons
-        with ui.card().classes('w-full bg-white shadow-lg'):
-            with ui.card_section().classes('p-8'):
+
+    # ── KPI card helper ───────────────────────────────────────────────────────
+    def kpi_card(icon: str, label: str, value: str, gradient: str, sub: str = ''):
+        with ui.card().classes(
+            f'flex-1 min-w-0 {gradient} text-white rounded-2xl shadow-lg '
+            'transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl'
+        ):
+            with ui.card_section().classes('p-5 flex flex-col items-center gap-2 text-center'):
+                ui.html(f'<div class="text-4xl mb-1">{icon}</div>')
+                ui.html(f'<div class="text-3xl font-extrabold tracking-tight">{value}</div>')
+                ui.html(f'<div class="text-sm font-semibold uppercase tracking-widest opacity-80">{label}</div>')
+                if sub:
+                    ui.html(f'<div class="text-xs opacity-60 mt-1">{sub}</div>')
+
+    # ── Main layout ───────────────────────────────────────────────────────────
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-blue-50 min-h-screen p-6 gap-6'):
+
+        # ── Header ────────────────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-gradient-to-r from-blue-700 to-indigo-700 text-white'):
+            with ui.card_section().classes('px-8 py-6'):
                 with ui.row().classes('w-full items-center justify-between'):
-                    with ui.column().classes('gap-2'):
-                        ui.label('👥 Employee Management').classes('text-4xl font-bold text-blue-800')
-                        ui.label('Manage team members, track performance, and organize company structure').classes('text-gray-600 text-lg')
-                    
+                    with ui.column().classes('gap-1'):
+                        ui.html('<h1 class="text-3xl font-extrabold tracking-tight flex items-center gap-3">'
+                                '👥 Employee Management</h1>')
+                        ui.html('<p class="text-blue-100 text-sm">Manage team members, '
+                                'track performance &amp; organise company structure</p>')
                     with ui.row().classes('gap-3'):
-                        ui.button('Add Employee', icon='person_add').props('color=green').on_click(lambda: show_add_employee())
-                        ui.button('Import', icon='upload').props('flat')
-                        ui.button('Export', icon='download').props('flat')
-        
-        # Statistics Cards
-        with ui.card().classes('w-full bg-white shadow-lg'):
-            with ui.card_section().classes('p-6'):
-                with ui.row().classes('gap-4 w-full'):
-                    # Total Employees
-                    with ui.card().classes('flex-1 bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-md'):
-                        with ui.card_section().classes('p-4 text-center'):
-                            ui.label('Total Employees').classes('text-sm opacity-90')
-                            ui.label(f'{total}').classes('text-3xl font-bold mt-2')
-                    
-                    # Active Employees
-                    with ui.card().classes('flex-1 bg-gradient-to-br from-green-500 to-green-700 text-white shadow-md'):
-                        with ui.card_section().classes('p-4 text-center'):
-                            ui.label('Active').classes('text-sm opacity-90')
-                            ui.label(f'{active}').classes('text-3xl font-bold mt-2')
-                    
-                    # On Leave
-                    with ui.card().classes('flex-1 bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-md'):
-                        with ui.card_section().classes('p-4 text-center'):
-                            ui.label('On Leave').classes('text-sm opacity-90')
-                            ui.label(f'{on_leave}').classes('text-3xl font-bold mt-2')
-                    
-                    # Remote Workers
-                    with ui.card().classes('flex-1 bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-md'):
-                        with ui.card_section().classes('p-4 text-center'):
-                            ui.label('Remote').classes('text-sm opacity-90')
-                            ui.label(f'{remote}').classes('text-3xl font-bold mt-2')
-        
-        # Search and Filter Bar
-        with ui.card().classes('w-full bg-white shadow-lg'):
-            with ui.card_section().classes('p-6'):
-                with ui.row().classes('w-full gap-4'):
-                    search_input = ui.input(placeholder='🔍 Search by name or email').classes('flex-1')
+                        ui.button('Add Employee', icon='person_add').props('color=white text-color=blue-700') \
+                            .on_click(lambda: show_add_employee())
+                        ui.button('Import', icon='upload').props('outline color=white')
+                        ui.button('Export', icon='download').props('outline color=white')
+
+        # ── KPI Cards ─────────────────────────────────────────────────────────
+        with ui.row().classes('w-full gap-4 flex-nowrap'):
+            kpi_card('👥', 'Total',    str(total),    'bg-gradient-to-br from-blue-500 to-blue-700')
+            kpi_card('✅', 'Active',   str(active),   'bg-gradient-to-br from-emerald-500 to-emerald-700')
+            kpi_card('🌴', 'On Leave', str(on_leave), 'bg-gradient-to-br from-orange-500 to-orange-700')
+            kpi_card('🏠', 'Remote',   str(remote),   'bg-gradient-to-br from-purple-500 to-purple-700')
+            kpi_card('⏳', 'Pending',  str(pending),  'bg-gradient-to-br from-amber-500 to-amber-700',
+                     'Awaiting onboarding')
+
+        # ── Search & Filter ───────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-white'):
+            with ui.card_section().classes('px-6 py-4'):
+                with ui.row().classes('w-full gap-4 items-end'):
+                    search_input = ui.input(placeholder='🔍 Search by name or email…').classes('flex-1')
                     department_select = ui.select(
-                        label='Department',
-                        value='All',
+                        label='Department', value='All',
                         options=['All', 'Engineering', 'Sales', 'HR', 'Finance', 'Operations']
-                    ).classes('w-48')
+                    ).classes('w-44')
                     status_select = ui.select(
-                        label='Status',
-                        value='All',
+                        label='Status', value='All',
                         options=['All', 'Active', 'On Leave', 'Remote', 'Pending']
-                    ).classes('w-48')
-        
-        # Employee Table
-        with ui.card().classes('w-full bg-white shadow-lg'):
-            with ui.card_section().classes('p-6'):
-                ui.label('Employee Directory').classes('text-xl font-bold mb-4 block')
-                
-                with ui.element('div').classes('overflow-x-auto'):
-                    with ui.element('table').classes('w-full border-collapse'):
-                        # Table Header
-                        with ui.element('thead'):
-                            with ui.element('tr').classes('bg-gradient-to-r from-blue-100 to-blue-50 border-b-2 border-blue-300'):
-                                headers = ['', 'Name', 'ID', 'Department', 'Position', 'Status', 'Location', 'Hire Date', 'Actions']
-                                for header in headers:
-                                    with ui.element('th').classes('p-4 text-left font-semibold text-blue-800'):
-                                        ui.label(header).classes('text-sm')
-                        
-                        # Table Body
-                        with ui.element('tbody'):
-                            for idx, emp in enumerate(employees):
-                                row_class = 'hover:bg-blue-50 border-b border-gray-200'
-                                with ui.element('tr').classes(row_class):
-                                    # Avatar
-                                    with ui.element('td').classes('p-4'):
-                                        initials = f"{emp.first_name[0]}{emp.last_name[0]}".upper()
-                                        with ui.element('div').classes('w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center font-bold'):
-                                            ui.label(initials).classes('text-white text-sm')
-                                    
-                                    # Name
-                                    with ui.element('td').classes('p-4'):
-                                        ui.label(f'{emp.first_name} {emp.last_name}').classes('font-semibold text-gray-800')
-                                    
-                                    # ID
-                                    with ui.element('td').classes('p-4'):
-                                        ui.label(emp.id).classes('font-mono text-gray-600 text-sm')
-                                    
-                                    # Department
-                                    with ui.element('td').classes('p-4'):
-                                        ui.label(emp.department).classes('text-gray-700')
-                                    
-                                    # Position
-                                    with ui.element('td').classes('p-4'):
-                                        ui.label(emp.position).classes('text-gray-700')
-                                    
-                                    # Status Badge
-                                    with ui.element('td').classes('p-4'):
-                                        status_colors = {
-                                            'active': 'bg-green-100 text-green-800',
-                                            'on_leave': 'bg-orange-100 text-orange-800',
-                                            'remote': 'bg-purple-100 text-purple-800',
-                                            'pending': 'bg-yellow-100 text-yellow-800',
-                                            'terminated': 'bg-red-100 text-red-800',
-                                        }
-                                        color = status_colors.get(emp.status.value, 'bg-gray-100 text-gray-800')
-                                        ui.label(emp.status.value.replace('_', ' ').title()).classes(f'{color} px-3 py-1 rounded-full text-xs font-semibold')
-                                    
-                                    # Location
-                                    with ui.element('td').classes('p-4'):
-                                        location_icon = {'On-site': '🏢', 'Remote': '🏠', 'Hybrid': '🔄'}.get(emp.location, '📍')
-                                        ui.label(f'{location_icon} {emp.location}').classes('text-gray-700 text-sm')
-                                    
-                                    # Hire Date
-                                    with ui.element('td').classes('p-4'):
-                                        ui.label(emp.hire_date).classes('text-gray-600 text-sm')
-                                    
-                                    # Actions
-                                    with ui.element('td').classes('p-4'):
-                                        with ui.row().classes('gap-2'):
-                                            ui.button(icon='visibility').props('flat size=sm') \
-                                                .on_click(lambda emp=emp: show_employee_details(emp, selected_employee))
-                                            ui.button(icon='edit').props('flat size=sm color=blue') \
-                                                .on_click(lambda emp=emp: show_edit_employee(emp))
-                                            ui.button(icon='more_vert').props('flat size=sm')
-        
-        # Employee Details Card (shown when selected)
-        details_container = ui.card().classes('w-full bg-white shadow-lg')
+                    ).classes('w-40')
+
+        # ── Employee Directory Table ──────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.card_section().classes('px-6 pt-6 pb-2'):
+                with ui.row().classes('w-full justify-between items-center mb-4'):
+                    ui.html('<h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">'
+                            '📋 Employee Directory</h2>')
+                    ui.html(f'<span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">'
+                            f'{total} member{"s" if total != 1 else ""}</span>')
+
+            with ui.element('div').classes('w-full overflow-x-auto px-2 pb-4'):
+                with ui.element('table').classes('w-full min-w-full border-collapse'):
+
+                    # ── Table header ──────────────────────────────────────────
+                    with ui.element('thead'):
+                        with ui.element('tr').classes(
+                            'bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm'
+                        ):
+                            th = 'px-4 py-3 text-left font-semibold tracking-wide uppercase whitespace-nowrap'
+                            for icon_h, text_h in [
+                                ('', ''), ('👤', 'Name'), ('🆔', 'ID'),
+                                ('🏢', 'Department'), ('💼', 'Position'),
+                                ('🏷', 'Status'), ('📍', 'Location'),
+                                ('📅', 'Hire Date'), ('⚙', 'Actions'),
+                            ]:
+                                with ui.element('th').classes(th):
+                                    ui.html(f'{icon_h} {text_h}'.strip())
+
+                    # ── Table body ────────────────────────────────────────────
+                    status_colors = {
+                        'active':     'bg-emerald-100 text-emerald-800',
+                        'on_leave':   'bg-orange-100 text-orange-800',
+                        'remote':     'bg-purple-100 text-purple-800',
+                        'pending':    'bg-amber-100 text-amber-800',
+                        'terminated': 'bg-red-100 text-red-800',
+                    }
+                    avatar_gradients = [
+                        'from-blue-500 to-indigo-600',
+                        'from-emerald-500 to-teal-600',
+                        'from-purple-500 to-pink-600',
+                        'from-orange-500 to-red-500',
+                        'from-amber-500 to-yellow-600',
+                    ]
+                    td = 'px-4 py-3 text-sm text-gray-700 whitespace-nowrap'
+
+                    with ui.element('tbody'):
+                        for idx, emp in enumerate(employees):
+                            stripe = 'bg-slate-50' if idx % 2 == 0 else 'bg-white'
+                            grad   = avatar_gradients[idx % len(avatar_gradients)]
+                            initials = f'{emp.first_name[:1]}{emp.last_name[:1]}'.upper()
+
+                            with ui.element('tr').classes(
+                                f'{stripe} border-b border-gray-100 '
+                                'hover:bg-blue-50 transition-colors duration-150'
+                            ):
+                                # Avatar
+                                with ui.element('td').classes('px-4 py-3'):
+                                    ui.html(
+                                        f'<div class="w-9 h-9 bg-gradient-to-br {grad} text-white '
+                                        f'rounded-full flex items-center justify-center font-bold text-sm '
+                                        f'shadow-sm">{initials}</div>'
+                                    )
+
+                                # Name
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="font-semibold text-gray-900">'
+                                            f'{emp.first_name} {emp.last_name}</span>')
+
+                                # ID
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="font-mono text-xs bg-gray-100 text-gray-600 '
+                                            f'px-2 py-0.5 rounded">{emp.id}</span>')
+
+                                # Department
+                                with ui.element('td').classes(td):
+                                    ui.label(emp.department)
+
+                                # Position
+                                with ui.element('td').classes(td):
+                                    ui.html(f'<span class="text-blue-700 font-medium">{emp.position}</span>')
+
+                                # Status badge
+                                with ui.element('td').classes(td):
+                                    cls   = status_colors.get(emp.status.value, 'bg-gray-100 text-gray-700')
+                                    lbl   = emp.status.value.replace('_', ' ').title()
+                                    ui.html(f'<span class="{cls} px-3 py-1 rounded-full text-xs font-bold">{lbl}</span>')
+
+                                # Location
+                                with ui.element('td').classes(td):
+                                    loc_icon = {'On-site': '🏢', 'Remote': '🏠', 'Hybrid': '🔄'}.get(emp.location, '📍')
+                                    ui.html(f'<span>{loc_icon} {emp.location}</span>')
+
+                                # Hire Date
+                                with ui.element('td').classes(td):
+                                    ui.label(emp.hire_date)
+
+                                # Actions
+                                with ui.element('td').classes(td):
+                                    with ui.row().classes('gap-1'):
+                                        ui.button(icon='visibility').props('flat round dense color=blue size=sm') \
+                                            .on_click(lambda e=emp: show_employee_details(e, selected_employee))
+                                        ui.button(icon='edit').props('flat round dense color=indigo size=sm') \
+                                            .on_click(lambda e=emp: show_edit_employee(e))
+                                        ui.button(icon='more_vert').props('flat round dense color=grey size=sm')
+
+        # ── Employee Details Card (shown when selected) ───────────────────────
+        details_container = ui.card().classes('w-full rounded-2xl shadow-md bg-white')
         
         def show_employee_details(emp, selected_emp):
             """Display employee details"""
@@ -444,10 +471,14 @@ def create_modern_employee_interface():
 
             dialog.open()
 
-        # Footer
-        with ui.card().classes('w-full bg-white shadow-lg'):
-            with ui.card_section().classes('p-4 text-center'):
-                ui.label('Employee data is securely stored. Last synced with HR system 2 minutes ago.').classes('text-sm text-gray-600')
+        # ── Footer ────────────────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-sm bg-white'):
+            with ui.card_section().classes('px-6 py-4'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    ui.html('<p class="text-xs text-gray-400">🔒 Employee data is securely stored '
+                            '— only authorised HR roles can edit records.</p>')
+                    ui.html(f'<p class="text-xs text-gray-400">Last synced: '
+                            f'{datetime.now().strftime("%d %b %Y, %H:%M")}</p>')
 
 
 def create_employee_management_page():

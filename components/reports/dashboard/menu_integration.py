@@ -190,12 +190,25 @@ def create_dashboard_landing_page():
     _leave_trend = f'{_leave} on leave'
     _remote_pct  = f'{round(_remote / _total * 100, 1)}% of workforce' if _total else '0% of workforce'
 
+    # KPI cards — gradient defined as inline CSS so Tailwind JIT is not needed
     kpi_cards = [
-        {'label': 'Total Employees', 'value': str(_total),   'icon': 'groups',            'bg': 'bg-blue-600',   'trend': 'from registry'},
-        {'label': 'Present Today',   'value': str(_present), 'icon': 'check_circle',      'bg': 'bg-green-600',  'trend': _att_pct},
-        {'label': 'On Leave',        'value': str(_leave),   'icon': 'beach_access',      'bg': 'bg-orange-500', 'trend': _leave_trend},
-        {'label': 'Remote Workers',  'value': str(_remote),  'icon': 'home_work',         'bg': 'bg-purple-600', 'trend': _remote_pct},
-        {'label': 'Open Positions',  'value': '4',           'icon': 'work',              'bg': 'bg-red-600',    'trend': '2 in final round'},
+        {'label': 'Total Employees', 'value': str(_total),   'icon': 'groups',            'gradient': 'linear-gradient(135deg,#3b82f6,#1d4ed8)', 'trend': 'from registry'},
+        {'label': 'Present Today',   'value': str(_present), 'icon': 'check_circle',      'gradient': 'linear-gradient(135deg,#10b981,#065f46)', 'trend': _att_pct},
+        {'label': 'On Leave',        'value': str(_leave),   'icon': 'beach_access',      'gradient': 'linear-gradient(135deg,#f97316,#c2410c)', 'trend': _leave_trend},
+        {'label': 'Remote Workers',  'value': str(_remote),  'icon': 'home_work',         'gradient': 'linear-gradient(135deg,#8b5cf6,#5b21b6)', 'trend': _remote_pct},
+        {'label': 'Open Positions',  'value': '4',           'icon': 'work',              'gradient': 'linear-gradient(135deg,#f43f5e,#9f1239)', 'trend': '2 in final round'},
+    ]
+
+    # Nav cards — bg/icon colours as hex so they always render
+    nav_cards = [
+        {'title': 'Analytics',        'desc': 'Trends & KPIs',    'icon': 'analytics',            'route': '/reporting/modern-dashboard',    'bg': '#eef2ff', 'icon_color': '#6366f1'},
+        {'title': 'Employee Reports', 'desc': 'Staff & stats',     'icon': 'people',               'route': '/reporting/employees',           'bg': '#eff6ff', 'icon_color': '#3b82f6'},
+        {'title': 'Timesheets',       'desc': 'Time logs',         'icon': 'schedule',             'route': '/reporting/employees/timesheet', 'bg': '#f0fdfa', 'icon_color': '#14b8a6'},
+        {'title': 'Administration',   'desc': 'HR admin',          'icon': 'admin_panel_settings', 'route': '/reporting/administration',      'bg': '#faf5ff', 'icon_color': '#a855f7'},
+        {'title': 'Departments',      'desc': 'Teams overview',    'icon': 'business',             'route': '/reporting/departments',         'bg': '#f0fdf4', 'icon_color': '#22c55e'},
+        {'title': 'Leave Reports',    'desc': 'Leave & policy',    'icon': 'event_busy',           'route': '/reporting/leaves',              'bg': '#fff7ed', 'icon_color': '#f97316'},
+        {'title': 'Asset Inventory',  'desc': 'Hardware & assets', 'icon': 'inventory',            'route': '/reporting/assets',              'bg': '#f8fafc', 'icon_color': '#64748b'},
+        {'title': 'AI Orchestrator',  'desc': 'AI insights',       'icon': 'psychology',           'route': '/ai/orchestrator',               'bg': '#fdf2f8', 'icon_color': '#ec4899'},
     ]
 
     devices = [
@@ -206,117 +219,222 @@ def create_dashboard_landing_page():
     ]
 
     activities = [
-        {'text': 'John D. clocked in at 08:02',     'icon': '✅', 'time': '08:02'},
-        {'text': 'Leave request from Sarah M.',      'icon': '📝', 'time': '08:45'},
-        {'text': 'New hire enrolled: K. James',      'icon': '👤', 'time': '09:10'},
-        {'text': 'Attendance report generated',      'icon': '📊', 'time': '09:30'},
-        {'text': 'Schedule updated – Week 12',       'icon': '📅', 'time': '10:00'},
-        {'text': 'Transfer request: A. Brown',       'icon': '🔄', 'time': '10:22'},
+        {'text': 'John D. clocked in at 08:02', 'icon': 'login',       'icon_color': '#10b981', 'time': '08:02'},
+        {'text': 'Leave request from Sarah M.', 'icon': 'description', 'icon_color': '#3b82f6', 'time': '08:45'},
+        {'text': 'New hire enrolled: K. James', 'icon': 'person_add',  'icon_color': '#8b5cf6', 'time': '09:10'},
+        {'text': 'Attendance report generated', 'icon': 'bar_chart',   'icon_color': '#14b8a6', 'time': '09:30'},
+        {'text': 'Schedule updated – Week 12',  'icon': 'event',       'icon_color': '#6366f1', 'time': '10:00'},
+        {'text': 'Transfer request: A. Brown',  'icon': 'swap_horiz',  'icon_color': '#f97316', 'time': '10:22'},
     ]
 
-    with ui.column().classes('w-full min-h-screen bg-gray-50'):
+    # bar chart data — bar colour as hex so it always renders
+    bar_data = [
+        ('Mon', 88, '#3b82f6'),
+        ('Tue', 91, '#6366f1'),
+        ('Wed', 87, '#3b82f6'),
+        ('Thu', 93, '#6366f1'),
+        ('Fri', 85, '#60a5fa'),
+    ]
 
-        # ── Page header (same colour palette as the app sidebar) ──────────────
-        with ui.element('div').classes(
-            'w-full bg-gradient-to-r from-[#1c2a48] to-[#31497D] px-8 py-6 text-white'
+    # ── inject a tiny helper style once ─────────────────────────────────────────
+    ui.add_head_html('''
+    <style>
+      .dash-card-hover:hover { box-shadow: 0 8px 30px rgba(0,0,0,.18) !important; transform: translateY(-2px); }
+      .dash-nav-item:hover   { opacity:.85; transform:translateY(-1px); }
+      .dash-nav-item         { transition: opacity .15s, transform .15s; }
+      .dash-kpi              { transition: box-shadow .2s, transform .2s; }
+      .row-sep + .row-sep    { border-top: 1px solid #f1f5f9; }
+    </style>
+    ''')
+
+    with ui.column().classes('w-full min-h-screen').style('background:#eef2f7'):
+
+        # ── Full-width header ─────────────────────────────────────────────────
+        with ui.element('div').classes('w-full').style(
+            'background:linear-gradient(100deg,#1c2a48 0%,#2d4a7a 60%,#1e3a5f 100%);'
+            'box-shadow:0 4px 24px rgba(0,0,0,.3)'
         ):
-            with ui.row().classes('w-full items-center justify-between'):
-                with ui.row().classes('items-center gap-4'):
-                    ui.icon('dashboard').classes('text-5xl text-blue-200')
-                    with ui.column():
-                        ui.html('<h1 class="text-3xl font-bold leading-tight">HR Management Dashboard</h1>')
-                        ui.html('<p class="text-blue-200 text-sm mt-1">Real-time workforce analytics and overview</p>')
-                        ui.html(
-                            f'<p class="text-blue-300 text-xs mt-1">'
-                            f'🏠 Home &rsaquo; Reporting &rsaquo; Dashboard'
-                            f'&nbsp;·&nbsp; {now.strftime("%A, %B %d %Y  %H:%M")}'
-                            f'</p>'
-                        )
-                with ui.row().classes(
-                    'items-center gap-2 bg-green-500 bg-opacity-30 px-3 py-1 rounded-full'
-                ):
-                    ui.html('<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>')
-                    ui.html('<span class="text-sm text-green-100 font-medium">Live Data</span>')
-
-        # ── KPI stat cards ─────────────────────────────────────────────────────
-        with ui.row().classes('w-full px-6 pt-6 gap-4'):
-            for card in kpi_cards:
-                with ui.card().classes(
-                    f'flex-1 {card["bg"]} text-white hover:shadow-xl transition-shadow cursor-pointer'
-                ):
-                    with ui.card_section().classes('p-4'):
-                        with ui.row().classes('items-start justify-between'):
-                            with ui.column():
-                                ui.html(f'<div class="text-3xl font-bold">{card["value"]}</div>')
-                                ui.html(f'<div class="text-sm opacity-90 mt-1">{card["label"]}</div>')
-                            ui.icon(card['icon']).classes('text-4xl opacity-70')
-                        ui.html(f'<div class="text-xs mt-3 opacity-75">↗ {card["trend"]}</div>')
-
-        # ── Main body ──────────────────────────────────────────────────────────
-        with ui.row().classes('w-full px-6 py-6 gap-6 items-start'):
-
-            # Left – module quick-access + attendance bars
-            with ui.column().classes('flex-1 gap-4'):
-                ui.html('<h2 class="text-base font-bold text-gray-700">Quick Access</h2>')
-                with ui.row().classes('w-full gap-4 flex-wrap'):
-                    nav_cards = [
-                        {'title': 'Analytics',        'desc': 'Performance & trends',    'icon': 'analytics',           'route': '/reporting/modern-dashboard',    'border': 'border-indigo-500'},
-                        {'title': 'Employee Reports', 'desc': 'Staff directory & stats', 'icon': 'people',              'route': '/reporting/employees',           'border': 'border-blue-500'},
-                        {'title': 'Timesheets',       'desc': 'Time & attendance logs',  'icon': 'schedule',            'route': '/reporting/employees/timesheet', 'border': 'border-teal-500'},
-                        {'title': 'Administration',   'desc': 'HR admin reports',        'icon': 'admin_panel_settings','route': '/reporting/administration',      'border': 'border-purple-500'},
-                        {'title': 'Departments',      'desc': 'Department overview',     'icon': 'business',            'route': '/reporting/departments',         'border': 'border-green-500'},
-                        {'title': 'Leave Reports',    'desc': 'Leave tracking & policy', 'icon': 'event_busy',          'route': '/reporting/leaves',              'border': 'border-orange-500'},
-                        {'title': 'Asset Inventory',  'desc': 'Hardware & assets',       'icon': 'inventory',           'route': '/reporting/assets',              'border': 'border-gray-500'},
-                        {'title': 'AI Orchestrator',  'desc': 'AI-powered insights',     'icon': 'psychology',          'route': '/ai/orchestrator',               'border': 'border-pink-500'},
-                    ]
-                    for nav in nav_cards:
-                        with ui.card().classes(
-                            f'w-44 hover:shadow-lg transition-all cursor-pointer border-l-4 {nav["border"]}'
-                        ).on('click', lambda r=nav['route']: _navigate(r)):
-                            with ui.card_section().classes('p-3'):
-                                with ui.row().classes('items-center gap-2 mb-1'):
-                                    ui.icon(nav['icon']).classes('text-gray-600 text-xl')
-                                    ui.html(f'<div class="font-semibold text-gray-800 text-sm">{nav["title"]}</div>')
-                                ui.html(f'<div class="text-xs text-gray-500">{nav["desc"]}</div>')
-
-                # Attendance bar chart
-                with ui.card().classes('w-full mt-2'):
-                    with ui.card_section().classes('p-4'):
-                        ui.html('<h3 class="font-bold text-gray-700 mb-3">📊 This Week\'s Attendance</h3>')
-                        for day, pct in [('Mon', 88), ('Tue', 91), ('Wed', 87), ('Thu', 93), ('Fri', 85)]:
-                            with ui.row().classes('items-center gap-3 mb-2'):
-                                ui.html(f'<div class="w-10 text-xs font-medium text-gray-600">{day}</div>')
-                                with ui.element('div').classes('flex-1 bg-gray-200 rounded-full h-3'):
-                                    ui.element('div').classes(
-                                        'bg-blue-500 h-3 rounded-full'
-                                    ).style(f'width:{pct}%')
-                                ui.html(f'<div class="w-10 text-xs text-gray-500 text-right">{pct}%</div>')
-
-            # Right – activity feed + hardware status
-            with ui.column().classes('w-72 gap-4'):
-
-                with ui.card().classes('w-full'):
-                    with ui.card_section().classes(
-                        'p-3 bg-gradient-to-r from-[#1c2a48] to-[#31497D] text-white rounded-t'
+            # centred inner container
+            with ui.element('div').classes('px-8 py-5').style('max-width:1400px;margin:0 auto'):
+                with ui.row().classes('w-full items-center justify-between'):
+                    with ui.row().classes('items-center gap-4'):
+                        with ui.element('div').classes('flex items-center justify-center flex-shrink-0').style(
+                            'width:52px;height:52px;border-radius:14px;'
+                            'background:rgba(255,255,255,.13);'
+                            'box-shadow:0 2px 8px rgba(0,0,0,.2)'
+                        ):
+                            ui.icon('dashboard').classes('text-4xl').style('color:#93c5fd')
+                        with ui.column().classes('gap-0'):
+                            ui.html('<h1 style="font-size:1.4rem;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.2">HR Management Dashboard</h1>')
+                            ui.html('<p style="color:#93c5fd;font-size:.8rem;margin-top:2px">Real-time workforce analytics &amp; smart reporting</p>')
+                            ui.html(
+                                f'<p style="color:#6080aa;font-size:.7rem;margin-top:3px">'
+                                f'Home › Reporting › Stats Analysis'
+                                f'&nbsp;&nbsp;·&nbsp;&nbsp;{now.strftime("%A, %d %b %Y · %H:%M")}'
+                                f'</p>'
+                            )
+                    with ui.element('div').classes('flex items-center gap-2 px-4 py-2').style(
+                        'background:rgba(16,185,129,.18);'
+                        'border:1px solid rgba(52,211,153,.35);'
+                        'border-radius:99px'
                     ):
-                        ui.html('<h3 class="font-bold">⚡ Recent Activity</h3>')
-                    with ui.card_section().classes('p-3'):
-                        for act in activities:
-                            with ui.row().classes('items-center gap-3 py-2 border-b border-gray-100 last:border-0'):
-                                ui.html(f'<span class="text-base">{act["icon"]}</span>')
-                                with ui.column().classes('flex-1'):
-                                    ui.html(f'<div class="text-xs text-gray-800">{act["text"]}</div>')
-                                    ui.html(f'<div class="text-xs text-gray-400">{act["time"]} AM</div>')
+                        ui.html('<div style="width:8px;height:8px;border-radius:50%;background:#34d399" class="animate-pulse"></div>')
+                        ui.html('<span style="font-size:.8rem;font-weight:600;color:#a7f3d0">Live</span>')
 
-                with ui.card().classes('w-full'):
-                    with ui.card_section().classes(
-                        'p-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-t'
+        # ── centred content wrapper ───────────────────────────────────────────
+        with ui.element('div').classes('px-6 pb-10').style('max-width:1400px;margin:0 auto;width:100%'):
+
+            # ── KPI cards row ─────────────────────────────────────────────────
+            with ui.row().classes('w-full pt-6 gap-4').style('flex-wrap:nowrap'):
+                for card in kpi_cards:
+                    with ui.card().classes('flex-1 overflow-hidden text-white dash-kpi dash-card-hover').style(
+                        f'background:{card["gradient"]};border-radius:16px;'
+                        'box-shadow:0 4px 16px rgba(0,0,0,.15);cursor:pointer'
                     ):
-                        ui.html('<h3 class="font-bold">🔧 Hardware Status</h3>')
-                    with ui.card_section().classes('p-3'):
-                        for dev in devices:
-                            icon = '🟢' if dev['status'] == 'online' else '🟡'
-                            with ui.row().classes('items-center gap-2 py-1'):
-                                ui.html(f'<span>{icon}</span>')
-                                ui.html(f'<div class="text-xs text-gray-700">{dev["name"]}</div>')
-                ui.html('<div class="text-sm opacity-75">Modern Workforce Management Solution</div>')
+                        with ui.card_section().classes('p-5'):
+                            with ui.row().classes('w-full justify-between items-start mb-3'):
+                                with ui.element('div').classes('flex items-center justify-center').style(
+                                    'width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.22)'
+                                ):
+                                    ui.icon(card['icon']).classes('text-2xl text-white')
+                            ui.html(f'<div style="font-size:2rem;font-weight:900;letter-spacing:-.5px">{card["value"]}</div>')
+                            ui.html(f'<div style="font-size:.82rem;font-weight:600;opacity:.88;margin-top:2px">{card["label"]}</div>')
+                            ui.html(f'<div style="font-size:.7rem;opacity:.65;margin-top:8px">↗&nbsp;{card["trend"]}</div>')
+
+            # ── Main two-column body ──────────────────────────────────────────
+            with ui.row().classes('w-full pt-5 gap-5 items-start'):
+
+                # ── LEFT column ───────────────────────────────────────────────
+                with ui.column().classes('flex-1 gap-5').style('min-width:0'):
+
+                    # Quick Access card
+                    with ui.card().classes('w-full overflow-hidden').style(
+                        'border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.1)'
+                    ):
+                        with ui.element('div').classes('px-6 py-4').style(
+                            'background:linear-gradient(90deg,#1e293b,#334155)'
+                        ):
+                            with ui.row().classes('items-center gap-3'):
+                                with ui.element('div').classes('flex items-center justify-center').style(
+                                    'width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.1)'
+                                ):
+                                    ui.icon('grid_view').classes('text-lg').style('color:#94a3b8')
+                                ui.html('<span style="color:#fff;font-weight:700;font-size:.9rem;letter-spacing:.3px">Quick Access</span>')
+                                ui.html('<span style="color:#475569;font-size:.75rem;margin-left:4px">— jump to any module</span>')
+
+                        with ui.grid(columns=4).classes('gap-3 p-5'):
+                            for nav in nav_cards:
+                                with ui.element('div').classes('flex flex-col items-center gap-2 p-3 dash-nav-item cursor-pointer').style(
+                                    f'background:{nav["bg"]};border-radius:12px'
+                                ).on('click', lambda r=nav['route']: _navigate(r)):
+                                    with ui.element('div').classes('flex items-center justify-center').style(
+                                        f'width:42px;height:42px;border-radius:11px;'
+                                        f'background:{nav["icon_color"]};'
+                                        f'box-shadow:0 2px 8px rgba(0,0,0,.15)'
+                                    ):
+                                        ui.icon(nav['icon']).classes('text-xl text-white')
+                                    ui.html(f'<div style="font-size:.72rem;font-weight:700;color:#1e293b;text-align:center;line-height:1.3">{nav["title"]}</div>')
+                                    ui.html(f'<div style="font-size:.65rem;color:#64748b;text-align:center;line-height:1.3">{nav["desc"]}</div>')
+
+                    # Attendance bar chart card
+                    with ui.card().classes('w-full overflow-hidden').style(
+                        'border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.1)'
+                    ):
+                        with ui.element('div').classes('px-6 py-4').style(
+                            'background:linear-gradient(90deg,#1d4ed8,#4338ca)'
+                        ):
+                            with ui.row().classes('items-center gap-3'):
+                                with ui.element('div').classes('flex items-center justify-center').style(
+                                    'width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.15)'
+                                ):
+                                    ui.icon('bar_chart').classes('text-lg text-blue-200')
+                                ui.html('<span style="color:#fff;font-weight:700;font-size:.9rem;letter-spacing:.3px">This Week\'s Attendance</span>')
+
+                        with ui.column().classes('px-6 py-5 gap-4'):
+                            for day, pct, color in bar_data:
+                                with ui.row().classes('items-center gap-3'):
+                                    ui.html(f'<div style="width:26px;font-size:.73rem;font-weight:700;color:#64748b">{day}</div>')
+                                    with ui.element('div').classes('flex-1 overflow-hidden').style(
+                                        'background:#dde3ec;border-radius:99px;height:10px'
+                                    ):
+                                        ui.element('div').style(
+                                            f'width:{pct}%;height:100%;border-radius:99px;'
+                                            f'background:{color};'
+                                            f'box-shadow:0 1px 4px rgba(0,0,0,.15)'
+                                        )
+                                    ui.html(f'<div style="width:2.4rem;font-size:.73rem;font-weight:700;color:#475569;text-align:right">{pct}%</div>')
+
+                # ── RIGHT column ──────────────────────────────────────────────
+                with ui.column().classes('gap-5').style('width:22rem;flex-shrink:0'):
+
+                    # Recent Activity card
+                    with ui.card().classes('w-full overflow-hidden').style(
+                        'border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.1)'
+                    ):
+                        with ui.element('div').classes('px-6 py-4').style(
+                            'background:linear-gradient(90deg,#1c2a48,#31497d)'
+                        ):
+                            with ui.row().classes('items-center gap-3'):
+                                with ui.element('div').classes('flex items-center justify-center').style(
+                                    'width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.1)'
+                                ):
+                                    ui.icon('bolt').classes('text-lg text-blue-200')
+                                ui.html('<span style="color:#fff;font-weight:700;font-size:.9rem;letter-spacing:.3px">Recent Activity</span>')
+
+                        with ui.column().classes('px-4 py-2 gap-0'):
+                            for act in activities:
+                                with ui.element('div').classes('row-sep').style(
+                                    'display:flex;align-items:center;gap:12px;padding:10px 4px'
+                                ):
+                                    with ui.element('div').classes('flex items-center justify-center flex-shrink-0').style(
+                                        'width:32px;height:32px;border-radius:8px;background:#f1f5f9'
+                                    ):
+                                        ui.icon(act['icon']).classes('text-base').style(f'color:{act["icon_color"]}')
+                                    ui.html(
+                                        f'<div style="flex:1">'
+                                        f'<div style="font-size:.75rem;font-weight:500;color:#1e293b;line-height:1.4">{act["text"]}</div>'
+                                        f'<div style="font-size:.7rem;color:#94a3b8;margin-top:1px">{act["time"]} AM</div>'
+                                        f'</div>'
+                                    )
+
+                    # Hardware Status card
+                    with ui.card().classes('w-full overflow-hidden').style(
+                        'border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.1)'
+                    ):
+                        with ui.element('div').classes('px-6 py-4').style(
+                            'background:linear-gradient(90deg,#065f46,#0f766e)'
+                        ):
+                            with ui.row().classes('items-center gap-3'):
+                                with ui.element('div').classes('flex items-center justify-center').style(
+                                    'width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.12)'
+                                ):
+                                    ui.icon('developer_board').classes('text-lg').style('color:#6ee7b7')
+                                ui.html('<span style="color:#fff;font-weight:700;font-size:.9rem;letter-spacing:.3px">Hardware Status</span>')
+
+                        with ui.column().classes('px-4 py-2 gap-0'):
+                            for dev in devices:
+                                is_online = dev['status'] == 'online'
+                                dot_color  = '#10b981' if is_online else '#f59e0b'
+                                badge_bg   = '#d1fae5' if is_online else '#fef3c7'
+                                badge_fg   = '#065f46' if is_online else '#92400e'
+                                label      = 'Online'  if is_online else 'Maintenance'
+                                pulse      = ' class="animate-pulse"' if is_online else ''
+                                with ui.element('div').classes('row-sep').style(
+                                    'display:flex;align-items:center;gap:10px;padding:10px 4px'
+                                ):
+                                    ui.html(
+                                        f'<div{pulse} style="width:10px;height:10px;border-radius:50%;'
+                                        f'background:{dot_color};flex-shrink:0"></div>'
+                                    )
+                                    ui.html(f'<div style="flex:1;font-size:.75rem;font-weight:500;color:#334155">{dev["name"]}</div>')
+                                    ui.html(
+                                        f'<span style="font-size:.68rem;font-weight:700;padding:2px 9px;'
+                                        f'border-radius:99px;background:{badge_bg};color:{badge_fg}">{label}</span>'
+                                    )
+
+            # ── Footer ────────────────────────────────────────────────────────
+            with ui.element('div').classes('w-full mt-4 py-3 text-center').style('border-top:1px solid #d1d5db'):
+                ui.html(
+                    '<span style="font-size:.72rem;color:#94a3b8">'
+                    'HRMkit · HR Management Platform · Real-time data</span>'
+                )

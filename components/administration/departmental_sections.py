@@ -280,244 +280,418 @@ def DepartmentalSections():
     Modern Departmental Sections page with advanced HR time management algorithms
     and seamless institution integration
     """
-    
-    # Page header with breadcrumb navigation
-    with ui.row().classes('w-full justify-between items-center mb-6'):
-        with ui.column():
-            ui.label('Departmental Sections').classes('text-3xl font-bold text-gray-800 dark:text-white')
-            with ui.row().classes('items-center gap-2 text-sm text-gray-500'):
-                ui.icon('home').classes('text-blue-500')
-                ui.label('Dashboard')
-                ui.icon('chevron_right').classes('text-xs')
-                ui.label('Administration')
-                ui.icon('chevron_right').classes('text-xs')
-                ui.label('Departmental Sections').classes('text-blue-600 font-medium')
-        
-        # Action buttons
-        with ui.row().classes('gap-2'):
-            ui.button('Export Data', icon='download', on_click=export_department_data).props('outlined color=blue')
-            ui.button('Add Department', icon='add', on_click=show_add_department_dialog).props('color=primary')
+    with ui.column().classes('w-full bg-gradient-to-br from-slate-100 to-blue-50 min-h-screen p-6 gap-6'):
 
-    # Department statistics overview
-    create_department_stats_overview()
+        # ── Header card ───────────────────────────────────────────────────────
+        with ui.card().classes('w-full rounded-2xl shadow-md bg-gradient-to-r from-indigo-700 to-blue-700 text-white'):
+            with ui.card_section().classes('px-8 py-6'):
+                with ui.row().classes('w-full justify-between items-center'):
+                    with ui.column().classes('gap-1'):
+                        with ui.row().classes('items-center gap-2 text-indigo-200 text-sm mb-1'):
+                            ui.html('<span>🏠 Dashboard</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span>Administration</span>')
+                            ui.html('<span class="opacity-50">/</span>')
+                            ui.html('<span class="text-white font-medium">Departmental Sections</span>')
+                        ui.html('<h1 class="text-3xl font-extrabold tracking-tight">🏢 Departmental Sections</h1>')
+                    with ui.row().classes('gap-3'):
+                        ui.button('Export Data',    icon='download', on_click=export_department_data).props('outline color=white')
+                        ui.button('Add Department', icon='add',      on_click=show_add_department_dialog).props('outline color=white')
 
-    # Main content with tabs
-    with ui.tabs().classes('w-full mb-4') as tabs:
-        overview_tab = ui.tab('Overview', icon='dashboard')
-        departments_tab = ui.tab('Departments', icon='account_tree')
-        analytics_tab = ui.tab('Analytics', icon='analytics')
-        time_management_tab = ui.tab('Time Management', icon='schedule')
+        # ── KPI stats ────────────────────────────────────────────────────────
+        create_department_stats_overview()
 
-    with ui.tab_panels(tabs, value=overview_tab).classes('w-full'):
-        # Overview Panel
-        with ui.tab_panel(overview_tab):
-            create_overview_section()
-        
-        # Departments Panel
-        with ui.tab_panel(departments_tab):
-            create_departments_list_section()
-        
-        # Analytics Panel
-        with ui.tab_panel(analytics_tab):
-            create_analytics_section()
-        
-        # Time Management Panel
-        with ui.tab_panel(time_management_tab):
-            create_time_management_section()
+        # ── Tabs ─────────────────────────────────────────────────────────────
+        with ui.tabs().classes('w-full mb-4') as tabs:
+            overview_tab = ui.tab('Overview', icon='dashboard')
+            departments_tab = ui.tab('Departments', icon='account_tree')
+            analytics_tab = ui.tab('Analytics', icon='analytics')
+            time_management_tab = ui.tab('Time Management', icon='schedule')
+
+        with ui.tab_panels(tabs, value=overview_tab).classes('w-full'):
+            with ui.tab_panel(overview_tab):
+                create_overview_section()
+            with ui.tab_panel(departments_tab):
+                create_departments_list_section()
+            with ui.tab_panel(analytics_tab):
+                create_analytics_section()
+            with ui.tab_panel(time_management_tab):
+                create_time_management_section()
 
 def create_department_stats_overview():
-    """Create department statistics overview cards"""
+    """Create department statistics overview cards — evenly distributed, modern gradient design."""
     stats = dept_manager.departments_data["statistics"]
-    
-    with ui.row().classes('w-full gap-4 mb-6'):
-        # Total Departments Card
-        with ui.card().classes('p-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white min-w-48'):
-            with ui.row().classes('items-center justify-between'):
-                with ui.column():
-                    ui.label('Total Departments').classes('text-indigo-100 text-sm')
-                    ui.label(f'{stats["total_departments"]}').classes('text-2xl font-bold')
-                ui.icon('account_tree').classes('text-3xl text-indigo-200')
-        
-        # Total Employees Card
-        with ui.card().classes('p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white min-w-48'):
-            with ui.row().classes('items-center justify-between'):
-                with ui.column():
-                    ui.label('Total Employees').classes('text-emerald-100 text-sm')
-                    ui.label(f'{stats["total_employees"]}').classes('text-2xl font-bold')
-                ui.icon('groups').classes('text-3xl text-emerald-200')
-        
-        # Total Budget Card
-        with ui.card().classes('p-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white min-w-48'):
-            with ui.row().classes('items-center justify-between'):
-                with ui.column():
-                    ui.label('Total Budget').classes('text-amber-100 text-sm')
-                    ui.label(f'${stats["total_budget"]:,}').classes('text-2xl font-bold')
-                ui.icon('account_balance').classes('text-3xl text-amber-200')
-        
-        # Average Efficiency Card
-        with ui.card().classes('p-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white min-w-48'):
-            with ui.row().classes('items-center justify-between'):
-                with ui.column():
-                    ui.label('Avg. Efficiency').classes('text-rose-100 text-sm')
-                    ui.label(f'{stats["average_efficiency"]}%').classes('text-2xl font-bold')
-                ui.icon('trending_up').classes('text-3xl text-rose-200')
+
+    cards = [
+        {
+            "icon": "🏢",
+            "label": "Total Departments",
+            "value": str(stats["total_departments"]),
+            "sub": "Active units",
+            "from_": "#6366f1",   # indigo-500
+            "to_":   "#4338ca",   # indigo-700
+            "orb1":  "rgba(255,255,255,0.12)",
+            "orb2":  "rgba(255,255,255,0.06)",
+        },
+        {
+            "icon": "👥",
+            "label": "Total Employees",
+            "value": str(stats["total_employees"]),
+            "sub": "Across all depts",
+            "from_": "#10b981",   # emerald-500
+            "to_":   "#065f46",   # emerald-900
+            "orb1":  "rgba(255,255,255,0.14)",
+            "orb2":  "rgba(255,255,255,0.07)",
+        },
+        {
+            "icon": "💰",
+            "label": "Total Budget",
+            "value": f'${stats["total_budget"]:,}',
+            "sub": "Annual allocation",
+            "from_": "#f59e0b",   # amber-500
+            "to_":   "#b45309",   # amber-700
+            "orb1":  "rgba(255,255,255,0.15)",
+            "orb2":  "rgba(255,255,255,0.07)",
+        },
+        {
+            "icon": "📈",
+            "label": "Avg Efficiency",
+            "value": f'{stats["average_efficiency"]}%',
+            "sub": "Performance score",
+            "from_": "#ef4444",   # rose-500
+            "to_":   "#9f1239",   # rose-900
+            "orb1":  "rgba(255,255,255,0.13)",
+            "orb2":  "rgba(255,255,255,0.06)",
+        },
+    ]
+
+    with ui.row().classes('w-full gap-5 flex-nowrap'):
+        for c in cards:
+            ui.html(f"""
+<div style="
+    flex: 1 1 0%;
+    min-width: 0;
+    background: linear-gradient(135deg, {c['from_']}, {c['to_']});
+    border-radius: 1.25rem;
+    padding: 1.5rem 1.75rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 40px -8px rgba(0,0,0,0.35)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 10px 30px -6px rgba(0,0,0,0.3)'">
+
+  <!-- decorative background orbs -->
+  <div style="position:absolute;top:-28px;right:-28px;width:110px;height:110px;
+              border-radius:50%;background:{c['orb1']};pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;
+              border-radius:50%;background:{c['orb2']};pointer-events:none;"></div>
+
+  <!-- icon pill -->
+  <div style="display:inline-flex;align-items:center;justify-content:center;
+              width:52px;height:52px;border-radius:0.875rem;
+              background:rgba(255,255,255,0.18);
+              backdrop-filter:blur(6px);
+              font-size:1.75rem;margin-bottom:1rem;
+              box-shadow:inset 0 1px 1px rgba(255,255,255,0.3);">
+    {c['icon']}
+  </div>
+
+  <!-- metric -->
+  <div style="font-size:2.25rem;font-weight:900;letter-spacing:-0.03em;
+              line-height:1;margin-bottom:0.4rem;
+              text-shadow:0 2px 8px rgba(0,0,0,0.15);">
+    {c['value']}
+  </div>
+
+  <!-- label -->
+  <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;
+              letter-spacing:0.12em;opacity:0.85;margin-bottom:0.25rem;">
+    {c['label']}
+  </div>
+
+  <!-- sub label -->
+  <div style="font-size:0.72rem;opacity:0.6;font-weight:500;">
+    {c['sub']}
+  </div>
+</div>
+""")
 
 def create_overview_section():
-    """Create overview section with department summary"""
-    with ui.row().classes('w-full gap-6'):
-        # Department Performance Chart
-        with ui.card().classes('flex-1 p-6'):
-            ui.label('Department Performance Overview').classes('text-xl font-semibold mb-4')
-            departments = dept_manager.get_all_departments()
-            
-            with ui.grid(columns=2).classes('gap-4 w-full'):
-                for dept in departments:
-                    metrics = dept["calculated_metrics"]
-                    with ui.card().classes('p-4 border border-gray-200 hover:shadow-lg transition-shadow'):
-                        with ui.row().classes('items-center justify-between mb-2'):
-                            ui.label(dept["name"]).classes('font-semibold text-lg')
-                            ui.chip(dept["status"], color='green').props('dense')
-                        
-                        with ui.column().classes('gap-2'):
-                            with ui.row().classes('justify-between'):
-                                ui.label('Employees:').classes('text-sm text-gray-600')
-                                ui.label(f'{dept["employee_count"]}').classes('font-medium')
-                            
-                            with ui.row().classes('justify-between'):
-                                ui.label('Efficiency:').classes('text-sm text-gray-600')
-                                ui.label(f'{dept["performance_metrics"]["efficiency_score"]}%').classes('font-medium')
-                            
-                            with ui.row().classes('justify-between'):
-                                ui.label('Budget:').classes('text-sm text-gray-600')
-                                ui.label(f'${dept["budget"]:,}').classes('font-medium')
-                            
-                            with ui.row().classes('justify-between'):
-                                ui.label('Cost/Employee:').classes('text-sm text-gray-600')
-                                ui.label(f'${metrics["cost_per_employee"]:,}').classes('font-medium')
+    """Create overview section — one row of 4-5 department cards evenly spread."""
+    departments = dept_manager.get_all_departments()
+
+    # Cycle through vivid gradient pairs for visual variety
+    _gradients = [
+        ("from-indigo-500 to-blue-600",    "#6366f1", "#2563eb"),
+        ("from-emerald-500 to-teal-600",   "#10b981", "#0d9488"),
+        ("from-violet-500 to-purple-600",  "#8b5cf6", "#9333ea"),
+        ("from-rose-500 to-pink-600",      "#ef4444", "#db2777"),
+        ("from-amber-500 to-orange-600",   "#f59e0b", "#ea580c"),
+        ("from-cyan-500 to-sky-600",       "#06b6d4", "#0284c7"),
+    ]
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.card_section().classes('px-6 pt-6 pb-2'):
+            with ui.row().classes('w-full justify-between items-center'):
+                ui.html('<h2 class="text-xl font-bold text-gray-800">📊 Department Performance Overview</h2>')
+                ui.html(f'<span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">'
+                        f'{len(departments)} departments</span>')
+
+        with ui.card_section().classes('px-6 pb-6'):
+            # flex-wrap so if >5 depts they wrap, min-w-0 keeps flex-1 from overflowing
+            with ui.element('div').style(
+                'display:flex; flex-wrap:wrap; gap:1rem; width:100%;'
+            ):
+                for idx, dept in enumerate(departments):
+                    metrics   = dept["calculated_metrics"]
+                    eff       = dept["performance_metrics"]["efficiency_score"]
+                    _, g_from, g_to = _gradients[idx % len(_gradients)]
+
+                    if eff >= 90:
+                        eff_color = "#059669"   # emerald
+                        eff_bg    = "#d1fae5"
+                    elif eff >= 80:
+                        eff_color = "#d97706"   # amber
+                        eff_bg    = "#fef3c7"
+                    else:
+                        eff_color = "#dc2626"   # rose
+                        eff_bg    = "#fee2e2"
+
+                    ui.html(f"""
+<div style="
+    flex: 1 1 0%;
+    min-width: 180px;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 18px -4px rgba(0,0,0,0.12);
+    background: #fff;
+    transition: transform .2s ease, box-shadow .2s ease;
+    cursor: default;
+" onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 14px 28px -6px rgba(0,0,0,0.18)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px -4px rgba(0,0,0,0.12)'">
+
+  <!-- gradient top bar -->
+  <div style="
+    height: 7px;
+    background: linear-gradient(90deg, {g_from}, {g_to});
+  "></div>
+
+  <div style="padding: 1rem 1.1rem 1.1rem;">
+
+    <!-- dept name + active badge -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; margin-bottom:.75rem;">
+      <span style="font-weight:700; font-size:.9rem; color:#1e293b; line-height:1.3;">{dept["name"]}</span>
+      <span style="flex-shrink:0; padding:.15rem .55rem; border-radius:9999px;
+                   font-size:.65rem; font-weight:700;
+                   background:linear-gradient(90deg,{g_from},{g_to}); color:#fff;">
+        Active
+      </span>
+    </div>
+
+    <!-- metrics rows -->
+    <div style="display:flex; flex-direction:column; gap:.45rem;">
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:.72rem; color:#94a3b8; font-weight:500;">👥 Employees</span>
+        <span style="font-size:.8rem; font-weight:700; color:#1e293b;">{dept["employee_count"]}</span>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:.72rem; color:#94a3b8; font-weight:500;">📈 Efficiency</span>
+        <span style="font-size:.8rem; font-weight:700;
+                     padding:.1rem .45rem; border-radius:9999px;
+                     background:{eff_bg}; color:{eff_color};">{eff}%</span>
+      </div>
+
+      <!-- efficiency mini-bar -->
+      <div style="width:100%; height:4px; background:#e2e8f0; border-radius:9999px; overflow:hidden;">
+        <div style="height:4px; border-radius:9999px;
+                    background:linear-gradient(90deg,{g_from},{g_to});
+                    width:{eff}%;"></div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:.72rem; color:#94a3b8; font-weight:500;">💰 Budget</span>
+        <span style="font-size:.78rem; font-weight:600; color:#475569;">${dept["budget"]:,}</span>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:.72rem; color:#94a3b8; font-weight:500;">💵 Cost/Emp</span>
+        <span style="font-size:.78rem; font-weight:600; color:#475569;">${metrics["cost_per_employee"]:,}</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+""")
 
 def create_departments_list_section():
     """Create detailed departments list with management capabilities"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('Department Management').classes('text-xl font-semibold mb-4')
-        
-        # Departments table
-        departments = dept_manager.get_all_departments()
-        
-        # Table header
-        with ui.row().classes('w-full p-4 bg-gray-50 rounded-t-lg font-semibold'):
-            ui.label('Department').classes('flex-1')
-            ui.label('Head').classes('w-32')
-            ui.label('Employees').classes('w-24 text-center')
-            ui.label('Budget').classes('w-32 text-right')
-            ui.label('Efficiency').classes('w-24 text-center')
-            ui.label('Actions').classes('w-32 text-center')
-        
-        # Table rows
-        for dept in departments:
-            metrics = dept["calculated_metrics"]
-            with ui.row().classes('w-full p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors'):
-                # Department info
-                with ui.column().classes('flex-1'):
-                    ui.label(dept["name"]).classes('font-medium')
-                    ui.label(f'{dept["code"]} • {dept["location"]}').classes('text-sm text-gray-500')
-                
-                # Department head
-                ui.label(dept["head_name"]).classes('w-32 text-sm')
-                
-                # Employee count
-                ui.label(f'{dept["employee_count"]}').classes('w-24 text-center font-medium')
-                
-                # Budget
-                ui.label(f'${dept["budget"]:,}').classes('w-32 text-right font-medium')
-                
-                # Efficiency with color coding
-                efficiency = dept["performance_metrics"]["efficiency_score"]
-                color = 'text-green-600' if efficiency >= 90 else 'text-yellow-600' if efficiency >= 80 else 'text-red-600'
-                ui.label(f'{efficiency}%').classes(f'w-24 text-center font-medium {color}')
-                
-                # Actions
-                with ui.row().classes('w-32 justify-center gap-1'):
-                    ui.button(icon='edit', on_click=lambda d=dept: edit_department_dialog(d)).props('size=sm flat color=blue')
-                    ui.button(icon='visibility', on_click=lambda d=dept: view_department_details(d)).props('size=sm flat color=green')
-                    ui.button(icon='delete', on_click=lambda d=dept: delete_department_confirm(d)).props('size=sm flat color=red')
+    departments = dept_manager.get_all_departments()
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.card_section().classes('px-6 pt-6 pb-2'):
+            with ui.row().classes('w-full justify-between items-center mb-4'):
+                ui.html('<h2 class="text-xl font-bold text-gray-800">🏢 Department Management</h2>')
+                ui.html(f'<span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">'
+                        f'{len(departments)} departments</span>')
+
+        with ui.element('div').classes('w-full overflow-x-auto px-2 pb-4'):
+            with ui.element('table').classes('w-full min-w-full border-collapse'):
+
+                # Header
+                with ui.element('thead'):
+                    with ui.element('tr').classes(
+                        'bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-sm'
+                    ):
+                        th = 'px-4 py-3 text-left font-semibold tracking-wide uppercase whitespace-nowrap'
+                        for icon_h, text_h in [
+                            ('🏢', 'Department'), ('👤', 'Head'), ('👥', 'Employees'),
+                            ('💰', 'Budget'), ('📈', 'Efficiency'), ('⚙', 'Actions'),
+                        ]:
+                            with ui.element('th').classes(th):
+                                ui.html(f'{icon_h} {text_h}')
+
+                # Body
+                with ui.element('tbody'):
+                    td = 'px-4 py-3 text-sm text-gray-700 whitespace-nowrap'
+                    for idx, dept in enumerate(departments):
+                        stripe   = 'bg-slate-50' if idx % 2 == 0 else 'bg-white'
+                        eff      = dept['performance_metrics']['efficiency_score']
+                        eff_cls  = ('text-emerald-600 font-bold' if eff >= 90
+                                    else 'text-amber-600 font-bold' if eff >= 80
+                                    else 'text-rose-600 font-bold')
+                        with ui.element('tr').classes(
+                            f'{stripe} border-b border-gray-100 '
+                            'hover:bg-blue-50 transition-colors duration-150'
+                        ):
+                            # Dept name + code
+                            with ui.element('td').classes(td):
+                                ui.html(
+                                    f'<div class="font-semibold text-gray-900">{dept["name"]}</div>'
+                                    f'<div class="text-xs text-gray-400">{dept["code"]} · {dept["location"]}</div>'
+                                )
+                            # Head
+                            with ui.element('td').classes(td):
+                                ui.label(dept['head_name'])
+                            # Employees
+                            with ui.element('td').classes(td):
+                                ui.html(f'<span class="font-bold text-gray-900">{dept["employee_count"]}</span>')
+                            # Budget
+                            with ui.element('td').classes(td):
+                                ui.html(f'<span class="font-medium">${dept["budget"]:,}</span>')
+                            # Efficiency
+                            with ui.element('td').classes(td):
+                                ui.html(f'<span class="{eff_cls}">{eff}%</span>')
+                            # Actions
+                            with ui.element('td').classes(td):
+                                with ui.row().classes('gap-1'):
+                                    ui.button(icon='visibility').props('flat round dense color=green size=sm') \
+                                        .on_click(lambda d=dept: view_department_details(d))
+                                    ui.button(icon='edit').props('flat round dense color=blue size=sm') \
+                                        .on_click(lambda d=dept: edit_department_dialog(d))
+                                    ui.button(icon='delete').props('flat round dense color=red size=sm') \
+                                        .on_click(lambda d=dept: delete_department_confirm(d))
 
 def create_analytics_section():
     """Create analytics section with charts and metrics"""
     analytics = dept_manager.get_dashboard_analytics()
-    
+
     with ui.row().classes('w-full gap-6'):
         # Budget Distribution
-        with ui.card().classes('flex-1 p-6'):
-            ui.label('Budget Distribution').classes('text-xl font-semibold mb-4')
-            for item in analytics["budget_distribution"]:
-                with ui.row().classes('items-center justify-between mb-2'):
-                    ui.label(item["department"]).classes('font-medium')
-                    ui.label(f'{item["percentage"]}%').classes('text-blue-600 font-bold')
-                # Progress bar
-                with ui.element('div').classes('w-full bg-gray-200 rounded-full h-2 mb-2'):
-                    ui.element('div').classes(f'bg-blue-500 h-2 rounded-full').style(f'width: {item["percentage"]}%')
-        
+        with ui.card().classes('flex-1 rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.card_section().classes('px-6 pt-6 pb-2'):
+                ui.html('<h2 class="text-lg font-bold text-gray-800">💰 Budget Distribution</h2>')
+            with ui.card_section().classes('px-6 pb-6'):
+                with ui.column().classes('w-full gap-3'):
+                    for item in analytics["budget_distribution"]:
+                        with ui.row().classes('items-center justify-between'):
+                            ui.html(f'<span class="text-sm font-medium text-gray-700">{item["department"]}</span>')
+                            ui.html(f'<span class="text-sm font-bold text-blue-600">{item["percentage"]}%</span>')
+                        with ui.element('div').classes('w-full bg-gray-200 rounded-full h-2'):
+                            ui.element('div').classes('bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full') \
+                                .style(f'width: {item["percentage"]}%')
+
         # Workforce Distribution
-        with ui.card().classes('flex-1 p-6'):
-            ui.label('Workforce Distribution').classes('text-xl font-semibold mb-4')
-            total_employees = sum(item["employees"] for item in analytics["workforce_distribution"])
-            for item in analytics["workforce_distribution"]:
-                percentage = round((item["employees"] / total_employees) * 100, 1)
-                with ui.row().classes('items-center justify-between mb-2'):
-                    ui.label(item["department"]).classes('font-medium')
-                    ui.label(f'{item["employees"]} ({percentage}%)').classes('text-green-600 font-bold')
-                # Progress bar
-                with ui.element('div').classes('w-full bg-gray-200 rounded-full h-2 mb-2'):
-                    ui.element('div').classes(f'bg-green-500 h-2 rounded-full').style(f'width: {percentage}%')
+        with ui.card().classes('flex-1 rounded-2xl shadow-md bg-white overflow-hidden'):
+            with ui.card_section().classes('px-6 pt-6 pb-2'):
+                ui.html('<h2 class="text-lg font-bold text-gray-800">👥 Workforce Distribution</h2>')
+            with ui.card_section().classes('px-6 pb-6'):
+                total_employees = sum(item["employees"] for item in analytics["workforce_distribution"])
+                with ui.column().classes('w-full gap-3'):
+                    for item in analytics["workforce_distribution"]:
+                        percentage = round((item["employees"] / total_employees) * 100, 1) if total_employees else 0
+                        with ui.row().classes('items-center justify-between'):
+                            ui.html(f'<span class="text-sm font-medium text-gray-700">{item["department"]}</span>')
+                            ui.html(f'<span class="text-sm font-bold text-emerald-600">{item["employees"]} ({percentage}%)</span>')
+                        with ui.element('div').classes('w-full bg-gray-200 rounded-full h-2'):
+                            ui.element('div').classes('bg-gradient-to-r from-emerald-400 to-green-500 h-2 rounded-full') \
+                                .style(f'width: {percentage}%')
 
 def create_time_management_section():
     """Create time management section with HR algorithms"""
-    with ui.card().classes('w-full p-6'):
-        ui.label('Time Management & Scheduling').classes('text-xl font-semibold mb-4')
-        
-        departments = dept_manager.get_all_departments()
-        
-        # Time management table
-        with ui.row().classes('w-full p-4 bg-gray-50 rounded-t-lg font-semibold'):
-            ui.label('Department').classes('flex-1')
-            ui.label('Working Hours').classes('w-32')
-            ui.label('Weekly Hours').classes('w-24 text-center')
-            ui.label('Overtime Proj.').classes('w-28 text-center')
-            ui.label('Flexibility').classes('w-24 text-center')
-            ui.label('Status').classes('w-24 text-center')
-        
-        for dept in departments:
-            metrics = dept["calculated_metrics"]
-            hours = dept["working_hours"]
-            
-            with ui.row().classes('w-full p-4 border-b border-gray-200'):
-                # Department name
-                ui.label(dept["name"]).classes('flex-1 font-medium')
-                
-                # Working hours
-                ui.label(f'{hours["start"]} - {hours["end"]}').classes('w-32 text-sm')
-                
-                # Weekly hours
-                ui.label(f'{metrics["working_hours_per_week"]:.1f}h').classes('w-24 text-center font-medium')
-                
-                # Overtime projection
-                overtime = metrics["overtime_projection"]
-                overtime_color = 'text-red-600' if overtime > 5 else 'text-yellow-600' if overtime > 0 else 'text-green-600'
-                ui.label(f'{overtime:.1f}h').classes(f'w-28 text-center font-medium {overtime_color}')
-                
-                # Flexibility
-                flex_text = 'Yes' if hours["flexible_hours"] else 'No'
-                flex_color = 'text-green-600' if hours["flexible_hours"] else 'text-gray-600'
-                ui.label(flex_text).classes(f'w-24 text-center {flex_color}')
-                
-                # Status based on efficiency
-                efficiency = dept["performance_metrics"]["efficiency_score"]
-                if efficiency >= 90:
-                    ui.chip('Optimal', color='green').props('dense').classes('w-24')
-                elif efficiency >= 80:
-                    ui.chip('Good', color='yellow').props('dense').classes('w-24')
-                else:
-                    ui.chip('Review', color='red').props('dense').classes('w-24')
+    departments = dept_manager.get_all_departments()
+
+    with ui.card().classes('w-full rounded-2xl shadow-md bg-white overflow-hidden'):
+        with ui.card_section().classes('px-6 pt-6 pb-2'):
+            ui.html('<h2 class="text-xl font-bold text-gray-800">⏱ Time Management &amp; Scheduling</h2>')
+
+        with ui.element('div').classes('w-full overflow-x-auto px-2 pb-4'):
+            with ui.element('table').classes('w-full min-w-full border-collapse'):
+
+                with ui.element('thead'):
+                    with ui.element('tr').classes(
+                        'bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm'
+                    ):
+                        th = 'px-4 py-3 text-left font-semibold tracking-wide uppercase whitespace-nowrap'
+                        for h in ['🏢 Department', '🕐 Hours', '📅 Weekly Hrs',
+                                  '⏰ Overtime', '🔄 Flexible', '🔵 Status']:
+                            with ui.element('th').classes(th):
+                                ui.html(h)
+
+                with ui.element('tbody'):
+                    td = 'px-4 py-3 text-sm text-gray-700 whitespace-nowrap'
+                    for idx, dept in enumerate(departments):
+                        metrics  = dept["calculated_metrics"]
+                        hours    = dept["working_hours"]
+                        overtime = metrics["overtime_projection"]
+                        eff      = dept["performance_metrics"]["efficiency_score"]
+                        stripe   = 'bg-slate-50' if idx % 2 == 0 else 'bg-white'
+
+                        ot_cls   = ('text-rose-600 font-bold' if overtime > 5
+                                    else 'text-amber-500 font-bold' if overtime > 0
+                                    else 'text-emerald-600 font-bold')
+                        if eff >= 90:
+                            status_html = '<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Optimal</span>'
+                        elif eff >= 80:
+                            status_html = '<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Good</span>'
+                        else:
+                            status_html = '<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">Review</span>'
+
+                        with ui.element('tr').classes(
+                            f'{stripe} border-b border-gray-100 '
+                            'hover:bg-blue-50 transition-colors duration-150'
+                        ):
+                            with ui.element('td').classes(td):
+                                ui.html(f'<span class="font-semibold text-gray-900">{dept["name"]}</span>')
+                            with ui.element('td').classes(td):
+                                ui.label(f'{hours["start"]} – {hours["end"]}')
+                            with ui.element('td').classes(td):
+                                ui.html(f'<span class="font-bold text-gray-900">{metrics["working_hours_per_week"]:.1f}h</span>')
+                            with ui.element('td').classes(td):
+                                ui.html(f'<span class="{ot_cls}">{overtime:.1f}h</span>')
+                            with ui.element('td').classes(td):
+                                flex = hours["flexible_hours"]
+                                ui.html(
+                                    '<span class="px-2 py-0.5 rounded-full text-xs font-bold '
+                                    + ('bg-emerald-100 text-emerald-800">Yes</span>' if flex
+                                       else 'bg-slate-100 text-slate-600">No</span>')
+                                )
+                            with ui.element('td').classes(td):
+                                ui.html(status_html)
 
 # Dialog and action functions
 async def show_add_department_dialog():
