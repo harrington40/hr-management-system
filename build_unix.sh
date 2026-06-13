@@ -65,6 +65,7 @@ pyinstaller \
     --hidden-import fastapi \
     --hidden-import uvicorn \
     --hidden-import nicegui \
+    --hidden-import rethinkdb \
     --hidden-import sqlalchemy \
     --hidden-import grpc \
     --hidden-import pydantic \

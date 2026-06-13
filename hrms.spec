@@ -53,6 +53,7 @@ a = Analysis(
         'nicegui.storage',
 
         # Database
+        'rethinkdb',
         'sqlalchemy',
         'psycopg2',
         'mysql.connector',

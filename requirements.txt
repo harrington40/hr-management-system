@@ -68,6 +68,9 @@ yarl==1.20.1
 # MQTT and Communication
 paho-mqtt==2.1.0
 
+# RethinkDB Driver
+rethinkdb==2.4.10.post1
+
 # Backblaze B2 Storage
 b2sdk==2.7.0
 
