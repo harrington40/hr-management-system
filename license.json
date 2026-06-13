@@ -1,0 +1,16 @@
+{
+  "license_id": "LIC-2026-F52871BEA352",
+  "product_id": "com.hrmkit.pro",
+  "customer_name": "KWARECOM Inc.",
+  "customer_id": "CUST-0001",
+  "issued_at": "2026-06-07T02:39:54Z",
+  "expires_at": "2027-12-31",
+  "max_activations": 1,
+  "seats": 100,
+  "require_bt": false,
+  "allowed_bt_name": null,
+  "features": {
+    "reports": true
+  },
+  "signature": "twKqoIXMHIt-tsUzpQA-RV2qcPEs28lwI7sinuR5hsMmqwsP16YzsuBtOn98gRTF9TQUgUnwQsC2yZ5g1jc0AA=="
+}
