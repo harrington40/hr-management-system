@@ -35,7 +35,7 @@ pip3 install pyinstaller
 
 # Install project dependencies
 echo "Installing project dependencies..."
-pip3 install -r requirement.txt
+pip3 install -r requirements.txt
 
 # Create output directory
 mkdir -p dist
@@ -67,12 +67,18 @@ pyinstaller \
     --hidden-import grpc \
     --hidden-import pydantic \
     --hidden-import starlette \
+    --hidden-import frontend \
+    --hidden-import components \
     --hidden-import components.attendance.attendance_rules \
     --hidden-import components.attendance.shift_timetable \
     --hidden-import components.authentication.auth \
     --hidden-import components.reports.dashboard \
+    --hidden-import helperFuns \
     --hidden-import helperFuns.helperFuns \
+    --hidden-import layout \
     --hidden-import layout.sidebar \
+    --hidden-import services \
+    --hidden-import ai_orchestrator \
     --hidden-import apis.db \
     --hidden-import apis.userModel \
     --add-data "assets:assets" \

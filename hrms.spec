@@ -80,7 +80,13 @@ a = Analysis(
         'python-socketio',
         'paho.mqtt',
 
+        # Core app modules
+        'frontend',
+        'services',
+        'ai_orchestrator',
+
         # Component modules
+        'components',
         'components.attendance',
         'components.attendance.attendance_rules',
         'components.attendance.shift_timetable',
@@ -97,7 +103,9 @@ a = Analysis(
         'components.employees.employee_management',
 
         # Helper modules
+        'helperFuns',
         'helperFuns.helperFuns',
+        'layout',
         'layout.sidebar',
 
         # Database modules

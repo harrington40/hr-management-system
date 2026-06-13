@@ -28,7 +28,7 @@ pip install pyinstaller
 
 echo.
 echo Installing project dependencies...
-pip install -r requirement.txt
+pip install -r requirements.txt
 
 echo.
 echo Creating application icon...
