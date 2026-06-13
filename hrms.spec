@@ -31,10 +31,10 @@ a = Analysis(
         (str(database_dir / 'hrms_schema.sql'), 'database'),
         (str(database_dir / 'hrms_schema_clean.sql'), 'database'),
         ('requirements.txt', '.'),
-        ('frontend.py', '.'),
         ('run_dual_services.py', '.'),
         ('run_grpc_only.py', '.'),
         ('__init__.py', '.'),
+        ('.env', '.'),
     ],
     hiddenimports=[
         # FastAPI and related

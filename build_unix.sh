@@ -60,6 +60,8 @@ pyinstaller \
     --clean \
     --onefile \
     --name "$EXECUTABLE_NAME" \
+    --paths . \
+    --collect-submodules frontend \
     --hidden-import fastapi \
     --hidden-import uvicorn \
     --hidden-import nicegui \
