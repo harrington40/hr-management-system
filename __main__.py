@@ -12,7 +12,8 @@ import uvicorn
 if __name__ == "__main__":
     from main import app
 
-    dev_mode = os.environ.get("HRMS_DEV", "").lower() in ("1", "true", "yes")
+    prod_mode = os.environ.get("HRMS_PROD", "").lower() in ("1", "true", "yes")
+    reload_enabled = not prod_mode
 
     print("""
     🚀 Starting HRMS (HR Management System)
@@ -23,14 +24,14 @@ if __name__ == "__main__":
     🔁 Hot-reload:  {reload}
     🛑 To stop:     Press CTRL+C
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    """.format(reload="ON  (HRMS_DEV=true)" if dev_mode else "OFF (use ./dev.sh for dev mode)"))
+    """.format(reload="ON  (default)" if reload_enabled else "OFF (HRMS_PROD=true)"))
 
     uvicorn.run(
         app,
         host="127.0.0.1",
         port=8000,
-        reload=dev_mode,
-        reload_dirs=[os.path.dirname(__file__)] if dev_mode else None,
-        reload_includes=["*.py", "*.yaml", "*.yml", "*.html"] if dev_mode else None,
+        reload=reload_enabled,
+        reload_dirs=[os.path.dirname(__file__)] if reload_enabled else None,
+        reload_includes=["*.py", "*.yaml", "*.yml", "*.html"] if reload_enabled else None,
         log_level="info"
     )

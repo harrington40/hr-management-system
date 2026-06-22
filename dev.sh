@@ -1,17 +1,15 @@
 #!/bin/bash
 # =============================================================================
-# HRMS Development Mode — auto-reloads on code changes
-# Uses watchfiles via uvicorn --reload (HRMS_DEV=true)
+# HRMS Development Mode — hot-reload is ON by default now.
+# This is a convenience wrapper; plain `python3 __main__.py` does the same.
 # =============================================================================
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-export HRMS_DEV=true
-
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║       HRMS — DEVELOPMENT MODE (hot-reload ON)                ║"
+echo "║       HRMS — hot-reload ON  (default)                        ║"
 echo "║       Watching *.py *.yaml *.yml *.html for changes          ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""

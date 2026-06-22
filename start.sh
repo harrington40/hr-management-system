@@ -50,8 +50,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "  📱 Web UI:   http://localhost:8000/hrmkit/"
 echo "  📊 API Docs: http://localhost:8000/docs"
 echo "  🔧 gRPC:     localhost:50051"
-echo "  🛑 Stop:     Press CTRL+C"
+echo "  🔁 Hot-reload: OFF (production mode)"
+echo "  Stop:       Press CTRL+C"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python3 run_dual_services.py
+HRMS_PROD=true python3 run_dual_services.py
