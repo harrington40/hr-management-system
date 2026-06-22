@@ -10,8 +10,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 import uvicorn
 
 if __name__ == "__main__":
-    from main import app
-
     prod_mode = os.environ.get("HRMS_PROD", "").lower() in ("1", "true", "yes")
     reload_enabled = not prod_mode
 
@@ -27,7 +25,7 @@ if __name__ == "__main__":
     """.format(reload="ON  (default)" if reload_enabled else "OFF (HRMS_PROD=true)"))
 
     uvicorn.run(
-        app,
+        "main:app",
         host="127.0.0.1",
         port=8000,
         reload=reload_enabled,
